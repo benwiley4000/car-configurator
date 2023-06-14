@@ -16,5 +16,34 @@
       <div id="fade"></div>
       <canvas tabindex="1" id="display_canvas"></canvas>
     </div>
+    <label for="cars">Choose a car:</label>
+
+    <select name="cars" id="cars" onchange="ChangeCar(this)">
+      <option value="0">Viper</option>
+      <option value="1">Urus</option>
+    </select>
+
+    <select name="spoilers" id="spoilers" onchange="ChangeSpoiler(this)">
+      <option value="0">0</option>
+      <option value="1">1</option>
+    </select>
+
+    <select
+      name="front_bumper"
+      id="front_bumpers"
+      onchange="ChangeFrontBumper(this)"
+    >
+      <option value="0">0</option>
+      <option value="1">1</option>
+    </select>
+
+    <select
+      name="rear_bumper"
+      id="rear_bumpers"
+      onchange="ChangeRearBumper(this)"
+    >
+      <option value="0">0</option>
+      <option value="1">1</option>
+    </select>
   </body>
 </html>
