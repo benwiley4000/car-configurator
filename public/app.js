@@ -12,7 +12,6 @@ let carParts = {
   rearBumper: null,
   spoiler: null,
 };
-let gIntensity = 0;
 
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
@@ -29,7 +28,6 @@ async function InitApp() {
   ];
   SDK3DVerse.setViewports(viewports);
   SetResolution();
-
   let debounceResizeTimeout = null;
   window.addEventListener("resize", () => {
     if (debounceResizeTimeout) {
