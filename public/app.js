@@ -12,6 +12,7 @@ let carParts = {
   rearBumper: null,
   spoiler: null,
 };
+let gIntensity = 0;
 
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
@@ -42,8 +43,12 @@ async function InitApp() {
 
   const sessionCreated = await Connect();
 
-  FadeOut();
-  SetInformation("");
+  SetInformation("Connection established.");
+  setTimeout(function(){
+    document.getElementById("loader").classList.add("opacity-0");
+    setTimeout(function(){document.getElementById("loader").classList.add("hidden");}, 1000);
+  }, 1000);
+
   await InitCarAttachment();
 
   gSelectedMaterial = AppConfig.materials[0];
@@ -61,6 +66,14 @@ async function InitCarAttachment() {
 async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
+  document.getElementById("car_name").innerHTML = gSelectedCar.name;
+  document.getElementById("car_description").innerHTML = gSelectedCar.description;
+  document.getElementById("maximum-speed-number").innerHTML = gSelectedCar.maxSpeed;
+  document.getElementById("acceleration-number").innerHTML = gSelectedCar.acceleration;
+  document.getElementById("maximum-power-number").innerHTML = gSelectedCar.maximumPower;
+  document.getElementById("maximum-torque-number").innerHTML = gSelectedCar.maximumTorque;
+  document.getElementById("engine-capacity-number").innerHTML = gSelectedCar.engineCapacity;
+  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
   await ApplySelectedCar();
   await InitColor();
   await ApplySelectedMaterial();
@@ -149,6 +162,15 @@ async function SelectPart(partName, partSceneUUID) {
   return await SDK3DVerse.engineAPI.spawnEntity(gCarAttachment, part);
 }
 
+async function nextCar(){
+  await ChangeCar({ value: 1 });
+}
+async function previousCar(){
+  await ChangeCar({ value: 0 });
+}
+
+
+
 //--------------------------------------------------------------------------------------------------
 // use setTimeout to delay a task that may be async (returning a promise) or not.
 // wrap the setTimeout in a Promise that can be awaited.
@@ -179,12 +201,6 @@ function SetInformation(str) {
   const infoSpan = document.getElementById("info_span");
   infoSpan.innerHTML = str;
   console.debug(str);
-}
-
-//--------------------------------------------------------------------------------------------------
-function FadeOut() {
-  const fade = document.getElementById("fade");
-  fade.style.animation = "fadeOut linear 2s";
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -244,7 +260,6 @@ function Reset() {
 async function Connect() {
   SetInformation("Connecting to 3dverse...");
 
-  //const connectionInfo = await SDK3DVerse.webAPI.createOrJoinSession(
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID
   );
@@ -321,4 +336,34 @@ async function ToggleLights() {
   );
 
   gIntensity = gIntensity === 0 ? 100 : 0;
+}
+
+SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
+  return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
+    token: this.apiToken,
+  });
+};
+
+async function ToggleLights() {
+  const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedCar.headLightsMatUUID
+  );
+  desc1.dataJson.emissionIntensity = gIntensity;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(gSelectedCar.headLightsMatUUID, desc1);
+
+  const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedCar.rearLightsMatUUID
+  );
+  desc2.dataJson.emissionIntensity = gIntensity;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.rearLightsMatUUID,
+    desc2
+  );
+
+  gIntensity = gIntensity === 0 ? 100 : 0;
+
+  document.getElementById("light-on").classList.add("hidden");
+  document.getElementById("light-off").classList.remove("hidden");
 }
