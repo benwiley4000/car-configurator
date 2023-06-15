@@ -1,12 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 body {
   width: 100%;
   height: 100%;
   background-color: black;
   margin: auto;
-  align-items: center;
   display: flex;
-  justify-content: center;
-  font-family: Work Sans, Verdana, Geneva, Tahoma, sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -23,79 +25,39 @@ body {
   justify-content: center;
 }
 
-#info {
-  position: absolute;
-  color: white;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-span {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-#fade {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  background-color: black;
-  opacity: 0;
-  pointer-events: none;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 canvas {
   position: absolute;
   all: unset;
 }
 
-/*
-.lds-ripple {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ripple div {
-  position: absolute;
-  border: 4px solid #fff;
-  opacity: 1;
-  border-radius: 50%;
-  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-.lds-ripple div:nth-child(2) {
-  animation-delay: -0.5s;
-}
-@keyframes lds-ripple {
-  0% {
-    top: 36px;
-    left: 36px;
-    width: 0;
-    height: 0;
-    opacity: 1;
-  }
-  100% {
-    top: 0px;
-    left: 0px;
-    width: 72px;
-    height: 72px;
-    opacity: 0;
-  }
+.active-color{
+  width: 70px !important;
+  height: 70px !important;
 }
 
-  */
+#car_name{
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.highlighted_word{
+  
+  color: #141614 !important;
+  padding: 10px;
+  background: #C5EC44;
+  border-radius: 12px;
+}
+
+.number{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+.price{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+}
+
+.customization-btn:hover{
+  box-shadow: 0 0 25px 12px rgba(222, 255, 115, 0.3);
+  background-color: #DEFF73;
+}
