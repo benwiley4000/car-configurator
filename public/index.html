@@ -9,6 +9,7 @@
   </head>
 
   <body>
+    <p>Hi Jeff!</p>
     <div id="container">
       <div id="info">
         <span id="info_span">Loading...</span>
@@ -23,9 +24,16 @@
       <option value="1">Urus</option>
     </select>
 
+    <select name="paint" id="paint" onchange="ChangeMaterial(this)">
+      <option value="0">Solid</option>
+      <option value="1">Metallic</option>
+      <option value="2">Matte</option>
+    </select>
+
     <select name="spoilers" id="spoilers" onchange="ChangeSpoiler(this)">
       <option value="0">0</option>
       <option value="1">1</option>
+      <option value="2">2</option>
     </select>
 
     <select
@@ -35,6 +43,7 @@
     >
       <option value="0">0</option>
       <option value="1">1</option>
+      <option value="2">2</option>
     </select>
 
     <select
@@ -45,5 +54,10 @@
       <option value="0">0</option>
       <option value="1">1</option>
     </select>
+
+    <button onclick="ChangeColor()">Color</button>
+    <button onclick="ToggleRotation()">Rotate</button>
+    <button onclick="Reset()">Reset</button>
+    <button onclick="ToggleLights()">Light</button>
   </body>
 </html>

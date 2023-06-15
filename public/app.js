@@ -3,6 +3,9 @@ window.addEventListener("load", InitApp);
 
 let gCarAttachment = null;
 let gSelectedCar = null;
+let gSelectedMaterial = null;
+let gColor = null;
+let gIntensity = 0;
 let carParts = {
   body: null,
   frontBumper: null,
@@ -12,8 +15,7 @@ let carParts = {
 
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
-  //SDK3DVerse.setViewports(null);
-
+  window.addEventListener("contextmenu", (e) => e.preventDefault());
   const viewports = [
     {
       id: 0,
@@ -40,22 +42,11 @@ async function InitApp() {
 
   const sessionCreated = await Connect();
 
-  if (sessionCreated) {
-    // This must be done before attaching the camera & controller scripts.
-    // The hasPlayer allows to start the simulation if the session was created by something else
-    // than the current application. But it means we could start simulation more than one time
-    // in the same session if all player have left and new one comes in.
-    console.debug("Start simulation");
-    SDK3DVerse.engineAPI.fireEvent(
-      SDK3DVerse.utils.invalidUUID,
-      "start_simulation"
-    );
-  }
-
   FadeOut();
   SetInformation("");
   await InitCarAttachment();
 
+  gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
 }
 
@@ -71,6 +62,8 @@ async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
   await ApplySelectedCar();
+  await InitColor();
+  await ApplySelectedMaterial();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -222,11 +215,37 @@ function SetResolution(showInfo = true) {
   }
 }
 
+//------------------------------------------------------------------------------
+SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
+  return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
+    token: this.apiToken,
+  });
+};
+
+let rotationState = false;
+//--------------------------------------------------------------------------------------------------
+function ToggleRotation() {
+  const event = rotationState ? "pause_simulation" : "start_simulation";
+  rotationState = !rotationState;
+
+  SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+}
+
+//--------------------------------------------------------------------------------------------------
+function Reset() {
+  SDK3DVerse.engineAPI.fireEvent(
+    SDK3DVerse.utils.invalidUUID,
+    "stop_simulation"
+  );
+  rotationState = false;
+}
+
 //--------------------------------------------------------------------------------------------------
 async function Connect() {
   SetInformation("Connecting to 3dverse...");
 
-  const connectionInfo = await SDK3DVerse.webAPI.createOrJoinSession(
+  //const connectionInfo = await SDK3DVerse.webAPI.createOrJoinSession(
+  const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID
   );
   connectionInfo.useSSL = true;
@@ -234,5 +253,72 @@ async function Connect() {
   SDK3DVerse.startStreamer(connectionInfo);
   await SDK3DVerse.connectToEditor();
   SetInformation("Connection to 3dverse established...");
-  return connectionInfo.sessionCreated;
+  return true; //connectionInfo.sessionCreated;
+}
+
+//--------------------------------------------------------------------------------------------------
+async function InitColor() {
+  const desc = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedCar.paintMaterialUUID
+  );
+  gColor = desc.dataJson.albedo;
+}
+
+//--------------------------------------------------------------------------------------------------
+async function ChangeColor() {
+  gColor = [Math.random(), Math.random(), Math.random()];
+  const desc = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedMaterial.matUUID
+  );
+  desc.dataJson.albedo = gColor;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.paintMaterialUUID,
+    desc
+  );
+}
+
+//--------------------------------------------------------------------------------------------------
+async function ChangeMaterial(e) {
+  const matIndex = e.value;
+  gSelectedMaterial = AppConfig.materials[matIndex];
+  await ApplySelectedMaterial();
+}
+
+//--------------------------------------------------------------------------------------------------
+async function ApplySelectedMaterial() {
+  const desc = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedMaterial.matUUID
+  );
+  desc.dataJson.albedo = gColor;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.paintMaterialUUID,
+    desc
+  );
+}
+
+async function ToggleLights() {
+  const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedCar.headLightsMatUUID
+  );
+  desc1.dataJson.emissionIntensity = gIntensity;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.headLightsMatUUID,
+    desc1
+  );
+
+  const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
+    "material",
+    gSelectedCar.rearLightsMatUUID
+  );
+  desc2.dataJson.emissionIntensity = gIntensity;
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.rearLightsMatUUID,
+    desc2
+  );
+
+  gIntensity = gIntensity === 0 ? 100 : 0;
 }
