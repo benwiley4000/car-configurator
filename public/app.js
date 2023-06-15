@@ -12,6 +12,7 @@ let carParts = {
   rearBumper: null,
   spoiler: null,
 };
+let gCarIndex = 0;
 
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
@@ -161,10 +162,13 @@ async function SelectPart(partName, partSceneUUID) {
 }
 
 async function nextCar(){
-  await ChangeCar({ value: 1 });
+  // gCarIndex = (gCarIndex + 1) >= AppConfig.cars.length ? 0 : gCarIndex + 1;
+  gCarIndex = (gCarIndex + 1)% AppConfig.cars.length;
+  await ChangeCar({ value: gCarIndex });
 }
 async function previousCar(){
-  await ChangeCar({ value: 0 });
+  gCarIndex = gCarIndex === 0 ? AppConfig.cars.length-1 : gCarIndex - 1;
+  await ChangeCar({ value: gCarIndex });
 }
 
 
@@ -243,6 +247,14 @@ function ToggleRotation() {
   rotationState = !rotationState;
 
   SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+
+  if (document.getElementById("rotate-on").classList.contains("hidden")){
+    document.getElementById("rotate-on").classList.remove("hidden");
+    document.getElementById("rotate-off").classList.add("hidden");
+  } else {
+    document.getElementById("rotate-on").classList.add("hidden");
+    document.getElementById("rotate-off").classList.remove("hidden");
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -362,6 +374,13 @@ async function ToggleLights() {
 
   gIntensity = gIntensity === 0 ? 100 : 0;
 
-  document.getElementById("light-on").classList.add("hidden");
-  document.getElementById("light-off").classList.remove("hidden");
+
+  if (document.getElementById("light-on").classList.contains("hidden")){
+    document.getElementById("light-on").classList.remove("hidden");
+    document.getElementById("light-off").classList.add("hidden");
+  } else {
+    document.getElementById("light-on").classList.add("hidden");
+    document.getElementById("light-off").classList.remove("hidden");
+  }
+  
 }
