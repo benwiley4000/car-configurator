@@ -39,12 +39,17 @@ canvas {
   font-family: 'Bebas Neue', sans-serif;
 }
 
-.highlighted_word{
-  
+.highlighted-word{
   color: #141614 !important;
-  padding: 10px;
-  background: #C5EC44;
-  border-radius: 12px;
+}
+.highlighted-word::after{
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  margin-top: 50px;
+  margin-right: 50px;
 }
 
 .number{
@@ -65,5 +70,5 @@ canvas {
 .toggled-light::after{
   content: "";
   position: absolute;
-  
+
 }
