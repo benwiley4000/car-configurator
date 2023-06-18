@@ -41,8 +41,9 @@ canvas {
 
 .highlighted-word{
   color: #141614 !important;
+  z-index: 20 !important;
 }
-.highlighted-word::after{
+.highlighted-word::before{
   content: "";
   position: absolute;
   width: 30px;
@@ -50,6 +51,7 @@ canvas {
   background-color: white;
   margin-top: 50px;
   margin-right: 50px;
+  z-index: 10 !important;
 }
 
 .number{
@@ -63,12 +65,6 @@ canvas {
 }
 
 .customization-btn:hover{
-  box-shadow: 0 0 25px 12px rgba(222, 255, 115, 0.3);
+  box-shadow: 0 0 30px 0 rgba(222, 255, 115, 0.3);
   background-color: #DEFF73;
-}
-
-.toggled-light::after{
-  content: "";
-  position: absolute;
-
 }
