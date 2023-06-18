@@ -29,193 +29,218 @@
       <!---------------------------------- MODEL SELECTION ----------------------------------------->
         
       <!-- arrows -->
-      <div class="model-left-button absolute left-20 cursor-pointer" onclick="previousCar()">
-          <svg width="27" height="47" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M25 2L4 23.5L25 45" stroke="white" stroke-width="5"/>
-            </svg>
-        </div>
-        <div class="model-right-button absolute right-20 cursor-pointer" onclick="nextCar()">
-          <svg width="27" height="47" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2L23 23.5L2 45" stroke="white" stroke-width="5"/>
-            </svg>        </div>
+      <div id="previous-model" class="model-left-button absolute left-20 cursor-pointer" onclick="previousCar()">
+        <svg width="27" height="47" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 2L4 23.5L25 45" stroke="white" stroke-width="5"/>
+          </svg>
+      </div>
+      <div id="next-model" class="model-right-button absolute right-20 cursor-pointer" onclick="nextCar()">
+        <svg width="27" height="47" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2L23 23.5L2 45" stroke="white" stroke-width="5"/>
+          </svg>        </div>
 
-        <!-- title & desc -->
-        <div class="absolute top-10 left-24 flex flex-col">
-          <h2 id="car_name" class="text-white text-[7rem] uppercase h-28 highlighted-word"></h2>
-          <p id="car_description" class="text-gray-400 w-2/3 text-l leading-7 mt-8"></p>
-        </div>
+      <!-- title & desc -->
+      <div id="model-title" class="absolute top-10 left-24 flex flex-col">
+        <h2 id="car_name" class="text-white text-[7rem] uppercase h-28"></h2>
+        <p id="car_description" class="text-gray-400 w-2/3 text-l leading-7 mt-8"></p>
+      </div>
 
-        <!-- options -->
-        <div class="options absolute flex space-x-3 top-20 right-24">
-          <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleLights()">
-            <svg id="light-on" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease">
-              <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#C5EC44"/>
-              <path d="M91 21H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
-              <path d="M91 46H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
-              <path d="M91 72H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
-            </svg>
-            <svg id="light-off" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease hidden">
-              <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="grey"/>
-              <path d="M91 21H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
-              <path d="M91 46H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
-              <path d="M91 72H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
-            </svg>
-          </div>
-
-          <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleRotation()">
-            <svg id="rotate-on" fill="#000000" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease" 
-              viewBox="0 0 214.367 214.367" xml:space="preserve">
-            <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
-              c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
-              c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
-              S202.403,42.716,202.403,95.22z"/>
-            </svg>
-            <svg id="rotate-off" fill="#C5EC44" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease hidden" 
-              viewBox="0 0 214.367 214.367" xml:space="preserve">
-            <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
-              c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
-              c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
-              S202.403,42.716,202.403,95.22z"/>
-            </svg>
-          </div>
+      <!-- options -->
+      <div id="ui-options" class="options absolute flex space-x-3 top-20 right-24">
+        <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleLights()">
+          <svg id="light-on" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease">
+            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#C5EC44"/>
+            <path d="M91 21H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 46H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 72H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
+          </svg>
+          <svg id="light-off" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease hidden">
+            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="grey"/>
+            <path d="M91 21H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 46H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 72H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
+          </svg>
         </div>
 
-        <!-- info numbers -->
-        <div class="absolute flex flex-col items-end right-40 justify-items-end">
-          <div class="info-item mt-4">
-            <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Speed</h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-speed-number" class="text-[2.5rem]"></p>
-              <p class="text-[1.3rem] mb-[6px] ml-2">KPH</p>
-            </div>
-          </div>
-          <div class="info-item mt-4">
-            <h3 class="text-[#AAAAAA] text-sm font-medium text-right">0-100kph</h3>
-            <div class="value flex text-white number items-end">
-              <p id="acceleration-number" class="text-[2.5rem]"></p>
-              <p class="text-[1.3rem] mb-[6px] ml-2">S</p>
-            </div>
-          </div>
-          <div class="info-item mt-4">
-            <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Power</h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-power-number" class="text-[2.5rem]"></p>
-              <p class="text-[1.3rem] mb-[6px] ml-2">PS</p>
-            </div>
-          </div>
-          <div class="info-item mt-4">
-            <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Torque</h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-torque-number" class="text-[2.5rem]"></p>
-              <p class="text-[1.3rem] mb-[6px] ml-2">NM</p>
-            </div>
-          </div>
-          <div class="info-item mt-4">
-            <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Engine Capacity</h3>
-            <div class="value flex text-white number items-end">
-              <p id="engine-capacity-number" class="text-[2.5rem]"></p>
-              <p class="text-[1.3rem] mb-[6px] ml-2">CC</p>
-            </div>
+        <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleRotation()">
+          <svg id="rotate-on" fill="#000000" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease" 
+            viewBox="0 0 214.367 214.367" xml:space="preserve">
+          <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
+            c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
+            c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
+            S202.403,42.716,202.403,95.22z"/>
+          </svg>
+          <svg id="rotate-off" fill="#C5EC44" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease hidden" 
+            viewBox="0 0 214.367 214.367" xml:space="preserve">
+          <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
+            c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
+            c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
+            S202.403,42.716,202.403,95.22z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- info numbers -->
+      <div id="model-infos" class="absolute flex flex-col items-end right-52 justify-items-end">
+        <div class="info-item mt-4">
+          <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Speed</h3>
+          <div class="value flex text-white number items-end">
+            <p id="maximum-speed-number" class="text-[2.5rem]"></p>
+            <p class="text-[1.3rem] mb-[6px] ml-2">KPH</p>
           </div>
         </div>
-
-        <!-- next btn -->
-        <div class="absolute flex space-x-4 bottom-10 right-20 items-center">
-          <div class="flex flex-col mr-2">
-            <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Customize</h3>
-            <h3 id="starting-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
-          </div>
-          <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease">
-            <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>              
+        <div class="info-item mt-4">
+          <h3 class="text-[#AAAAAA] text-sm font-medium text-right">0-100kph</h3>
+          <div class="value flex text-white number items-end">
+            <p id="acceleration-number" class="text-[2.5rem]"></p>
+            <p class="text-[1.3rem] mb-[6px] ml-2">S</p>
           </div>
         </div>
+        <div class="info-item mt-4">
+          <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Power</h3>
+          <div class="value flex text-white number items-end">
+            <p id="maximum-power-number" class="text-[2.5rem]"></p>
+            <p class="text-[1.3rem] mb-[6px] ml-2">PS</p>
+          </div>
+        </div>
+        <div class="info-item mt-4">
+          <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Maximum Torque</h3>
+          <div class="value flex text-white number items-end">
+            <p id="maximum-torque-number" class="text-[2.5rem]"></p>
+            <p class="text-[1.3rem] mb-[6px] ml-2">NM</p>
+          </div>
+        </div>
+        <div class="info-item mt-4">
+          <h3 class="text-[#AAAAAA] text-sm font-medium text-right">Engine Capacity</h3>
+          <div class="value flex text-white number items-end">
+            <p id="engine-capacity-number" class="text-[2.5rem]"></p>
+            <p class="text-[1.3rem] mb-[6px] ml-2">CC</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- select model btn -->
+      <div id="select-model-button" class="absolute flex space-x-4 bottom-10 right-20 items-center">
+        <div class="flex flex-col mr-2">
+          <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Customize</h3>
+          <h3 id="starting-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
+        </div>
+        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchCustomization()">
+          <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>              
+        </div>
+      </div>
 
 
-      <!-- </div> -->
+      <!---------------------------------- CUSTOMIZATION ----------------------------------------->
 
-        <!---------------------------------- COLOR SELECTION ----------------------------------------->
-        <!-- <div class="color-section absolute right-20">
-          <div class="color-selector flex justify-center items-center flex-col">
+      <!-- colors selection -->
+      <div id="colors" class="customization color-section absolute right-20 hidden" onclick="ChangeColor()">
+        <div class="color-selector flex justify-center items-center flex-col">
 
-            <div class="top-arrow mr-20">
-              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
-            </div>
+          <div class="top-arrow mr-20">
+            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
+          </div>
 
-            <div class="border-[1px] border-yellow-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
-              <div id="colorYellow" onclick="setYellow()" class="color-yellow h-[26px] w-[26px] bg-yellow-300 rounded-full hover:cursor-pointer"></div>
-            </div>
-            <div class="border-[1px] border-green-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
-              <div id="colorGreen" onclick="setGreen()" class="color-green h-[26px] w-[26px] bg-green-300 rounded-full hover:cursor-pointer"></div>
-            </div>
-            <div class="border-[1px] border-white-300 h-12 w-12 rounded-full my-3 flex items-center justify-center hover:cursor-pointer">
-              <div id="colorWhite" onclick="setWhite()" class="color-white h-[37px] w-[37px] bg-white rounded-full hover:cursor-pointer"></div>
-            </div>
-            <div class="border-[1px] border-blue-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
-              <div id="colorBlue" onclick="setBlue()" class="color-blue h-[26px] w-[26px] bg-blue-300 rounded-full hover:cursor-pointer"></div>
-            </div>
-            <div class="border-[1px] border-pink-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
-              <div id="colorPink" onclick="setPink()" class="color-pink h-[26px] w-[26px] bg-pink-300 rounded-full hover:cursor-pointer"></div>
-            </div>
+          <div class="border-[1px] border-yellow-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
+            <div id="colorYellow" onclick="setYellow()" class="color-yellow h-[26px] w-[26px] bg-yellow-300 rounded-full hover:cursor-pointer"></div>
+          </div>
+          <div class="border-[1px] border-green-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
+            <div id="colorGreen" onclick="setGreen()" class="color-green h-[26px] w-[26px] bg-green-300 rounded-full hover:cursor-pointer"></div>
+          </div>
+          <div class="border-[1px] border-white-300 h-12 w-12 rounded-full my-3 flex items-center justify-center hover:cursor-pointer">
+            <div id="colorWhite" onclick="setWhite()" class="color-white h-[37px] w-[37px] bg-white rounded-full hover:cursor-pointer"></div>
+          </div>
+          <div class="border-[1px] border-blue-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
+            <div id="colorBlue" onclick="setBlue()" class="color-blue h-[26px] w-[26px] bg-blue-300 rounded-full hover:cursor-pointer"></div>
+          </div>
+          <div class="border-[1px] border-pink-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
+            <div id="colorPink" onclick="setPink()" class="color-pink h-[26px] w-[26px] bg-pink-300 rounded-full hover:cursor-pointer"></div>
+          </div>
 
-            <div class="bottom-arrow mr-20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" transform="rotate(180deg)" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
-            </div>
-          </div> -->
+          <div class="bottom-arrow mr-20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" transform="rotate(180deg)" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
+          </div>
+        </div>
+      </div>
 
 
-
-
-        <!---------------------------------- PART SELECTION ----------------------------------------->
-        <!-- <div class="elementSelection">
-          
-          
+      <!-- parts selection -->
+      <div id="part-selection" class="absolute bottom-52 hidden flex w-50% space-x-3">
+        <div id="change-spoiler">
           <select 
-          name="cars" 
-          id="cars" 
-          class="relative flex items-center justify-center h-12 w-12 m-2" 
-          onchange="ChangeCar(this)"
-          >
-            <option value="0">Viper</option>
-            <option value="1">Urus</option>
-          </select>
-    
-          
-          <select 
-          name="spoilers" 
-          id="spoilers" 
-          class="relative flex items-center justify-center h-12 w-12 m-2" 
-          onchange="ChangeSpoiler(this)"
-          >
-            <option value="0">Spoiler 1</option>
-            <option value="1">Spoiler 2</option>
-          </select>
-    
-          
-          <i class="fa-solid fa-star"></i>
+            name="spoilers" 
+            id="spoilers" 
+            onchange="ChangeSpoiler(this)"
+            >
+              <option value="0">Spoiler 1</option>
+              <option value="1">Spoiler 2</option>
+            </select>
+        </div>
+
+        <div id="change-front-bumper">
           <select
-            name="front_bumper"
-            id="front_bumpers"
-            class="relative flex items-center justify-center h-12 w-12 m-2"
-            onchange="ChangeFrontBumper(this)"
-          >
-            <option value="0">Front Bumper 1</option>
-            <option value="1">Front Bumper 2</option>
-          </select>
+              name="front_bumper"
+              id="front_bumpers"
+              onchange="ChangeFrontBumper(this)"
+            >
+              <option value="0">Front Bumper 1</option>
+              <option value="1">Front Bumper 2</option>
+            </select>
+        </div>
+
+        <div id="change-rear-bumper">
+          <select
+            name="rear_bumper"
+            id="rear_bumpers"
+            onchange="ChangeRearBumper(this)"
+            >
+              <option value="0">Rear Bumper 1</option>
+              <option value="1">Rear Bumper 2</option>
+            </select>
+        </div>
+
+        <div id="change-material">
+          <select
+            name="material"
+            id="material"
+            onchange="ChangeMaterial(this)"
+            >
+              <option value="0">Solid</option>
+              <option value="1">Metallic</option>
+              <option value="2">Matte</option>
+            </select>
+        </div>
+      </div>
+
+      <!-- select parts btn -->
+      <div id="select-parts-button" class="absolute flex space-x-4 bottom-10 right-20 items-center hidden">
+        <div class="flex flex-col mr-2">
+          <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Confirm & Review</h3>
+          <h3 id="final-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
+        </div>
+        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease">
+          <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>              
+        </div>
+      </div>
+
+      <!-- back to model selection btn -->
+      <div id="back-to-model-button" class="absolute flex space-x-4 bottom-10 left-20 items-center hidden">
+        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchModelSelection()">
+          <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="rotate-180">
+            <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>              
+        </div>
+        <div class="flex flex-col ml-2">
+          <h3 class="text-[#AAAAAA] text-lg font-medium text-left mt-4">Model Selection</h3>
+          <h3 id="final-price" class="price text-[#C5EC44] text-[52px] text-left"></h3>
+        </div>
+      </div>
+
       
-          
-          <select
-          name="rear_bumper"
-          id="rear_bumpers"
-          class="relative flex items-center justify-center h-12 w-12 m-2"
-          onchange="ChangeRearBumper(this)"
-          >
-            <option value="0">Rear Bumper 1</option>
-            <option value="1">Rear Bumper 2</option>
-            <option value="2">Rear Bumper 3</option>
-          </select>
-      </div> -->
     </div>
   </body>
 </html>

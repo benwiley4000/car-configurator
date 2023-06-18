@@ -233,13 +233,6 @@ function SetResolution(showInfo = true) {
   }
 }
 
-//------------------------------------------------------------------------------
-SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
-  return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
-    token: this.apiToken,
-  });
-};
-
 let rotationState = false;
 //--------------------------------------------------------------------------------------------------
 function ToggleRotation() {
@@ -324,29 +317,6 @@ async function ApplySelectedMaterial() {
   );
 }
 
-async function ToggleLights() {
-  const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
-    gSelectedCar.headLightsMatUUID
-  );
-  desc1.dataJson.emissionIntensity = gIntensity;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.headLightsMatUUID,
-    desc1
-  );
-
-  const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
-    gSelectedCar.rearLightsMatUUID
-  );
-  desc2.dataJson.emissionIntensity = gIntensity;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.rearLightsMatUUID,
-    desc2
-  );
-
-  gIntensity = gIntensity === 0 ? 100 : 0;
-}
 
 SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
   return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
@@ -383,4 +353,32 @@ async function ToggleLights() {
     document.getElementById("light-off").classList.remove("hidden");
   }
   
+}
+
+function launchCustomization(){
+  document.getElementById("previous-model").classList.add("hidden");
+  document.getElementById("next-model").classList.add("hidden");
+  document.getElementById("model-title").classList.add("hidden");
+  document.getElementById("model-infos").classList.add("hidden");
+  document.getElementById("select-model-button").classList.add("hidden");
+
+  document.getElementById("colors").classList.remove("hidden");
+  document.getElementById("part-selection").classList.remove("hidden");
+  document.getElementById("select-parts-button").classList.remove("hidden");
+  document.getElementById("back-to-model-button").classList.remove("hidden");
+  document.getElementById("final-price").innerHTML = gSelectedCar.price;
+}
+
+function launchModelSelection(){
+  document.getElementById("previous-model").classList.remove("hidden");
+  document.getElementById("next-model").classList.remove("hidden");
+  document.getElementById("model-title").classList.remove("hidden");
+  document.getElementById("model-infos").classList.remove("hidden");
+  document.getElementById("select-model-button").classList.remove("hidden");
+
+  document.getElementById("colors").classList.add("hidden");
+  document.getElementById("part-selection").classList.add("hidden");
+  document.getElementById("select-parts-button").classList.add("hidden");
+  document.getElementById("back-to-model-button").classList.add("hidden");
+  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
 }
