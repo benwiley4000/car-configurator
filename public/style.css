@@ -65,6 +65,6 @@ canvas {
 }
 
 .customization-btn:hover{
-  box-shadow: 0 0 30px 0 rgba(222, 255, 115, 0.3);
-  background-color: #DEFF73;
+  box-shadow: 0 0 30px 0 rgba(247, 181, 51, 0.3);
+  background-color: #f7b533;
 }
