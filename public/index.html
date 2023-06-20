@@ -1,10 +1,19 @@
 <html>
   <head>
+    <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1.0" name="viewport" />
+
+    <title>GW9 Car Configurator</title>
+    <link rel="shortcut icon" href="./img/gw9-icon.png">
+
     <link rel="stylesheet" href="./style.css" />
+    
+    <!-- SDK 3dverse -->
     <script src="https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js"></script>
+
+    <!-- Tailwind CDN (dev only)-->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></script>
+
     <script src="./AppConfig.js"></script>
     <script src="./app.js"></script>
   </head>
@@ -15,7 +24,7 @@
 
       <!-------------------------------------- LOADER ------------------------------------------>
       <div id="loader" class="absolute flex justify-center items-center h-screen bg-[#010001] w-screen flex-col transition duration-1000 z-50">
-        <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid text-[#C5EC44] border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
+        <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid text-[#faae14] border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
         <div id="info" class="relative mt-10">
           <span id="info_span" class="text-white font-medium text-base">Loading...</span>
         </div>
@@ -49,28 +58,28 @@
       <div id="ui-options" class="options absolute flex space-x-3 top-20 right-24">
         <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleLights()">
           <svg id="light-on" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease">
-            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#C5EC44"/>
-            <path d="M91 21H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
-            <path d="M91 46H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
-            <path d="M91 72H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
+            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#faae14"/>
+            <path d="M91 21H123" stroke="#faae14" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 46H123" stroke="#faae14" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 72H123" stroke="#faae14" stroke-width="10" stroke-linecap="round"/>
           </svg>
           <svg id="light-off" width="28" height="28" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease hidden">
-            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="grey"/>
-            <path d="M91 21H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
-            <path d="M91 46H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
-            <path d="M91 72H123" stroke="grey" stroke-width="10" stroke-linecap="round"/>
+            <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#696969"/>
+            <path d="M91 21H123" stroke="#696969" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 46H123" stroke="#696969" stroke-width="10" stroke-linecap="round"/>
+            <path d="M91 72H123" stroke="#696969" stroke-width="10" stroke-linecap="round"/>
           </svg>
         </div>
 
         <div class="bg-[#272727] h-12 w-12 rounded-[12px] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleRotation()">
-          <svg id="rotate-on" fill="#000000" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease" 
+          <svg id="rotate-on" fill="#696969" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease" 
             viewBox="0 0 214.367 214.367" xml:space="preserve">
           <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
             c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
             c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
             S202.403,42.716,202.403,95.22z"/>
           </svg>
-          <svg id="rotate-off" fill="#C5EC44" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease hidden" 
+          <svg id="rotate-off" fill="#faae14" height="28" width="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease hidden" 
             viewBox="0 0 214.367 214.367" xml:space="preserve">
           <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
             c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
@@ -123,9 +132,9 @@
       <div id="select-model-button" class="absolute flex space-x-4 bottom-10 right-20 items-center">
         <div class="flex flex-col mr-2">
           <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Customize</h3>
-          <h3 id="starting-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
+          <h3 id="starting-price" class="price text-[#faae14] text-[52px] text-right"></h3>
         </div>
-        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchCustomization()">
+        <div class="customization-btn bg-[#faae14] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchCustomization()">
           <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>              
@@ -218,9 +227,9 @@
       <div id="select-parts-button" class="absolute flex space-x-4 bottom-10 right-20 items-center hidden">
         <div class="flex flex-col mr-2">
           <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Confirm & Review</h3>
-          <h3 id="final-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
+          <h3 id="final-price" class="price text-[#faae14] text-[52px] text-right"></h3>
         </div>
-        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease">
+        <div class="customization-btn bg-[#faae14] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease">
           <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>              
@@ -229,14 +238,14 @@
 
       <!-- back to model selection btn -->
       <div id="back-to-model-button" class="absolute flex space-x-4 bottom-10 left-20 items-center hidden">
-        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchModelSelection()">
+        <div class="customization-btn bg-[#faae14] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchModelSelection()">
           <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="rotate-180">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>              
         </div>
         <div class="flex flex-col ml-2">
           <h3 class="text-[#AAAAAA] text-lg font-medium text-left mt-4">Model Selection</h3>
-          <h3 id="final-price" class="price text-[#C5EC44] text-[52px] text-left"></h3>
+          <h3 id="final-price" class="price text-[#faae14] text-[52px] text-left"></h3>
         </div>
       </div>
 
