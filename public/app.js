@@ -73,6 +73,7 @@ async function ChangeCar(e) {
   document.getElementById("maximum-torque-number").innerHTML = gSelectedCar.maximumTorque;
   document.getElementById("engine-capacity-number").innerHTML = gSelectedCar.engineCapacity;
   document.getElementById("starting-price").innerHTML = gSelectedCar.price;
+  document.getElementById("starting-price-mobile").innerHTML = gSelectedCar.price;
   await ApplySelectedCar();
   await InitColor();
   await ApplySelectedMaterial();
