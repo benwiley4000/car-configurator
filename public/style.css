@@ -65,6 +65,40 @@ canvas {
 }
 
 .customization-btn:hover{
-  box-shadow: 0 0 30px 0 rgba(247, 181, 51, 0.3);
-  background-color: #f7b533;
+  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
+  background-color: #d2f75a;
+}
+.mobile-select-model-button:hover{
+  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
+  background-color: #d2f75a;
+  cursor: po;
+}
+
+.mobile-select-model-button{
+  display: none !important;
+}
+
+@media (max-width: 768px){
+  #model-infos{
+    display: none;
+  }
+  #select-model-button{
+    display: none !important;
+  }
+  .mobile-select-model-button{
+    display: flex !important;
+  }
+  #ui-options{
+    display: none !important;
+  }
+}
+@media (max-width: 1024px){
+  #car_name{
+    font-size: 4rem;
+    line-height: 4rem;
+  }
+  #car_description{
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+  }
 }
