@@ -454,12 +454,37 @@ function showTabThree() {
 }
 
 document.onclick = function(e) {
-  if(e.target.id !== "first-tab-selector" && e.target.id !== "second-tab-selector" && e.target.id !== "third-tab-selector" && e.target.id !== "tab-panels") {
+  if(e.target.id !== "first-tab-selector" && e.target.id !== "second-tab-selector" && e.target.id !== "third-tab-selector" && e.target.id !== "tab-panels" && e.target.id !== "part-item") {
     toolboxPanel.classList.add("hidden")
     document.getElementById("first-tab-selector").classList.remove("active-tab");
     document.getElementById("second-tab-selector").classList.remove("active-tab");
     document.getElementById("third-tab-selector").classList.remove("active-tab");
   }}
+
+const firstTabPanels = document.querySelectorAll(".first-panel-item");
+const secondTabPanels = document.querySelectorAll(".second-panel-item");
+const thirdTabPanels = document.querySelectorAll(".third-panel-item");
+
+firstTabPanels.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    firstTabPanels.forEach((tab) => tab.classList.remove("active-part"));
+    tab.classList.add("active-part");
+  });
+});
+
+secondTabPanels.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    secondTabPanels.forEach((tab) => tab.classList.remove("active-part"));
+    tab.classList.add("active-part");
+  });
+});
+
+thirdTabPanels.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    thirdTabPanels.forEach((tab) => tab.classList.remove("active-part"));
+    tab.classList.add("active-part");
+  });
+});
 
 //----------------------------------------------------------
 
