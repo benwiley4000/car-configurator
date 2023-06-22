@@ -83,7 +83,7 @@
       >
         <h2
           id="car_name"
-          class="text-white text-[7rem] uppercase leading-[7rem] rounded-xl pt-[1.7vh] pl-[1vw] highlighted-word"
+          class="text-white text-[7rem] uppercase leading-[7rem] rounded-xl pt-[1.7vh] pl-[1vw]"
         >
           Dodge Viper Start
         </h2>
@@ -453,7 +453,7 @@
           <div id="first-tab" class="flex flex-col space-y-2">
             <div
               class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
-              onclick="ChangeSpoiler(0)"
+              onclick="ChangeSpoiler({value:0})"
             >
               <h4>Spoiler 1</h4>
               <div
@@ -525,7 +525,6 @@
               <div
                 id="check-circle"
                 class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]"
-                onclick="ChangeSpoiler({value:1})"
               >
                 <img
                   src="./img/white-check.png"
@@ -550,6 +549,7 @@
                 />
               </div>
             </div>
+            
           </div>
           <div id="third-tab" class="flex flex-col space-y-2 hidden">
             <div
