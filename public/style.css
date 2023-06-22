@@ -38,17 +38,7 @@ canvas {
 
 .highlighted-word {
   color: #141614 !important;
-  z-index: 20 !important;
-}
-.highlighted-word::before {
-  content: "";
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  margin-top: 50px;
-  margin-right: 50px;
-  z-index: 10 !important;
+  background-color: #C5EC44;
 }
 
 .number {
@@ -69,10 +59,6 @@ canvas {
   box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
   background-color: #d2f75a;
   cursor: po;
-}
-
-.mobile-select-model-button {
-  display: none !important;
 }
 
 /* PART SELECTION MENU */
@@ -126,15 +112,12 @@ canvas {
   #model-infos {
     display: none;
   }
-  #select-model-button {
+  /* #select-model-button {
     display: none !important;
   }
   .mobile-select-model-button {
     display: flex !important;
-  }
-  .mobile-select-model-button .first-section-element {
-    display: none !important;
-  }
+  } */
   #ui-options {
     display: none !important;
   }
@@ -145,7 +128,13 @@ canvas {
   #back-to-model-button {
     display: none !important;
   }
-}
+  #car_description{
+    display: none !important;
+  }
+  #select-model-button{
+    display: none;
+}}
+
 @media (max-width: 1024px) {
   #car_name {
     font-size: 4rem;
