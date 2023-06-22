@@ -354,6 +354,16 @@ async function ToggleLights() {
 }
 
 // --------------------------------------------------------------
+highlightTitle();
+
+function highlightTitle(){
+  let title = document.getElementById("car-name");
+  let firstWord = title.onsecuritypolicyviolation(' ')[0];
+  console.log(firstWord);
+}
+
+
+// --------------------------------------------------------------
 
 const firstSectionElements = document.querySelectorAll(
   ".first-section-element"
@@ -401,6 +411,8 @@ function launchReview() {
 
 // ---------------------------------------------------------------
 
+toolboxPanel = document.getElementById("tab-panels");
+
 function showTabOne() {
   document.getElementById("first-tab").classList.remove("hidden");
   document.getElementById("second-tab").classList.add("hidden");
@@ -412,6 +424,8 @@ function showTabOne() {
 
   document.getElementById("tab-panels").style.borderTopLeftRadius = "0px";
   document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
+
+  toolboxPanel.classList.remove("hidden");
 }
 
 function showTabTwo() {
@@ -425,6 +439,8 @@ function showTabTwo() {
 
   document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
   document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
+
+  toolboxPanel.classList.remove("hidden");
 }
 
 function showTabThree() {
@@ -438,7 +454,17 @@ function showTabThree() {
 
   document.getElementById("tab-panels").style.borderTopRightRadius = "0px";
   document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
+
+  toolboxPanel.classList.remove("hidden");
 }
+
+document.onclick = function(e) {
+  if(e.target.id !== "first-tab-selector" && e.target.id !== "second-tab-selector" && e.target.id !== "third-tab-selector" && e.target.id !== "tab-panels") {
+    toolboxPanel.classList.add("hidden")
+    document.getElementById("first-tab-selector").classList.remove("active-tab");
+    document.getElementById("second-tab-selector").classList.remove("active-tab");
+    document.getElementById("third-tab-selector").classList.remove("active-tab");
+  }}
 
 //----------------------------------------------------------
 
