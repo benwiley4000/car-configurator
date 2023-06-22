@@ -405,9 +405,30 @@
         id="materials"
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
       >
-        <div class="bg-[#272727] h-[26px] w-[26px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material" onclick="ChangeMaterial({value:0})">1</div>
-        <div class="bg-[#272727] h-[26px] w-[26px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:2})">2</div>
-        <div class="bg-[#272727] h-[26px] w-[26px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:1})">3</div>
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:1})">
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/></svg>
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="#272727" stroke-width="15"/></svg>
+        </div>
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material" onclick="ChangeMaterial({value:0})">
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/>
+            <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="white"/>
+          </svg>
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="65" cy="65" r="57.5" stroke="#272727" stroke-width="15"/>
+            <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="#272727"/>
+          </svg>
+          </div>
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:2})">
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="65" cy="65" r="61" stroke="white" stroke-width="8"/>
+            <circle cx="65" cy="65" r="65" transform="rotate(90 65 65)" fill="white"/>
+            </svg>
+            <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="65" cy="65" r="61" stroke="#272727" stroke-width="8"/>
+              <circle cx="65" cy="65" r="65" transform="rotate(90 65 65)" fill="#272727"/>
+              </svg>
+          </div>
       </div>
 
       <!-- parts selection -->
@@ -532,8 +553,7 @@
                 />
               </div>
             </div>
-            <div
-              class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
               onclick="ChangeFrontBumper({value:2})"
             >
               <h4>Front Bumper 3</h4>
