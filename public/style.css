@@ -113,10 +113,10 @@ canvas {
 /* MATERIALS */
 
 .active-material {
-  background-color: #C5EC44 !important;
+  background-color: #c5ec44 !important;
   color: #272727 !important;
 }
-.active-material:hover{
+.active-material:hover {
   cursor: auto !important;
 }
 
@@ -132,17 +132,18 @@ canvas {
   .mobile-select-model-button {
     display: flex !important;
   }
-  .mobile-select-model-button .first-section-element{
+  .mobile-select-model-button .first-section-element {
     display: none !important;
   }
   #ui-options {
     display: none !important;
   }
-  .material-section{
+  .material-section {
     display: none !important;
   }
-  #select-parts-button, #back-to-model-button{
-    display:none !important;
+  #select-parts-button,
+  #back-to-model-button {
+    display: none !important;
   }
 }
 @media (max-width: 1024px) {

@@ -364,7 +364,9 @@ const firstSectionElements = document.querySelectorAll(
 const secondSectionElements = document.querySelectorAll(
   ".second-section-element"
 );
-const thirdSectionElements = document.querySelectorAll(".third-section-element");
+const thirdSectionElements = document.querySelectorAll(
+  ".third-section-element"
+);
 
 function launchModelSelection() {
   firstSectionElements.forEach((element) => {
@@ -451,7 +453,6 @@ colors.forEach((color) => {
     color.classList.add("active-color");
   });
 });
-
 
 // ---------------------------------------------------------
 
