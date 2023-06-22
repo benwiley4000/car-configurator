@@ -39,6 +39,8 @@ canvas {
 .highlighted-word {
   color: #141614 !important;
   background-color: #C5EC44;
+  padding-top: 1.7vh;
+  padding-left: 1vw;
 }
 
 /* INFO NUMBERS */
