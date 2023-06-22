@@ -30,10 +30,7 @@ canvas {
   all: unset;
 }
 
-.active-color{
-  width: 70px !important;
-  height: 70px !important;
-}
+/* MODEL NAME */
 
 #car_name{
   font-family: 'Bebas Neue', sans-serif;
@@ -77,6 +74,43 @@ canvas {
 .mobile-select-model-button{
   display: none !important;
 }
+
+/* PART SELECTION MENU */
+
+.active-tab{
+  background-color: #272727 !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  color: white !important;
+  cursor: auto !important;
+}
+
+.active-part {
+  background-color: #C5EC44 !important;
+  color: #22242A !important;
+  cursor: auto !important;
+}
+.active-part #check-circle{
+  background-color: #1ABF34 !important;
+}
+.active-part #check-circle img{
+  display: block !important;
+}
+.part-item{
+  justify-content: space-between;
+}
+
+/* COLORS */
+
+.active-color{
+  border: 4px solid #3c3c3c !important;
+  cursor: auto !important;
+}
+.active-color:hover{
+  transform: none !important;
+}
+
+/* MEDIA QUERIES */
 
 @media (max-width: 768px){
   #model-infos{
