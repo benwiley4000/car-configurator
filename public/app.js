@@ -285,13 +285,12 @@ async function InitColor() {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeColor() {
-  gColor = [Math.random(), Math.random(), Math.random()];
+async function ChangeColor(color) {
   const desc = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
     gSelectedMaterial.matUUID
   );
-  desc.dataJson.albedo = gColor;
+  desc.dataJson.albedo = color;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.paintMaterialUUID,
     desc
@@ -346,40 +345,95 @@ async function ToggleLights() {
   gIntensity = gIntensity === 0 ? 100 : 0;
 
 
-  if (document.getElementById("light-on").classList.contains("hidden")){
-    document.getElementById("light-on").classList.remove("hidden");
-    document.getElementById("light-off").classList.add("hidden");
-  } else {
-    document.getElementById("light-on").classList.add("hidden");
-    document.getElementById("light-off").classList.remove("hidden");
-  }
+  document.getElementById("light-on").classList.toggle("hidden");
   
 }
 
-function launchCustomization(){
-  document.getElementById("previous-model").classList.add("hidden");
-  document.getElementById("next-model").classList.add("hidden");
-  document.getElementById("model-title").classList.add("hidden");
-  document.getElementById("model-infos").classList.add("hidden");
-  document.getElementById("select-model-button").classList.add("hidden");
+// --------------------------------------------------------------
 
-  document.getElementById("colors").classList.remove("hidden");
-  document.getElementById("part-selection").classList.remove("hidden");
-  document.getElementById("select-parts-button").classList.remove("hidden");
-  document.getElementById("back-to-model-button").classList.remove("hidden");
+const firstSectionElements = document.querySelectorAll(".first-section-element");
+const secondSectionElements = document.querySelectorAll(".second-section-element");
+const thirdSectionElements = document.querySelectorAll(".thirdsection-element");
+
+function launchModelSelection(){
+  firstSectionElements.forEach(element => {
+    element.classList.remove('hidden')})
+  secondSectionElements.forEach(element => {
+    element.classList.add('hidden')})
+
+  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
+}
+
+function launchCustomization(){
+
+  firstSectionElements.forEach(element => {
+    element.classList.add('hidden')})
+  secondSectionElements.forEach(element => {
+    element.classList.remove('hidden')})
+  thirdSectionElements.forEach(element => {
+    element.classList.add('hidden')})
+
   document.getElementById("final-price").innerHTML = gSelectedCar.price;
 }
 
-function launchModelSelection(){
-  document.getElementById("previous-model").classList.remove("hidden");
-  document.getElementById("next-model").classList.remove("hidden");
-  document.getElementById("model-title").classList.remove("hidden");
-  document.getElementById("model-infos").classList.remove("hidden");
-  document.getElementById("select-model-button").classList.remove("hidden");
-
-  document.getElementById("colors").classList.add("hidden");
-  document.getElementById("part-selection").classList.add("hidden");
-  document.getElementById("select-parts-button").classList.add("hidden");
-  document.getElementById("back-to-model-button").classList.add("hidden");
-  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
+function launchReview(){
+  secondSectionElementsSectionElements.forEach(element => {
+    element.classList.add('hidden')})
+  thirdSectionElementsectionElements.forEach(element => {
+    element.classList.remove('hidden')})
 }
+
+// ---------------------------------------------------------------
+
+function showTabOne(){
+  document.getElementById("first-tab").classList.remove("hidden");
+  document.getElementById("second-tab").classList.add("hidden");
+  document.getElementById("third-tab").classList.add("hidden");
+
+  document.getElementById("first-tab-selector").classList.add("active-tab");
+  document.getElementById("second-tab-selector").classList.remove("active-tab");
+  document.getElementById("third-tab-selector").classList.remove("active-tab");
+
+  document.getElementById("tab-panels").style.borderTopLeftRadius = "0px";
+  document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
+}
+
+function showTabTwo(){
+  document.getElementById("first-tab").classList.add("hidden");
+  document.getElementById("second-tab").classList.remove("hidden");
+  document.getElementById("third-tab").classList.add("hidden");
+
+  document.getElementById("first-tab-selector").classList.remove("active-tab");
+  document.getElementById("second-tab-selector").classList.add("active-tab");
+  document.getElementById("third-tab-selector").classList.remove("active-tab");
+
+  document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
+  document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
+}
+
+function showTabThree(){
+  document.getElementById("first-tab").classList.add("hidden");
+  document.getElementById("second-tab").classList.add("hidden");
+  document.getElementById("third-tab").classList.remove("hidden");
+
+  document.getElementById("first-tab-selector").classList.remove("active-tab");
+  document.getElementById("second-tab-selector").classList.remove("active-tab");
+  document.getElementById("third-tab-selector").classList.add("active-tab");
+
+  document.getElementById("tab-panels").style.borderTopRightRadius = "0px";
+  document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
+}
+
+
+//----------------------------------------------------------
+
+const colors = document.querySelectorAll('.color');
+
+colors.forEach(color => {
+  color.addEventListener('click', () => {
+    colors.forEach(
+      color => color.classList.remove('active-color')
+      );
+    color.classList.add('active-color');
+    });
+});

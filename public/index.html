@@ -15,7 +15,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script src="./AppConfig.js"></script>
-    <script src="./app.js"></script>
   </head>
 
   <body>
@@ -38,18 +37,18 @@
       <!---------------------------------- MODEL SELECTION ----------------------------------------->
         
       <!-- arrows -->
-      <div id="previous-model" class="model-left-button absolute left-[5vw] cursor-pointer h-[5vh] w-[5vh]" onclick="previousCar()">
+      <div id="previous-model" class="model-left-button absolute left-[5vw] cursor-pointer h-[5vh] w-[5vh] first-section-element" onclick="previousCar()">
         <svg width="100%" height="100%" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M25 2L4 23.5L25 45" stroke="white" stroke-width="5"/>
           </svg>
       </div>
-      <div id="next-model" class="model-right-button absolute right-[5vw] cursor-pointer h-[5vh] w-[5vh]" onclick="nextCar()">
+      <div id="next-model" class="model-right-button absolute right-[5vw] cursor-pointer h-[5vh] w-[5vh] first-section-element" onclick="nextCar()">
         <svg width="100%" height="100%" viewBox="0 0 27 47" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M2 2L23 23.5L2 45" stroke="white" stroke-width="5"/>
           </svg>        </div>
 
       <!-- title & desc -->
-      <div id="model-title" class="absolute top-[7vh] left-[10vw] flex flex-col w-[80%] md:w-2/3 space-y-2">
+      <div id="model-title" class="absolute top-[7vh] left-[10vw] flex flex-col w-[80%] md:w-2/3 space-y-2 first-section-element">
         <h2 id="car_name" class="text-white text-[7rem] uppercase leading-[7rem]">Dodge Viper Start</h2>
         <p id="car_description" class="text-gray-400 text-l leading-7">The legend became infamous after ex-Top Gear presenter Richard Hammond crashed one of only eight cars build.</p>
       </div>
@@ -57,7 +56,7 @@
       <!-- options -->
       <div id="ui-options" class="options absolute flex space-x-3 top-[7vh] right-[5vw]">
         <div class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleLights()">
-          <svg id="light-on" height="60%" width="60%" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition ease">
+          <svg id="light-on" height="60%" width="60%" viewBox="0 0 128 92" fill="none" xmlns="http://www.w3.org/2000/svg" class="group-hover:opacity-50 transition">
             <path d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z" fill="#C5EC44"/>
             <path d="M91 21H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
             <path d="M91 46H123" stroke="#C5EC44" stroke-width="10" stroke-linecap="round"/>
@@ -72,14 +71,14 @@
         </div>
 
         <div class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights" onclick="ToggleRotation()">
-          <svg id="rotate-on" fill="#696969" height="55%" width="55%" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease" 
+          <svg id="rotate-on" fill="#696969" height="55%" width="55%" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition" 
             viewBox="0 0 214.367 214.367" xml:space="preserve">
           <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
             c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
             c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
             S202.403,42.716,202.403,95.22z"/>
           </svg>
-          <svg id="rotate-off" fill="#C5EC44" height="55%" width="55%" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition ease hidden" 
+          <svg id="rotate-off" fill="#C5EC44" height="55%" width="55%" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="group-hover:opacity-50 transition hidden" 
             viewBox="0 0 214.367 214.367" xml:space="preserve">
           <path d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
             c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
@@ -88,13 +87,13 @@
           </svg>
         </div>
         <div class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="#696969" class="group-hover:opacity-50 transition ease"  viewBox="0 0 50 50" height="55%" width="55%">    <path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="#C5EC44" class="group-hover:opacity-50 transition ease hidden"  viewBox="0 0 50 50" height="55%" width="55%">    <path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="#696969" class="group-hover:opacity-50 transition"  viewBox="0 0 50 50" height="55%" width="55%">    <path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="#C5EC44" class="group-hover:opacity-50 transition hidden"  viewBox="0 0 50 50" height="55%" width="55%">    <path d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"/></svg>
         </div>
       </div>
 
       <!-- info numbers -->
-      <div id="model-infos" class="absolute flex flex-col items-end right-[12%] justify-items-end space-y-[1.5vh]">
+      <div id="model-infos" class="absolute flex flex-col items-end right-[12%] justify-items-end space-y-[1.5vh] first-section-element">
         <div class="info-item">
           <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">Maximum Speed</h3>
           <div class="value flex text-white number items-end">
@@ -133,12 +132,12 @@
       </div>
 
       <!-- select model btn -->
-      <div id="select-model-button" class="absolute flex space-x-4 bottom-[5vh] right-[5vw] items-center">
+      <div id="select-model-button" class="absolute flex space-x-4 bottom-[5vh] right-[5vw] items-center first-section-element">
         <div class="flex flex-col mr-2">
           <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right mt-4">Customize</h3>
           <h3 id="starting-price" class="price text-[#C5EC44] text-[6vh] text-right">346 000$</h3>
         </div>
-        <div class="customization-btn bg-[#C5EC44] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition ease" onclick="launchCustomization()">
+        <div class="customization-btn bg-[#C5EC44] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition" onclick="launchCustomization()">
           <svg width="30%" height="30%" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>              
@@ -146,7 +145,7 @@
       </div>
 
       <!-- mobile select model btn -->
-      <div class="mobile-select-model-button bg-[#C5EC44] flex rounded-full px-10 py-4 absolute bottom-[5vh] justify-center items-center w-[90%] transition ease" onclick="launchCustomization()">
+      <div class="mobile-select-model-button bg-[#C5EC44] flex rounded-full px-10 py-4 absolute bottom-[5vh] justify-center items-center w-[90%] transition" onclick="launchCustomization()">
         <div class="text w-3/4">
           <h3 id="starting-price-mobile" class="price text-[#141614] text-[4.5vh]">346 000$</h3>
         </div>
@@ -161,38 +160,17 @@
       <!---------------------------------- CUSTOMIZATION ----------------------------------------->
 
       <!-- colors selection -->
-      <div id="colors" class="customization color-section absolute right-20 hidden" onclick="ChangeColor()">
-        <div class="color-selector flex justify-center items-center flex-col">
-
-          <div class="top-arrow mr-20">
-            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
-          </div>
-
-          <div class="border-[1px] border-yellow-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
-            <div id="colorYellow" onclick="setYellow()" class="color-yellow h-[26px] w-[26px] bg-yellow-300 rounded-full hover:cursor-pointer"></div>
-          </div>
-          <div class="border-[1px] border-green-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
-            <div id="colorGreen" onclick="setGreen()" class="color-green h-[26px] w-[26px] bg-green-300 rounded-full hover:cursor-pointer"></div>
-          </div>
-          <div class="border-[1px] border-white-300 h-12 w-12 rounded-full my-3 flex items-center justify-center hover:cursor-pointer">
-            <div id="colorWhite" onclick="setWhite()" class="color-white h-[37px] w-[37px] bg-white rounded-full hover:cursor-pointer"></div>
-          </div>
-          <div class="border-[1px] border-blue-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-4">
-            <div id="colorBlue" onclick="setBlue()" class="color-blue h-[26px] w-[26px] bg-blue-300 rounded-full hover:cursor-pointer"></div>
-          </div>
-          <div class="border-[1px] border-pink-300 h-9 w-9 rounded-full my-3 flex items-center justify-center hover:cursor-pointer mr-12">
-            <div id="colorPink" onclick="setPink()" class="color-pink h-[26px] w-[26px] bg-pink-300 rounded-full hover:cursor-pointer"></div>
-          </div>
-
-          <div class="bottom-arrow mr-20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="#666666" transform="rotate(180deg)" d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z"/></svg>
-          </div>
-        </div>
+      <div id="colors" class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden">
+        <div id="color1" onclick="ChangeColor([0.58, 0.314, 0.137])" class="color h-[36px] w-[36px] bg-orange-300 rounded-full hover:cursor-pointer transition hover:scale-125"></div>
+        <div id="color2" onclick="ChangeColor([0.58, 0.137, 0.137])" class="color h-[36px] w-[36px] bg-red-300 rounded-full hover:cursor-pointer transition hover:scale-125"></div>
+        <div id="color3" onclick="ChangeColor([0.769, 0.769, 0.769])" class="color h-[36px] w-[36px] bg-white rounded-full hover:cursor-pointer transition hover:scale-125"></div>
+        <div id="color4" onclick="ChangeColor([0.141, 0.392, 0.58])" class="color h-[36px] w-[36px] bg-blue-300 rounded-full hover:cursor-pointer transition hover:scale-125"></div>
+        <div id="color5" onclick="ChangeColor([0.58, 0.141, 0.506])" class="color h-[36px] w-[36px] bg-pink-300 rounded-full hover:cursor-pointer transition hover:scale-125"></div>
       </div>
 
 
       <!-- parts selection -->
-      <div id="part-selection" class="absolute bottom-52 hidden flex w-50% space-x-3">
+      <!-- <div id="part-selection" class="absolute bottom-52 hidden flex w-50% space-x-3">
         <div id="change-spoiler">
           <select 
             name="spoilers" 
@@ -237,15 +215,86 @@
               <option value="2">Matte</option>
             </select>
         </div>
+      </div> -->
+
+      <div id="part-selection" class="toolbox absolute top-[7vh] left-[5vw] hidden second-section-element">
+        <ul class="tab-selector flex text-sm font-medium text-center space-x-1 justify-between w-full font-semibold">
+          <div class="flex justify-center align-items">
+              <div id="first-tab-selector" class="rounded-xl bg-[#22242A] text-[#6D6D6D] text-base hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full active-tab" onclick="showTabOne()">Spoiler</div>
+          </div>
+          <div class="flex justify-center align-items">
+              <div id="second-tab-selector"  class="rounded-xl bg-[#191A1D] text-[#6D6D6D] text-base hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full" onclick="showTabTwo()">Front Bumper</div>
+          </div>
+          <div class="flex justify-center align-items">
+              <div id="third-tab-selector"  class=" rounded-xl bg-[#191A1D] text-[#6D6D6D] text-base hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full" onclick="showTabThree()">Rear Bumper</div>
+          </div>
+        </ul>
+        <div id="tab-panels" class="w-full bg-[#272727] rounded-b-xl rounded-tr-xl text-base text-white w-full px-4 py-6 transition font-medium">
+          <div id="first-tab" class="flex flex-col space-y-2">
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition" onclick="ChangeSpoiler(0)">
+              <h4>Spoiler 1</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part" onclick="ChangeSpoiler(1)">
+              <h4>Spoiler 2</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition">
+              <h4>Spoiler 3</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+          </div>
+          <div id="second-tab" class="flex flex-col space-y-2 hidden">
+            <div class="part-item w-full rounded-xl p-[16px]  flex items-center hover:bg-[#454642] cursor-pointer transition active-part" onclick="ChangeFrontBumper(0)">
+              <h4>Front Bumper 1</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition" onclick="ChangeFrontBumper(1)">
+              <h4>Front Bumper 2</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+          </div>
+          <div id="third-tab" class="flex flex-col space-y-2 hidden">
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition" >
+              <h4>Rear Bumper 1</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part">
+              <h4>Rear Bumper 2</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+            <div class="part-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition">
+              <h4>Rear Bumper 3</h4>
+              <div id="check-circle" class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]">
+                <img src="./img/white-check.png" class="w-1/2 h-1/2 hidden" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
+
       <!-- select parts btn -->
-      <div id="select-parts-button" class="absolute flex space-x-4 bottom-10 right-20 items-center hidden">
+      <div id="select-parts-button" class="absolute flex space-x-4 bottom-10 right-20 items-center hidden second-section-element">
         <div class="flex flex-col mr-2">
           <h3 class="text-[#AAAAAA] text-lg font-medium text-right mt-4">Confirm & Review</h3>
           <h3 id="final-price" class="price text-[#C5EC44] text-[52px] text-right"></h3>
         </div>
-        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease">
+        <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchReview()">
           <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>              
@@ -253,7 +302,7 @@
       </div>
 
       <!-- back to model selection btn -->
-      <div id="back-to-model-button" class="absolute flex space-x-4 bottom-10 left-20 items-center hidden">
+      <div id="back-to-model-button" class="absolute flex space-x-4 bottom-10 left-20 items-center hidden second-section-element">
         <div class="customization-btn bg-[#C5EC44] h-[90px] w-[90px] rounded-[20px] flex justify-center items-center cursor-pointer transition ease" onclick="launchModelSelection()">
           <svg width="28" height="30" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="rotate-180">
             <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" stroke="#141614" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -268,4 +317,5 @@
       
     </div>
   </body>
+  <script src="./app.js"></script>
 </html>
