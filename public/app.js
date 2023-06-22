@@ -43,9 +43,11 @@ async function InitApp() {
   const sessionCreated = await Connect();
 
   SetInformation("Connection established.");
-  setTimeout(function(){
+  setTimeout(function () {
     document.getElementById("loader").classList.add("opacity-0");
-    setTimeout(function(){document.getElementById("loader").classList.add("hidden");}, 1000);
+    setTimeout(function () {
+      document.getElementById("loader").classList.add("hidden");
+    }, 1000);
   }, 1000);
 
   await InitCarAttachment();
@@ -66,14 +68,21 @@ async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
   document.getElementById("car_name").innerHTML = gSelectedCar.name;
-  document.getElementById("car_description").innerHTML = gSelectedCar.description;
-  document.getElementById("maximum-speed-number").innerHTML = gSelectedCar.maxSpeed;
-  document.getElementById("acceleration-number").innerHTML = gSelectedCar.acceleration;
-  document.getElementById("maximum-power-number").innerHTML = gSelectedCar.maximumPower;
-  document.getElementById("maximum-torque-number").innerHTML = gSelectedCar.maximumTorque;
-  document.getElementById("engine-capacity-number").innerHTML = gSelectedCar.engineCapacity;
+  document.getElementById("car_description").innerHTML =
+    gSelectedCar.description;
+  document.getElementById("maximum-speed-number").innerHTML =
+    gSelectedCar.maxSpeed;
+  document.getElementById("acceleration-number").innerHTML =
+    gSelectedCar.acceleration;
+  document.getElementById("maximum-power-number").innerHTML =
+    gSelectedCar.maximumPower;
+  document.getElementById("maximum-torque-number").innerHTML =
+    gSelectedCar.maximumTorque;
+  document.getElementById("engine-capacity-number").innerHTML =
+    gSelectedCar.engineCapacity;
   document.getElementById("starting-price").innerHTML = gSelectedCar.price;
-  document.getElementById("starting-price-mobile").innerHTML = gSelectedCar.price;
+  document.getElementById("starting-price-mobile").innerHTML =
+    gSelectedCar.price;
   await ApplySelectedCar();
   await InitColor();
   await ApplySelectedMaterial();
@@ -162,17 +171,15 @@ async function SelectPart(partName, partSceneUUID) {
   return await SDK3DVerse.engineAPI.spawnEntity(gCarAttachment, part);
 }
 
-async function nextCar(){
+async function nextCar() {
   // gCarIndex = (gCarIndex + 1) >= AppConfig.cars.length ? 0 : gCarIndex + 1;
-  gCarIndex = (gCarIndex + 1)% AppConfig.cars.length;
+  gCarIndex = (gCarIndex + 1) % AppConfig.cars.length;
   await ChangeCar({ value: gCarIndex });
 }
-async function previousCar(){
-  gCarIndex = gCarIndex === 0 ? AppConfig.cars.length-1 : gCarIndex - 1;
+async function previousCar() {
+  gCarIndex = gCarIndex === 0 ? AppConfig.cars.length - 1 : gCarIndex - 1;
   await ChangeCar({ value: gCarIndex });
 }
-
-
 
 //--------------------------------------------------------------------------------------------------
 // use setTimeout to delay a task that may be async (returning a promise) or not.
@@ -242,7 +249,7 @@ function ToggleRotation() {
 
   SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
 
-  if (document.getElementById("rotate-on").classList.contains("hidden")){
+  if (document.getElementById("rotate-on").classList.contains("hidden")) {
     document.getElementById("rotate-on").classList.remove("hidden");
     document.getElementById("rotate-off").classList.add("hidden");
   } else {
@@ -317,7 +324,6 @@ async function ApplySelectedMaterial() {
   );
 }
 
-
 SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
   return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
     token: this.apiToken,
@@ -330,7 +336,10 @@ async function ToggleLights() {
     gSelectedCar.headLightsMatUUID
   );
   desc1.dataJson.emissionIntensity = gIntensity;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(gSelectedCar.headLightsMatUUID, desc1);
+  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+    gSelectedCar.headLightsMatUUID,
+    desc1
+  );
 
   const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
@@ -344,48 +353,56 @@ async function ToggleLights() {
 
   gIntensity = gIntensity === 0 ? 100 : 0;
 
-
   document.getElementById("light-on").classList.toggle("hidden");
-  
 }
 
 // --------------------------------------------------------------
 
-const firstSectionElements = document.querySelectorAll(".first-section-element");
-const secondSectionElements = document.querySelectorAll(".second-section-element");
-const thirdSectionElements = document.querySelectorAll(".thirdsection-element");
+const firstSectionElements = document.querySelectorAll(
+  ".first-section-element"
+);
+const secondSectionElements = document.querySelectorAll(
+  ".second-section-element"
+);
+const thirdSectionElements = document.querySelectorAll(".third-section-element");
 
-function launchModelSelection(){
-  firstSectionElements.forEach(element => {
-    element.classList.remove('hidden')})
-  secondSectionElements.forEach(element => {
-    element.classList.add('hidden')})
+function launchModelSelection() {
+  firstSectionElements.forEach((element) => {
+    element.classList.remove("hidden");
+  });
+  secondSectionElements.forEach((element) => {
+    element.classList.add("hidden");
+  });
 
   document.getElementById("starting-price").innerHTML = gSelectedCar.price;
 }
 
-function launchCustomization(){
-
-  firstSectionElements.forEach(element => {
-    element.classList.add('hidden')})
-  secondSectionElements.forEach(element => {
-    element.classList.remove('hidden')})
-  thirdSectionElements.forEach(element => {
-    element.classList.add('hidden')})
+function launchCustomization() {
+  firstSectionElements.forEach((element) => {
+    element.classList.add("hidden");
+  });
+  secondSectionElements.forEach((element) => {
+    element.classList.remove("hidden");
+  });
+  thirdSectionElements.forEach((element) => {
+    element.classList.add("hidden");
+  });
 
   document.getElementById("final-price").innerHTML = gSelectedCar.price;
 }
 
-function launchReview(){
-  secondSectionElementsSectionElements.forEach(element => {
-    element.classList.add('hidden')})
-  thirdSectionElementsectionElements.forEach(element => {
-    element.classList.remove('hidden')})
+function launchReview() {
+  secondSectionElements.forEach((element) => {
+    element.classList.add("hidden");
+  });
+  thirdSectionElements.forEach((element) => {
+    element.classList.remove("hidden");
+  });
 }
 
 // ---------------------------------------------------------------
 
-function showTabOne(){
+function showTabOne() {
   document.getElementById("first-tab").classList.remove("hidden");
   document.getElementById("second-tab").classList.add("hidden");
   document.getElementById("third-tab").classList.add("hidden");
@@ -398,7 +415,7 @@ function showTabOne(){
   document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
 }
 
-function showTabTwo(){
+function showTabTwo() {
   document.getElementById("first-tab").classList.add("hidden");
   document.getElementById("second-tab").classList.remove("hidden");
   document.getElementById("third-tab").classList.add("hidden");
@@ -411,7 +428,7 @@ function showTabTwo(){
   document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
 }
 
-function showTabThree(){
+function showTabThree() {
   document.getElementById("first-tab").classList.add("hidden");
   document.getElementById("second-tab").classList.add("hidden");
   document.getElementById("third-tab").classList.remove("hidden");
@@ -424,16 +441,25 @@ function showTabThree(){
   document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
 }
 
-
 //----------------------------------------------------------
 
-const colors = document.querySelectorAll('.color');
+const colors = document.querySelectorAll(".color");
 
-colors.forEach(color => {
-  color.addEventListener('click', () => {
-    colors.forEach(
-      color => color.classList.remove('active-color')
-      );
-    color.classList.add('active-color');
-    });
+colors.forEach((color) => {
+  color.addEventListener("click", () => {
+    colors.forEach((color) => color.classList.remove("active-color"));
+    color.classList.add("active-color");
+  });
+});
+
+
+// ---------------------------------------------------------
+
+const materialIcons = document.querySelectorAll(".material-icon");
+
+materialIcons.forEach((icon) => {
+  icon.addEventListener("click", () => {
+    materialIcons.forEach((icon) => icon.classList.remove("active-material"));
+    icon.classList.add("active-material");
+  });
 });
