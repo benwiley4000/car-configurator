@@ -305,13 +305,6 @@ async function ChangeColor(color) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeMaterial(e) {
-  const matIndex = e.value;
-  gSelectedMaterial = AppConfig.materials[matIndex];
-  await ApplySelectedMaterial();
-}
-
-//--------------------------------------------------------------------------------------------------
 async function ApplySelectedMaterial() {
   const desc = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
@@ -489,3 +482,15 @@ materialIcons.forEach((icon) => {
     icon.classList.add("active-material");
   });
 });
+
+
+//--------------------------------------------------------------------------------------------------
+async function ChangeMaterial(e) {
+  const matIndex = e.value;
+  gSelectedMaterial = AppConfig.materials[matIndex];
+  await ApplySelectedMaterial();
+
+  colors.forEach((color) => {
+      colors.forEach((color) => color.classList.remove("active-color"));
+    });
+}

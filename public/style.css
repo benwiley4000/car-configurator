@@ -109,6 +109,12 @@ canvas {
 .active-material:hover {
   cursor: auto !important;
 }
+.active-material .unactive-icon{
+  display: none !important;
+}
+.active-material .active-icon{
+  display: block !important;
+}
 
 /* MEDIA QUERIES */
 
