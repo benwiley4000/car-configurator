@@ -357,7 +357,6 @@ async function ToggleLights() {
 }
 
 // --------------------------------------------------------------
-highlightTitle();
 
 function highlightTitle(){
   let title = document.getElementById("car-name");
