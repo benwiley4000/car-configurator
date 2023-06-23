@@ -143,7 +143,17 @@ canvas {
   }
   #select-model-button, .hidden-button{
     display: none !important;
-}}
+  }
+  #part-selection{
+    font-size: 12px !important;
+    top: 3vh;
+    left: auto;
+  }
+  #tab-panels{
+    font-size: 14px !important;
+  }
+
+}
 
 @media (max-width: 1024px) {
   #car_name {
