@@ -141,8 +141,8 @@ canvas {
   #car_description{
     display: none !important;
   }
-  #select-model-button{
-    display: none;
+  #select-model-button, .hidden-button{
+    display: none !important;
 }}
 
 @media (max-width: 1024px) {

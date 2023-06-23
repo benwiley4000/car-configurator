@@ -392,6 +392,10 @@ function launchCustomization() {
     element.classList.add("hidden");
   });
 
+  hiddenButtons = document.querySelectorAll(".hidden-button");
+  hiddenButtons.forEach((button) =>
+  button.classList.remove("hidden-button"));
+
   document.getElementById("final-price").innerHTML = gSelectedCar.price;
 }
 
