@@ -68,6 +68,7 @@ async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
   document.getElementById("car_name").innerHTML = gSelectedCar.name;
+  firstWordFromId("car_name", "highlighted-word");
   document.getElementById("car_description").innerHTML =
     gSelectedCar.description;
   document.getElementById("maximum-speed-number").innerHTML =
@@ -349,14 +350,6 @@ async function ToggleLights() {
   document.getElementById("light-on").classList.toggle("hidden");
 }
 
-// --------------------------------------------------------------
-
-function highlightTitle(){
-  let title = document.getElementById("car-name");
-  let firstWord = title.onsecuritypolicyviolation(' ')[0];
-  console.log(firstWord);
-}
-
 
 // --------------------------------------------------------------
 
@@ -522,4 +515,17 @@ async function ChangeMaterial(e) {
   colors.forEach((color) => {
       colors.forEach((color) => color.classList.remove("active-color"));
     });
+}
+
+
+//-----------------------------------------------------------------------------------
+function firstWordFromId(selectId, addClass) {
+  var jsIntro = document.getElementById(selectId);
+  var originalString = jsIntro.innerHTML;
+  var splitWords = originalString.split(" ");
+
+  jsIntro.innerHTML =
+    "<span class=" + addClass + ">"
+    .concat(splitWords[0], "</span>") + "&#32;" + originalString
+    .substr(originalString.indexOf(" ") + 1);
 }
