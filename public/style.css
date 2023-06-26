@@ -43,8 +43,8 @@ canvas {
   color: #141614 !important;
   display: inline-block !important;
   height: 7rem;
-  padding-left: 1vw !important;
-  padding-right: 1vw !important;
+  padding-left: 1vh !important;
+  padding-right: 1vh !important;
   padding-top: 0.5vh !important;
   padding-bottom: 0.4vh !important;
   background-color: #EC6244;
@@ -71,6 +71,12 @@ canvas {
   box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
   background-color: #f27357;
   cursor: po;
+}
+
+/* SETTINGS PANEL */
+
+.settings-line{
+  justify-content: space-between;
 }
 
 /* PART SELECTION MENU */

@@ -42,6 +42,11 @@ async function InitApp() {
 
   const sessionCreated = await Connect();
 
+  await ToggleGradientPlatform();
+  await InitCarAttachment();
+  gSelectedMaterial = AppConfig.materials[0];
+  await ChangeCar({ value: 0 });
+
   SetInformation("Connection established.");
   setTimeout(function () {
     document.getElementById("loader").classList.add("opacity-0");
@@ -49,11 +54,6 @@ async function InitApp() {
       document.getElementById("loader").classList.add("hidden");
     }, 1000);
   }, 1000);
-
-  await InitCarAttachment();
-
-  gSelectedMaterial = AppConfig.materials[0];
-  await ChangeCar({ value: 0 });
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -250,13 +250,8 @@ function ToggleRotation() {
 
   SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
 
-  if (document.getElementById("rotate-on").classList.contains("hidden")) {
-    document.getElementById("rotate-on").classList.remove("hidden");
-    document.getElementById("rotate-off").classList.add("hidden");
-  } else {
-    document.getElementById("rotate-on").classList.add("hidden");
-    document.getElementById("rotate-off").classList.remove("hidden");
-  }
+  document.getElementById("rotate-on").classList.toggle("hidden");
+  document.getElementById("rotate-off").classList.toggle("hidden");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -350,6 +345,21 @@ async function ToggleLights() {
   document.getElementById("light-on").classList.toggle("hidden");
 }
 
+
+// ------------------------------------------------
+async function ToggleGradientPlatform(){
+  // const gradientPlatform  = await SDK3DVerse.engineAPI.findEntitiesByEUID("83575f30-fc35-40c1-9173-23052a93a176");
+  // gradientPlatformEntity     = gradientPlatform[0];
+  const gradientPlatforms  = await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
+  const gradientPlatform = gradientPlatforms[0];
+
+  if (gradientPlatform.isVisible()){
+    SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
+  } else {
+    SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
+  }
+  console.log("Platform Visibility changed to", gradientPlatform.isVisible());
+}
 
 // --------------------------------------------------------------
 
@@ -528,4 +538,13 @@ function firstWordFromId(selectId, addClass) {
     "<span class=" + addClass + ">"
     .concat(splitWords[0], "</span>") + "&#32;" + originalString
     .substr(originalString.indexOf(" ") + 1);
+}
+
+
+//---------------------------------------------------------------------------
+function toggleSettingsPanel() {
+  document.getElementById("settings-on").classList.toggle("hidden");
+  document.getElementById("settings-off").classList.toggle("hidden");
+
+  document.getElementById("settings-panel").classList.toggle("hidden");
 }
