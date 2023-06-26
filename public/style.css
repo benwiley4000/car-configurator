@@ -86,7 +86,9 @@ canvas {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
   color: white !important;
-  cursor: auto !important;
+}
+.active-tab:hover {
+  color: #acacac !important;
 }
 
 .active-part {
