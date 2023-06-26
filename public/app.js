@@ -90,8 +90,7 @@ async function ChangeCar(e) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeSpoiler(e) {
-  const i = e.value;
+async function ChangeSpoiler(i) {
   if (i >= gSelectedCar.spoilers.length) {
     return;
   }
@@ -104,8 +103,7 @@ async function ChangeSpoiler(e) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeFrontBumper(e) {
-  const i = e.value;
+async function ChangeFrontBumper(i) {
   if (i >= gSelectedCar.frontBumpers.length) {
     return;
   }
@@ -118,8 +116,7 @@ async function ChangeFrontBumper(e) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeRearBumper(e) {
-  const i = e.value;
+async function ChangeRearBumper(i) {
   if (i >= gSelectedCar.rearBumpers.length) {
     return;
   }
@@ -149,9 +146,9 @@ async function ApplySelectedCar() {
     gSelectedCar.name,
     gSelectedCar.sceneUUID
   );
-  await ChangeFrontBumper({ value: 0 });
-  await ChangeRearBumper({ value: 0 });
-  await ChangeSpoiler({ value: 0 });
+  await ChangeFrontBumper(0);
+  await ChangeRearBumper(0);
+  await ChangeSpoiler(0);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -293,6 +290,7 @@ async function ChangeColor(color) {
     "material",
     gSelectedMaterial.matUUID
   );
+  gColor = color;
   desc.dataJson.albedo = color;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.paintMaterialUUID,
@@ -460,13 +458,11 @@ function showTabThree() {
   toolboxPanel.classList.remove("hidden");
 }
 
-document.onclick = function(e) {
-  if(e.target.id !== "first-tab-selector" && e.target.id !== "second-tab-selector" && e.target.id !== "third-tab-selector" && e.target.id !== "tab-panels" && e.target.id !== "part-item") {
-    toolboxPanel.classList.add("hidden")
-    document.getElementById("first-tab-selector").classList.remove("active-tab");
-    document.getElementById("second-tab-selector").classList.remove("active-tab");
-    document.getElementById("third-tab-selector").classList.remove("active-tab");
-  }}
+// document.onclick = function(e) {
+//   if(e.target.classList.contains("active-tab")) {
+//     toolboxPanel.classList.add("hidden");
+//     e.target.classList.remove("active-tab");
+//   }}
 
 const firstTabPanels = document.querySelectorAll(".first-panel-item");
 const secondTabPanels = document.querySelectorAll(".second-panel-item");
@@ -517,8 +513,7 @@ materialIcons.forEach((icon) => {
 
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeMaterial(e) {
-  const matIndex = e.value;
+async function ChangeMaterial(matIndex) {
   gSelectedMaterial = AppConfig.materials[matIndex];
   await ApplySelectedMaterial();
 

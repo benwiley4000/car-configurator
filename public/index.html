@@ -252,7 +252,7 @@
           <div class="settings-line flex text-[#dbdbdb] font-basic text-[0.9rem] space-x-90">
             <h4 class="align-middle">RGB Gradient</h4>  
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" value="" class="sr-only peer" onclick="ToggleGradientPlatform()">
+              <input type="checkbox" class="sr-only peer" onclick="ToggleGradientPlatform()">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"></div>
             </label>
           </div>
@@ -353,11 +353,11 @@
         id="materials"
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
       >
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:1})">
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial(1)">
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/></svg>
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="#272727" stroke-width="15"/></svg>
         </div>
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material" onclick="ChangeMaterial({value:0})">
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material" onclick="ChangeMaterial(0)">
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
             <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/>
             <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="white"/>
@@ -367,7 +367,7 @@
             <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="#272727"/>
           </svg>
           </div>
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial({value:2})">
+        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial(2)">
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
             <circle cx="65" cy="65" r="61" stroke="white" stroke-width="8"/>
             <circle cx="65" cy="65" r="65" transform="rotate(90 65 65)" fill="white"/>
@@ -390,7 +390,7 @@
           <div class="flex justify-center align-items">
             <div
               id="first-tab-selector"
-              class="rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
+              class="rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full active-tab"
               onclick="showTabOne()"
             >
               Spoiler
@@ -422,7 +422,7 @@
           <div id="first-tab" class="flex flex-col space-y-2">
             <div
               class="part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
-              onclick="ChangeSpoiler({value:0})"
+              onclick="ChangeSpoiler(0)"
               id="part-item"
             >
               <h4>Spoiler 1</h4>
@@ -439,7 +439,7 @@
             </div>
             <div
               class="part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
-              onclick="ChangeSpoiler({value:1})"
+              onclick="ChangeSpoiler(1)"
               id="part-item"
             >
               <h4>Spoiler 2</h4>
@@ -456,7 +456,7 @@
             </div>
             <div
               class="part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
-              onclick="ChangeSpoiler({value:2})"
+              onclick="ChangeSpoiler(2)"
               id="part-item"
             >
               <h4>Spoiler 3</h4>
@@ -474,7 +474,7 @@
           </div>
           <div id="second-tab" class="flex flex-col space-y-2 hidden">
             <div class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
-              onclick="ChangeFrontBumper({value:0})"
+              onclick="ChangeFrontBumper(0)"
               id="part-item"
             >
               <h4>Front Bumper 1</h4>
@@ -491,7 +491,7 @@
             </div>
             <div
               class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
-              onclick="ChangeFrontBumper({value:1})"
+              onclick="ChangeFrontBumper(1)"
               id="part-item"
             >
               <h4>Front Bumper 2</h4>
@@ -507,7 +507,7 @@
               </div>
             </div>
             <div class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
-              onclick="ChangeFrontBumper({value:2})"
+              onclick="ChangeFrontBumper(2)"
               id="part-item"
             >
               <h4>Front Bumper 3</h4>
@@ -527,7 +527,7 @@
           <div id="third-tab" class="flex flex-col space-y-2 hidden">
             <div
               class="part-item third-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
-              onclick="ChangeRearBumper({value:0})"
+              onclick="ChangeRearBumper(0)"
               id="part-item"
               >
               <h4>Rear Bumper 1</h4>
@@ -545,7 +545,7 @@
             <div
 
               class="part-item third-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
-              onclick="ChangeRearBumper({value:1})"
+              onclick="ChangeRearBumper(1)"
               id="part-item"
               >
               <h4>Rear Bumper 2</h4>
@@ -562,6 +562,29 @@
             </div>
           </div>
         </div>
+      </div>
+
+
+      <!-- Cubemap Selection -->
+      <div
+        id="colors"
+        class="customization color-section absolute right-[10vw] space-y-[30px] flex align-center justify-center flex-col third-section-element hidden"
+      >
+        <div
+          id="cubemap1"
+          onclick=""
+          class="h-[60px] w-[60px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70"
+        ></div>
+        <div
+          id="cubemap1"
+          onclick=""
+          class="h-[60px] w-[60px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70"
+        ></div>
+        <div
+          id="cubemap1"
+          onclick=""
+          class="h-[60px] w-[60px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70"
+        ></div>
       </div>
 
 
