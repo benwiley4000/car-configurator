@@ -132,6 +132,19 @@ canvas {
   display: block !important;
 }
 
+/* CUBEMAP SELECTION */
+
+.active-cubemap{
+  background-color: #EC6244 !important;
+  cursor: auto !important;
+}
+.active-cubemap .cubemap-check{
+  display: flex !important;
+}
+.active-cubemap:hover{
+  opacity: 100% !important;
+}
+
 /* MEDIA QUERIES */
 
 @media (max-width: 768px) {
