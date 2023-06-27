@@ -281,7 +281,7 @@ async function InitColor() {
     "material",
     gSelectedCar.paintMaterialUUID
   );
-  gColor = desc.dataJson.albedo;
+  desc.dataJson.albedo = gColor;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -543,3 +543,12 @@ function toggleSettingsPanel() {
 
   document.getElementById("settings-panel").classList.toggle("hidden");
 }
+
+
+//---------------------------------------------------------------------------
+// toggleDisplayBackground()
+
+// function toggleDisplayBackground() {
+//   const camera = SDK3DVerse.SDK3DVerse_Viewport.getCamera();
+//   camera.dataJson.displatBackground = true;
+// }
