@@ -43,6 +43,7 @@ async function InitApp() {
   const sessionCreated = await Connect();
 
   await ToggleGradientPlatform();
+  await changeCubemap(AppConfig.cubemaps[0]);
   await InitCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
@@ -568,6 +569,14 @@ function toggleDisplayBackground() {
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
-function changeCubemap() {
-  
+async function changeCubemap(cubemap) {
+  const environementEntitys  = await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
+  const environementEntity = environementEntitys[0];
+  let envComponent = environementEntity.getComponent("environment");
+  envComponent = SDK3DVerse.utils.clone(envComponent); //clone du component environment
+  envComponent.skyboxUUID = cubemap.skyboxUUID;
+  envComponent.radianceUUID = cubemap.radianceUUID;
+  envComponent.irradianceUUID = cubemap.irradianceUUID;
+  environementEntity.setComponent("environment", envComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
 }

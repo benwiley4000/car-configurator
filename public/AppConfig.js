@@ -1,5 +1,25 @@
 AppConfig = {
   sceneUUID: "060594e9-3255-4329-805a-b448bc8605c0",
+  cubemaps: [
+    {
+      name: "Pure Sky",
+      skyboxUUID: "eb6b6cfc-a25f-4f9b-9cbf-287488a5f902",
+      radianceUUID: "2abf3b02-7ce9-437c-a85f-5f2f54ecc67b",
+      irradianceUUID: "ff345697-eca6-4970-bec7-7e6b1d52c715",
+    },
+    {
+      name: "Zwinger Night",
+      skyboxUUID: "3d87dcf8-7e9e-40b2-9187-521d6a2f0d7a",
+      radianceUUID: "2312C1F1-3277-4DDE-8D74-6F42B413F447",
+      irradianceUUID: "e8308b91-206b-4314-b1de-5d9831534fc8",
+    },
+    {
+      name: "Noon Grass",
+      skyboxUUID: "0c8d92be-9ad0-4242-83af-3b5fc175eb5a",
+      radianceUUID: "c0565c7e-2db8-4c5f-93a3-7c11e8d3e076",
+      irradianceUUID: "9ecc2abe-a3e6-40c1-b879-297717659b97",
+    },
+  ],
   cameraComponentDataJSON: {},
   materials: [
     { name: "Solid", matUUID: "bd9dc4c5-20b7-404c-8a94-b84cf21de580" },
