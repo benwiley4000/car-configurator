@@ -567,24 +567,33 @@
 
       <!-- Cubemap Selection -->
       <div
-        id="colors"
-        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col third-section-element hidden"
+        id="cubemap"
+        class="absolute right-[7vw] space-y-[40px] flex align-center justify-center flex-col third-section-element hidden"
       >
         <div
           id="cubemap1"
           onclick=""
-          class="h-[80px] w-[80px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center align-center"
-        ></div>
+          class="cubemap h-[90px] w-[90px] bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center active-cubemap"
+        >
+          <div class="cubemap-check absolute bg-black bg-opacity-70 h-[80px] w-[80px] rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" alt="" class="h-[35px] w-[35px]"></div>
+          <img src="./img/city_cubemap.png" alt="City Cubemap" class="h-[80px] w-[80px] rounded-full">
+        </div>
         <div
-          id="cubemap1"
-          onclick=""
-          class="h-[80px] w-[80px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center align-center"
-        ></div>
+            id="cubemap2"
+            onclick=""
+            class="cubemap h-[90px] w-[90px] bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
+          >
+          <div class="cubemap-check absolute bg-black bg-opacity-70 h-[80px] w-[80px] rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" alt="" class="h-[35px] w-[35px]"></div>
+          <img src="./img/desert_cubemap.png" alt="City Cubemap" class="h-[80px] w-[80px] rounded-full">
+        </div>
         <div
-          id="cubemap1"
+          id="cubemap3"
           onclick=""
-          class="h-[80px] w-[80px] bg-gray-300 rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center align-center"
-        ></div>
+          class="cubemap h-[90px] w-[90px] bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
+        >
+          <div class="cubemap-check absolute bg-black bg-opacity-70 h-[90%] w-[90%] rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" alt="" class="h-[50%] w-[50%]"></div>
+          <img src="./img/studio_cubemap.png" alt="City Cubemap" class="h-[90%] w-[90%] rounded-full">
+        </div>
       </div>
 
 
@@ -678,7 +687,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="launchReview()"
+          onclick="launchReview(); toggleDisplayBackground()"
         >
           <svg
             width="30%"
@@ -753,7 +762,7 @@
         </div>
         <div
         class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-        onclick="launchReview()"
+        onclick="launchReview(); toggleDisplayBackground()"
         >
           <div class="text w-3/4">
             <h3
@@ -789,7 +798,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="launchCustomization()"
+          onclick="launchCustomization(); toggleDisplayBackground()"
         >
           <svg
             width="30%"
@@ -816,7 +825,7 @@
       <div class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] hidden-button">
         <div
         class="bg-[#EC6244] flex rounded-full  py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-        onclick="launchCustomization()"
+        onclick="launchCustomization(); toggleDisplayBackground()"
       >
         <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
           <svg
@@ -838,9 +847,6 @@
         </div>
       </div>
       </div>
-
-      
-      
 
 
     </div>

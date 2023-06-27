@@ -318,6 +318,9 @@ SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
 };
 
 async function ToggleLights() {
+  document.getElementById("light-on").classList.toggle("hidden");
+  document.getElementById("light-off").classList.toggle("hidden");
+
   const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
     gSelectedCar.headLightsMatUUID
@@ -339,8 +342,6 @@ async function ToggleLights() {
   );
 
   gIntensity = gIntensity === 0 ? 100 : 0;
-
-  document.getElementById("light-on").classList.toggle("hidden");
 }
 
 
@@ -544,11 +545,29 @@ function toggleSettingsPanel() {
   document.getElementById("settings-panel").classList.toggle("hidden");
 }
 
+// --------------------------------------------------------------------------
+const cubemaps = document.querySelectorAll(".cubemap");
+
+cubemaps.forEach((cubemap) => {
+cubemap.addEventListener("click", () => {
+    cubemaps.forEach((cubemap) => cubemap.classList.remove("active-cubemap"));
+    cubemap.classList.add("active-cubemap");
+    });
+});
+
 
 //---------------------------------------------------------------------------
-// toggleDisplayBackground()
+function toggleDisplayBackground() {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport = cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const camera = viewport.getCamera();
+  let cameraComponent = camera.getComponent("camera");
+  cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
+  cameraComponent.dataJSON.displayBackground = !cameraComponent.dataJSON.displayBackground;
+  camera.setComponent("camera", cameraComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
+}
 
-// function toggleDisplayBackground() {
-//   const camera = SDK3DVerse.SDK3DVerse_Viewport.getCamera();
-//   camera.dataJson.displatBackground = true;
-// }
+function changeCubemap() {
+  
+}
