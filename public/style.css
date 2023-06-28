@@ -144,6 +144,22 @@ canvas {
 .active-cubemap:hover{
   opacity: 100% !important;
 }
+.cubemap{
+  height: 90px;
+  width: 90px;
+}
+.cubemap-check{
+  height: 80px;
+  width: 80px;
+}
+.cubemap-check-icon{
+  height: 40%;
+  width: 40%;
+}
+.cubemap-bg{
+  height: 80px;
+  width: 80px;
+}
 
 /* MEDIA QUERIES */
 
@@ -181,7 +197,17 @@ canvas {
   #tab-panels{
     font-size: 14px !important;
   }
-
+  #cubemap{
+    flex-direction: row !important;
+    bottom: 17vh !important;
+    right: auto !important;
+    align-items: center !important;
+    width: 80% !important;
+    justify-content: space-between !important;
+  }
+  .cubemap{
+    margin: 0 !important;
+  }
 }
 
 @media (max-width: 1024px) {
