@@ -47,7 +47,7 @@ async function InitApp() {
   await InitCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
-  // SDK3DVerse.updateControllerSetting({speed: 5});
+  SDK3DVerse.updateControllerSetting({speed: 1}); //reduce scroll speed
 
   SetInformation("Connection established.");
   setTimeout(function () {
