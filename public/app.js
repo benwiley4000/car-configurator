@@ -581,3 +581,26 @@ async function changeCubemap(cubemap) {
   environementEntity.setComponent("environment", envComponent);
   SDK3DVerse.engineAPI.propagateChanges();
 }
+
+//---------------------------------------------------------------------------
+async function changeLightIntensity(newIntensity){
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport = cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const camera = viewport.getCamera();
+  let cameraComponent = camera.getComponent("camera");
+  cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
+  cameraComponent.dataJSON.brightness = newIntensity;
+  camera.setComponent("camera", cameraComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
+  console.log("Light updated to", newIntensity);
+}
+
+//---------------------------------------------------------------------------
+var luminositySlider = document.getElementById("luminosity-slider");
+var luminosityValue = document.getElementById("luminosity-value");
+luminosityValue.innerHTML = luminositySlider.value;
+
+luminositySlider.oninput = function() {
+  luminosityValue.innerHTML = this.value;
+  changeLightIntensity(Number(this.value));
+}
