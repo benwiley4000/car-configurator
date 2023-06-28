@@ -256,6 +256,13 @@
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"></div>
             </label>
           </div>
+          <div class="settings-line flex flex-col text-[#dbdbdb] font-basic text-[0.9rem] space-y-3">
+            <div class="flex flex-row space-x-90 w-full settings-line">
+              <h4>Luminosity</h4>
+              <h4 id="luminosity-value"></h4>
+            </div> 
+            <input id="luminosity-slider" id="minmax-range" type="range" min="0" max="5" value="1.5" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 align-middle accent-[#EC6244]">
+          </div>
         </div>
       </div>
 
