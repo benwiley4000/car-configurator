@@ -17,6 +17,11 @@ let gCarIndex = 0;
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
   window.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  // -------------- Media Query
+  const mediaQuery = window.matchMedia("(max-width: 768px)");
+  mediaQuery.addEventListener("change", onMediaQueryChange);
+
   const viewports = [
     {
       id: 0,
@@ -25,8 +30,10 @@ async function InitApp() {
       width: 1,
       height: 1,
       defaultControllerType: 1,
+      onCameraCreation: () => onMediaQueryChange(mediaQuery),
     },
   ];
+
   SDK3DVerse.setViewports(viewports);
   SetResolution();
   let debounceResizeTimeout = null;
@@ -47,7 +54,7 @@ async function InitApp() {
   await InitCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
-  SDK3DVerse.updateControllerSetting({speed: 1}); //reduce scroll speed
+  SDK3DVerse.updateControllerSetting({ speed: 1 }); //reduce scroll speed
 
   SetInformation("Connection established.");
   setTimeout(function () {
@@ -346,15 +353,16 @@ async function ToggleLights() {
   gIntensity = gIntensity === 0 ? 100 : 0;
 }
 
-
 // ------------------------------------------------
-async function ToggleGradientPlatform(){
+async function ToggleGradientPlatform() {
   // const gradientPlatform  = await SDK3DVerse.engineAPI.findEntitiesByEUID("83575f30-fc35-40c1-9173-23052a93a176");
   // gradientPlatformEntity     = gradientPlatform[0];
-  const gradientPlatforms  = await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
+  const gradientPlatforms = await SDK3DVerse.engineAPI.findEntitiesByNames(
+    "SM_StaticPlatform"
+  );
   const gradientPlatform = gradientPlatforms[0];
 
-  if (gradientPlatform.isVisible()){
+  if (gradientPlatform.isVisible()) {
     SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
   } else {
     SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
@@ -397,8 +405,7 @@ function launchCustomization() {
   });
 
   hiddenButtons = document.querySelectorAll(".hidden-button");
-  hiddenButtons.forEach((button) =>
-  button.classList.remove("hidden-button"));
+  hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
 
   document.getElementById("final-price").innerHTML = gSelectedCar.price;
 }
@@ -461,10 +468,18 @@ function showTabThree() {
   toolboxPanel.classList.remove("hidden");
 }
 
+// function closeTabs() {
+//   document.getElementById("first-tab").classList.add("hidden");
+//   document.getElementById("second-tab").classList.add("hidden");
+//   document.getElementById("third-tab").classList.add("hidden");
+//   document.getElementById("first-tab-selector").classList.remove("active-tab");
+//   document.getElementById("second-tab-selector").classList.remove("active-tab");
+//   document.getElementById("third-tab-selector").classList.remove("active-tab");
+// }
+
 // document.onclick = function(e) {
 //   if(e.target.classList.contains("active-tab")) {
-//     toolboxPanel.classList.add("hidden");
-//     e.target.classList.remove("active-tab");
+//     closeTabs();
 //   }}
 
 const firstTabPanels = document.querySelectorAll(".first-panel-item");
@@ -514,17 +529,15 @@ materialIcons.forEach((icon) => {
   });
 });
 
-
 //--------------------------------------------------------------------------------------------------
 async function ChangeMaterial(matIndex) {
   gSelectedMaterial = AppConfig.materials[matIndex];
   await ApplySelectedMaterial();
 
   colors.forEach((color) => {
-      colors.forEach((color) => color.classList.remove("active-color"));
-    });
+    colors.forEach((color) => color.classList.remove("active-color"));
+  });
 }
-
 
 //-----------------------------------------------------------------------------------
 function firstWordFromId(selectId, addClass) {
@@ -533,11 +546,12 @@ function firstWordFromId(selectId, addClass) {
   var splitWords = originalString.split(" ");
 
   jsIntro.innerHTML =
-    "<span class=" + addClass + ">"
-    .concat(splitWords[0], "</span>") + "&#32;" + originalString
-    .substr(originalString.indexOf(" ") + 1);
+    "<span class=" +
+    addClass +
+    ">".concat(splitWords[0], "</span>") +
+    "&#32;" +
+    originalString.substr(originalString.indexOf(" ") + 1);
 }
-
 
 //---------------------------------------------------------------------------
 function toggleSettingsPanel() {
@@ -551,27 +565,30 @@ function toggleSettingsPanel() {
 const cubemaps = document.querySelectorAll(".cubemap");
 
 cubemaps.forEach((cubemap) => {
-cubemap.addEventListener("click", () => {
+  cubemap.addEventListener("click", () => {
     cubemaps.forEach((cubemap) => cubemap.classList.remove("active-cubemap"));
     cubemap.classList.add("active-cubemap");
-    });
+  });
 });
-
 
 //---------------------------------------------------------------------------
 function toggleDisplayBackground() {
   const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport = cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
   const camera = viewport.getCamera();
   let cameraComponent = camera.getComponent("camera");
   cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
-  cameraComponent.dataJSON.displayBackground = !cameraComponent.dataJSON.displayBackground;
+  cameraComponent.dataJSON.displayBackground =
+    !cameraComponent.dataJSON.displayBackground;
   camera.setComponent("camera", cameraComponent);
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
 async function changeCubemap(cubemap) {
-  const environementEntitys  = await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
+  const environementEntitys = await SDK3DVerse.engineAPI.findEntitiesByNames(
+    "Env"
+  );
   const environementEntity = environementEntitys[0];
   let envComponent = environementEntity.getComponent("environment");
   envComponent = SDK3DVerse.utils.clone(envComponent); //clone du component environment
@@ -583,9 +600,10 @@ async function changeCubemap(cubemap) {
 }
 
 //---------------------------------------------------------------------------
-async function changeLightIntensity(newIntensity){
+async function changeLightIntensity(newIntensity) {
   const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport = cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
   const camera = viewport.getCamera();
   let cameraComponent = camera.getComponent("camera");
   cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
@@ -600,7 +618,46 @@ var luminositySlider = document.getElementById("luminosity-slider");
 var luminosityValue = document.getElementById("luminosity-value");
 luminosityValue.innerHTML = luminositySlider.value;
 
-luminositySlider.oninput = function() {
+luminositySlider.oninput = function () {
   luminosityValue.innerHTML = this.value;
   changeLightIntensity(Number(this.value));
+};
+
+//---------------------------------------------------------------------------
+function onMediaQueryChange(e) {
+  if (e.matches) {
+    console.log("< 768px");
+    changeCameraPosition(
+      [-4.595289707183838, 1.6792974472045898, 8.23273754119873],
+      [
+        -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
+        0.9640212059020996,
+      ]
+    );
+  } else {
+    console.log("> 768px");
+    changeCameraPosition(
+      [-3.3017091751098633, 1.3626002073287964, 4.2906060218811035],
+      [
+        -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
+        0.9428451061248779,
+      ]
+    );
+  }
+}
+
+async function changeCameraPosition(
+  destinationPosition,
+  destinationOrientation
+) {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+
+  SDK3DVerse.engineAPI.cameraAPI.travel(
+    viewport,
+    destinationPosition,
+    destinationOrientation,
+    10
+  );
 }
