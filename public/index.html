@@ -217,7 +217,7 @@
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group"
             onclick="toggleSettingsPanel()"
-            >
+          >
             <svg
               id="settings-off"
               xmlns="http://www.w3.org/2000/svg"
@@ -248,20 +248,42 @@
         </div>
 
         <!-- Settings Panel -->
-        <div id="settings-panel" class="w-[300px] bg-[#272727] rounded-[13px] z-10 p-7 space-y-5 hidden">
-          <div class="settings-line flex text-[#dbdbdb] font-basic text-[0.9rem] space-x-90">
-            <h4 class="align-middle">RGB Gradient</h4>  
+        <div
+          id="settings-panel"
+          class="w-[300px] bg-[#272727] rounded-[13px] z-10 p-7 space-y-5 hidden"
+        >
+          <div
+            class="settings-line flex text-[#dbdbdb] font-basic text-[0.9rem] space-x-90"
+          >
+            <h4 class="align-middle">RGB Gradient</h4>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" onclick="ToggleGradientPlatform()">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"></div>
+              <input
+                type="checkbox"
+                class="sr-only peer"
+                onclick="ToggleGradientPlatform()"
+              />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"
+              ></div>
             </label>
           </div>
-          <div class="settings-line flex flex-col text-[#dbdbdb] font-basic text-[0.9rem] space-y-3">
+          <div
+            class="settings-line flex flex-col text-[#dbdbdb] font-basic text-[0.9rem] space-y-3"
+          >
             <div class="flex flex-row space-x-90 w-full settings-line">
               <h4>Luminosity</h4>
               <h4 id="luminosity-value"></h4>
-            </div> 
-            <input id="luminosity-slider" id="minmax-range" type="range" min="0" max="5" value="1.5" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 align-middle accent-[#EC6244]">
+            </div>
+            <input
+              id="luminosity-slider"
+              id="minmax-range"
+              type="range"
+              min="0"
+              max="5"
+              value="1.5"
+              step="0.5"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 align-middle accent-[#EC6244]"
+            />
           </div>
         </div>
       </div>
@@ -318,8 +340,6 @@
         </div>
       </div>
 
-      
-
       <!---------------------------------- CUSTOMIZATION ----------------------------------------->
 
       <!-- colors selection -->
@@ -354,36 +374,120 @@
         ></div>
       </div>
 
-
       <!-- material section -->
       <div
         id="materials"
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
       >
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial(1)">
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/></svg>
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg"><circle cx="65" cy="65" r="57.5" stroke="#272727" stroke-width="15"/></svg>
+        <div
+          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          onclick="ChangeMaterial(1)"
+        >
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="unactive-icon"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
+          </svg>
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="active-icon hidden"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="65"
+              cy="65"
+              r="57.5"
+              stroke="#272727"
+              stroke-width="15"
+            />
+          </svg>
         </div>
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material" onclick="ChangeMaterial(0)">
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15"/>
-            <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="white"/>
+        <div
+          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
+          onclick="ChangeMaterial(0)"
+        >
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="unactive-icon"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
+            <path
+              d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
+              fill="white"
+            />
           </svg>
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="65" cy="65" r="57.5" stroke="#272727" stroke-width="15"/>
-            <path d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z" fill="#272727"/>
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="active-icon hidden"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="65"
+              cy="65"
+              r="57.5"
+              stroke="#272727"
+              stroke-width="15"
+            />
+            <path
+              d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
+              fill="#272727"
+            />
           </svg>
-          </div>
-        <div class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer" onclick="ChangeMaterial(2)">
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="unactive-icon" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="65" cy="65" r="61" stroke="white" stroke-width="8"/>
-            <circle cx="65" cy="65" r="65" transform="rotate(90 65 65)" fill="white"/>
-            </svg>
-            <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none" class="active-icon hidden" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="65" cy="65" r="61" stroke="#272727" stroke-width="8"/>
-              <circle cx="65" cy="65" r="65" transform="rotate(90 65 65)" fill="#272727"/>
-              </svg>
-          </div>
+        </div>
+        <div
+          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          onclick="ChangeMaterial(2)"
+        >
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="unactive-icon"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="65" cy="65" r="61" stroke="white" stroke-width="8" />
+            <circle
+              cx="65"
+              cy="65"
+              r="65"
+              transform="rotate(90 65 65)"
+              fill="white"
+            />
+          </svg>
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="active-icon hidden"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="65" cy="65" r="61" stroke="#272727" stroke-width="8" />
+            <circle
+              cx="65"
+              cy="65"
+              r="65"
+              transform="rotate(90 65 65)"
+              fill="#272727"
+            />
+          </svg>
+        </div>
       </div>
 
       <!-- parts selection -->
@@ -480,7 +584,8 @@
             </div>
           </div>
           <div id="second-tab" class="flex flex-col space-y-2 hidden">
-            <div class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
+            <div
+              class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
               onclick="ChangeFrontBumper(0)"
               id="part-item"
             >
@@ -513,7 +618,8 @@
                 />
               </div>
             </div>
-            <div class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
+            <div
+              class="part-item second-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
               onclick="ChangeFrontBumper(2)"
               id="part-item"
             >
@@ -529,14 +635,13 @@
                 />
               </div>
             </div>
-            
           </div>
           <div id="third-tab" class="flex flex-col space-y-2 hidden">
             <div
               class="part-item third-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition active-part"
               onclick="ChangeRearBumper(0)"
               id="part-item"
-              >
+            >
               <h4>Rear Bumper 1</h4>
               <div
                 id="check-circle"
@@ -550,11 +655,10 @@
               </div>
             </div>
             <div
-
               class="part-item third-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition"
               onclick="ChangeRearBumper(1)"
               id="part-item"
-              >
+            >
               <h4>Rear Bumper 2</h4>
               <div
                 id="check-circle"
@@ -571,7 +675,6 @@
         </div>
       </div>
 
-
       <!-- Cubemap Selection -->
       <div
         id="cubemap"
@@ -582,30 +685,64 @@
           onclick="changeCubemap(AppConfig.cubemaps[0]);"
           class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center active-cubemap"
         >
-          <div class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" class="cubemap-check-icon" alt=""></div>
-          <img src="./img/cubemap1.png" alt="City Cubemap" class="rounded-full cubemap-bg">
+          <div
+            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
+          >
+            <img
+              src="./img/orange-check.png"
+              class="cubemap-check-icon"
+              alt=""
+            />
+          </div>
+          <img
+            src="./img/cubemap1.png"
+            alt="City Cubemap"
+            class="rounded-full cubemap-bg"
+          />
         </div>
         <div
-            id="cubemap2"
-            onclick="changeCubemap(AppConfig.cubemaps[1]);"
-            class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
+          id="cubemap2"
+          onclick="changeCubemap(AppConfig.cubemaps[1]);"
+          class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
+        >
+          <div
+            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
           >
-          <div class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" class="cubemap-check-icon" alt=""></div>
-          <img src="./img/cubemap2.png" alt="City Cubemap" class="rounded-full cubemap-bg">
+            <img
+              src="./img/orange-check.png"
+              class="cubemap-check-icon"
+              alt=""
+            />
+          </div>
+          <img
+            src="./img/cubemap2.png"
+            alt="City Cubemap"
+            class="rounded-full cubemap-bg"
+          />
         </div>
         <div
           id="cubemap3"
           onclick="changeCubemap(AppConfig.cubemaps[2]);"
           class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
         >
-          <div class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"><img src="./img/orange-check.png" class="cubemap-check-icon" alt=""></div>
-          <img src="./img/cubemap3.png" alt="City Cubemap" class="rounded-full cubemap-bg">
+          <div
+            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
+          >
+            <img
+              src="./img/orange-check.png"
+              class="cubemap-check-icon"
+              alt=""
+            />
+          </div>
+          <img
+            src="./img/cubemap3.png"
+            alt="City Cubemap"
+            class="rounded-full cubemap-bg"
+          />
         </div>
       </div>
 
-
       <!--------------------------------- BUTTONS ---------------------------------------------------->
-
 
       <!-- First Screen PC Button -->
       <div
@@ -689,8 +826,7 @@
           <h3
             id="final-price"
             class="price text-[#EC6244] text-[6vh] text-right"
-          >
-          </h3>
+          ></h3>
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
@@ -742,11 +878,13 @@
       </div>
 
       <!-- Second Screen Mobile Buttons -->
-      
-      <div class="second-screen-mobile-button absolute flex space-x-[5%] bottom-[3vh] md:hidden w-[90%] second-section-element hidden-button">
+
+      <div
+        class="second-screen-mobile-button absolute flex space-x-[5%] bottom-[3vh] md:hidden w-[90%] second-section-element hidden-button"
+      >
         <div
-        class="mobile-back-model-button bg-[#EC6244] flex rounded-full px-5 py-6 w-[25%] justify-center items-center transition cursor-pointer"
-        onclick="launchModelSelection()"
+          class="mobile-back-model-button bg-[#EC6244] flex rounded-full px-5 py-6 w-[25%] justify-center items-center transition cursor-pointer"
+          onclick="launchModelSelection()"
         >
           <div class="arrow w-full flex justify-center items-center h-[3vh]">
             <svg
@@ -768,15 +906,11 @@
           </div>
         </div>
         <div
-        class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-        onclick="launchReview(); toggleDisplayBackground()"
+          class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
+          onclick="launchReview(); toggleDisplayBackground()"
         >
           <div class="text w-3/4">
-            <h3
-              class="price text-[#141614] text-[3vh]"
-            >
-              Review
-            </h3>
+            <h3 class="price text-[#141614] text-[3vh]">Review</h3>
           </div>
           <div class="arrow w-1/4 flex justify-end items-center h-[3vh]">
             <svg
@@ -825,37 +959,35 @@
           </svg>
         </div>
       </div>
-      
-
 
       <!-- Third Screen Mobile Button -->
-      <div class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] hidden-button">
-        <div
-        class="bg-[#EC6244] flex rounded-full  py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-        onclick="launchCustomization(); toggleDisplayBackground();"
+      <div
+        class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] hidden-button"
       >
-        <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
-          <svg
-            width="53%"
-            height="53%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="rotate-180"
-          >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <div
+          class="bg-[#EC6244] flex rounded-full py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
+          onclick="launchCustomization(); toggleDisplayBackground();"
+        >
+          <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
+            <svg
+              width="53%"
+              height="53%"
+              viewBox="0 0 30 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="rotate-180"
+            >
+              <path
+                d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
+                stroke="#141614"
+                stroke-width="4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
         </div>
       </div>
-      </div>
-
-
     </div>
   </body>
   <script src="./app.js"></script>

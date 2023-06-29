@@ -1,8 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
 
 body {
   width: 100%;
@@ -35,7 +34,7 @@ canvas {
 /* MODEL NAME */
 
 #car_name {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: "Bebas Neue", sans-serif;
 }
 
 /* the padding and display stuff is necessary because of the badely cropped font */
@@ -47,7 +46,7 @@ canvas {
   padding-right: 1vh !important;
   padding-top: 0.5vh !important;
   padding-bottom: 0.4vh !important;
-  background-color: #EC6244;
+  background-color: #ec6244;
   border-radius: 15px;
 }
 
@@ -75,7 +74,7 @@ canvas {
 
 /* SETTINGS PANEL */
 
-.settings-line{
+.settings-line {
   justify-content: space-between;
 }
 
@@ -92,7 +91,7 @@ canvas {
 }
 
 .active-part {
-  background-color: #EC6244 !important;
+  background-color: #ec6244 !important;
   color: #22242a !important;
   cursor: auto !important;
 }
@@ -119,44 +118,44 @@ canvas {
 /* MATERIALS */
 
 .active-material {
-  background-color: #EC6244 !important;
+  background-color: #ec6244 !important;
   color: #272727 !important;
 }
 .active-material:hover {
   cursor: auto !important;
 }
-.active-material .unactive-icon{
+.active-material .unactive-icon {
   display: none !important;
 }
-.active-material .active-icon{
+.active-material .active-icon {
   display: block !important;
 }
 
 /* CUBEMAP SELECTION */
 
-.active-cubemap{
-  background-color: #EC6244 !important;
+.active-cubemap {
+  background-color: #ec6244 !important;
   cursor: auto !important;
 }
-.active-cubemap .cubemap-check{
+.active-cubemap .cubemap-check {
   display: flex !important;
 }
-.active-cubemap:hover{
+.active-cubemap:hover {
   opacity: 100% !important;
 }
-.cubemap{
+.cubemap {
   height: 90px;
   width: 90px;
 }
-.cubemap-check{
+.cubemap-check {
   height: 80px;
   width: 80px;
 }
-.cubemap-check-icon{
+.cubemap-check-icon {
   height: 40%;
   width: 40%;
 }
-.cubemap-bg{
+.cubemap-bg {
   height: 80px;
   width: 80px;
 }
@@ -183,21 +182,22 @@ canvas {
   #back-to-model-button {
     display: none !important;
   }
-  #car_description{
+  /* #car_description {
+    display: none !important;
+  } */
+  #select-model-button,
+  .hidden-button {
     display: none !important;
   }
-  #select-model-button, .hidden-button{
-    display: none !important;
-  }
-  #part-selection{
+  #part-selection {
     font-size: 12px !important;
     top: 3vh;
     left: auto;
   }
-  #tab-panels{
+  #tab-panels {
     font-size: 14px !important;
   }
-  #cubemap{
+  #cubemap {
     flex-direction: row !important;
     bottom: 17vh !important;
     right: auto !important;
@@ -205,7 +205,7 @@ canvas {
     width: 80% !important;
     justify-content: space-between !important;
   }
-  .cubemap{
+  .cubemap {
     margin: 0 !important;
   }
 }
@@ -215,7 +215,7 @@ canvas {
     font-size: 4rem;
     line-height: 4rem;
   }
-  .highlighted-word{
+  .highlighted-word {
     height: 4.1rem !important;
     border-radius: 8px !important;
   }
