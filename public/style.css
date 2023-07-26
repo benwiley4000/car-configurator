@@ -49,6 +49,13 @@ canvas {
   background-color: #ec6244;
   border-radius: 15px;
 }
+path{
+  transition: 0.1s ease;
+}
+
+.arrow:hover path{
+  stroke: #a1a1a1;
+}
 
 /* INFO NUMBERS */
 
@@ -182,9 +189,9 @@ canvas {
   #back-to-model-button {
     display: none !important;
   }
-  /* #car_description {
+  #car_description {
     display: none !important;
-  } */
+  }
   #select-model-button,
   .hidden-button {
     display: none !important;
@@ -207,6 +214,9 @@ canvas {
   }
   .cubemap {
     margin: 0 !important;
+  }
+  #car_description{
+    display: none !important;
   }
 }
 

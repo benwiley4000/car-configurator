@@ -54,15 +54,15 @@ async function InitApp() {
   await InitCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
-  SDK3DVerse.updateControllerSetting({ speed: 1 }); //reduce scroll speed
+  // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
-  SetInformation("Connection established.");
-  setTimeout(function () {
+  SetInformation("Loading complete");
     document.getElementById("loader").classList.add("opacity-0");
     setTimeout(function () {
       document.getElementById("loader").classList.add("hidden");
-    }, 1000);
-  }, 1000);
+    }, 500);
+
+    SDK3DVerse.updateControllerSetting({ speed: 1 }); //reduce scroll speed
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -73,25 +73,36 @@ async function InitCarAttachment() {
 }
 
 //--------------------------------------------------------------------------------------------------
+const carName = document.getElementById("car_name");
+const carDescription = document.getElementById("car_description");
+const carMaximumSpeed = document.getElementById("maximum-speed-number");
+const carAcceleration =  document.getElementById("acceleration-number");
+const carMaximumPower = document.getElementById("maximum-power-number");
+const carMaximumTorque = document.getElementById("maximum-torque-number");
+const carEngineCapacity = document.getElementById("engine-capacity-number");
+const startingPrice = document.getElementById("starting-price");
+const startingPriceMobile = document.getElementById("starting-price-mobile");
+
+
 async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
-  document.getElementById("car_name").innerHTML = gSelectedCar.name;
+  carName.innerHTML = gSelectedCar.name;
   firstWordFromId("car_name", "highlighted-word");
-  document.getElementById("car_description").innerHTML =
+  carDescription.innerHTML =
     gSelectedCar.description;
-  document.getElementById("maximum-speed-number").innerHTML =
+  carMaximumSpeed.innerHTML =
     gSelectedCar.maxSpeed;
-  document.getElementById("acceleration-number").innerHTML =
+  carAcceleration.innerHTML =
     gSelectedCar.acceleration;
-  document.getElementById("maximum-power-number").innerHTML =
+  carMaximumPower.innerHTML =
     gSelectedCar.maximumPower;
-  document.getElementById("maximum-torque-number").innerHTML =
+  carMaximumTorque.innerHTML =
     gSelectedCar.maximumTorque;
-  document.getElementById("engine-capacity-number").innerHTML =
+  carEngineCapacity.innerHTML =
     gSelectedCar.engineCapacity;
-  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
-  document.getElementById("starting-price-mobile").innerHTML =
+  startingPrice.innerHTML = gSelectedCar.price;
+  startingPriceMobile.innerHTML =
     gSelectedCar.price;
   await ApplySelectedCar();
   await InitColor();
@@ -178,14 +189,28 @@ async function SelectPart(partName, partSceneUUID) {
   return await SDK3DVerse.engineAPI.spawnEntity(gCarAttachment, part);
 }
 
+var isCarSwitchEnabled = true;
+var carSwitchDelay = 0; //delay to avoid car model switch spam
+
 async function nextCar() {
-  // gCarIndex = (gCarIndex + 1) >= AppConfig.cars.length ? 0 : gCarIndex + 1;
-  gCarIndex = (gCarIndex + 1) % AppConfig.cars.length;
-  await ChangeCar({ value: gCarIndex });
+  if (isCarSwitchEnabled){
+    isCarSwitchEnabled = false;
+    gCarIndex = (gCarIndex + 1) % AppConfig.cars.length;
+    await ChangeCar({ value: gCarIndex });
+  }
+  setTimeout(function () {
+    isCarSwitchEnabled = true;
+  }, carSwitchDelay)
 }
 async function previousCar() {
-  gCarIndex = gCarIndex === 0 ? AppConfig.cars.length - 1 : gCarIndex - 1;
-  await ChangeCar({ value: gCarIndex });
+  if (isCarSwitchEnabled){
+    isCarSwitchEnabled = false;
+    gCarIndex = gCarIndex === 0 ? AppConfig.cars.length - 1 : gCarIndex - 1;
+    await ChangeCar({ value: gCarIndex });
+  }
+  setTimeout(function () {
+    isCarSwitchEnabled = true;
+  }, carSwitchDelay)
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -224,7 +249,6 @@ function SetInformation(str) {
 function SetResolution(showInfo = true) {
   const container = document.getElementById("container");
   const canvasSize = container.getBoundingClientRect();
-  //const canvasSize    = {width: window.innerWidth, height: window.innerHeight};
 
   const largestDim = Math.max(canvasSize.width, canvasSize.height);
   const MAX_DIM = 1920;
@@ -250,14 +274,16 @@ function SetResolution(showInfo = true) {
 
 let rotationState = false;
 //--------------------------------------------------------------------------------------------------
+rotateOnIcon = document.getElementById("rotate-on");
+rotateOffIcon = document.getElementById("rotate-off");
 function ToggleRotation() {
   const event = rotationState ? "pause_simulation" : "start_simulation";
   rotationState = !rotationState;
 
   SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
 
-  document.getElementById("rotate-on").classList.toggle("hidden");
-  document.getElementById("rotate-off").classList.toggle("hidden");
+  rotateOnIcon.classList.toggle("hidden");
+  rotateOffIcon.classList.toggle("hidden");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -326,9 +352,11 @@ SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
   });
 };
 
+const lightOnIcon = document.getElementById("light-on");
+const lightOffIcon = document.getElementById("light-off");
 async function ToggleLights() {
-  document.getElementById("light-on").classList.toggle("hidden");
-  document.getElementById("light-off").classList.toggle("hidden");
+  lightOnIcon.classList.toggle("hidden");
+  lightOffIcon.classList.toggle("hidden");
 
   const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
@@ -354,20 +382,17 @@ async function ToggleLights() {
 }
 
 // ------------------------------------------------
+
 async function ToggleGradientPlatform() {
-  // const gradientPlatform  = await SDK3DVerse.engineAPI.findEntitiesByEUID("83575f30-fc35-40c1-9173-23052a93a176");
-  // gradientPlatformEntity     = gradientPlatform[0];
   const gradientPlatforms = await SDK3DVerse.engineAPI.findEntitiesByNames(
     "SM_StaticPlatform"
   );
   const gradientPlatform = gradientPlatforms[0];
-
   if (gradientPlatform.isVisible()) {
-    SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
+    await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
   } else {
-    SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
+    await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
   }
-  console.log("Platform Visibility changed to", gradientPlatform.isVisible());
 }
 
 // --------------------------------------------------------------
@@ -468,20 +493,6 @@ function showTabThree() {
   toolboxPanel.classList.remove("hidden");
 }
 
-// function closeTabs() {
-//   document.getElementById("first-tab").classList.add("hidden");
-//   document.getElementById("second-tab").classList.add("hidden");
-//   document.getElementById("third-tab").classList.add("hidden");
-//   document.getElementById("first-tab-selector").classList.remove("active-tab");
-//   document.getElementById("second-tab-selector").classList.remove("active-tab");
-//   document.getElementById("third-tab-selector").classList.remove("active-tab");
-// }
-
-// document.onclick = function(e) {
-//   if(e.target.classList.contains("active-tab")) {
-//     closeTabs();
-//   }}
-
 const firstTabPanels = document.querySelectorAll(".first-panel-item");
 const secondTabPanels = document.querySelectorAll(".second-panel-item");
 const thirdTabPanels = document.querySelectorAll(".third-panel-item");
@@ -506,6 +517,10 @@ thirdTabPanels.forEach((tab) => {
     tab.classList.add("active-part");
   });
 });
+
+
+// document.getElementsByClassName("active-part").addEventListener("click", closeToolbox);
+
 
 //----------------------------------------------------------
 
@@ -554,11 +569,14 @@ function firstWordFromId(selectId, addClass) {
 }
 
 //---------------------------------------------------------------------------
-function toggleSettingsPanel() {
-  document.getElementById("settings-on").classList.toggle("hidden");
-  document.getElementById("settings-off").classList.toggle("hidden");
+const settingsOnIcon = document.getElementById("settings-on");
+const settingsOffIcon = document.getElementById("settings-off");
+const settingsPanel = document.getElementById("settings-panel");
 
-  document.getElementById("settings-panel").classList.toggle("hidden");
+function toggleSettingsPanel() {
+  settingsOnIcon.classList.toggle("hidden");
+  settingsOffIcon.classList.toggle("hidden");
+  settingsPanel.classList.toggle("hidden");
 }
 
 // --------------------------------------------------------------------------
@@ -578,24 +596,37 @@ function toggleDisplayBackground() {
     cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
   const camera = viewport.getCamera();
   let cameraComponent = camera.getComponent("camera");
-  cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
+  // cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
   cameraComponent.dataJSON.displayBackground =
     !cameraComponent.dataJSON.displayBackground;
   camera.setComponent("camera", cameraComponent);
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
+// async function changeCubemap(cubemap) {
+//   const environementEntitys = await SDK3DVerse.engineAPI.findEntitiesByNames(
+//     "Env"
+//   );
+//   const environementEntity = environementEntitys[0];
+//   let envComponent = environementEntity.getComponent("environment");
+//   envComponent = SDK3DVerse.utils.clone(envComponent); //clone du component environment
+//   envComponent.skyboxUUID = cubemap.skyboxUUID;
+//   envComponent.radianceUUID = cubemap.radianceUUID;
+//   envComponent.irradianceUUID = cubemap.irradianceUUID;
+//   environementEntity.setComponent("environment", envComponent);
+//   SDK3DVerse.engineAPI.propagateChanges();
+// }
+
 async function changeCubemap(cubemap) {
-  const environementEntitys = await SDK3DVerse.engineAPI.findEntitiesByNames(
+  const environmentEntities = await SDK3DVerse.engineAPI.findEntitiesByNames(
     "Env"
   );
-  const environementEntity = environementEntitys[0];
-  let envComponent = environementEntity.getComponent("environment");
-  envComponent = SDK3DVerse.utils.clone(envComponent); //clone du component environment
+  const environmentEntity = environmentEntities[0];
+  let envComponent = await environmentEntity.getComponent("environment");
   envComponent.skyboxUUID = cubemap.skyboxUUID;
   envComponent.radianceUUID = cubemap.radianceUUID;
   envComponent.irradianceUUID = cubemap.irradianceUUID;
-  environementEntity.setComponent("environment", envComponent);
+  await environmentEntity.setComponent("environment", envComponent);
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
@@ -605,17 +636,16 @@ async function changeLightIntensity(newIntensity) {
   const viewport =
     cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
   const camera = viewport.getCamera();
-  let cameraComponent = camera.getComponent("camera");
-  cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
+  let cameraComponent = await camera.getComponent("camera");
+  // cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
   cameraComponent.dataJSON.brightness = newIntensity;
-  camera.setComponent("camera", cameraComponent);
+  await camera.setComponent("camera", cameraComponent);
   SDK3DVerse.engineAPI.propagateChanges();
-  console.log("Light updated to", newIntensity);
 }
 
 //---------------------------------------------------------------------------
-var luminositySlider = document.getElementById("luminosity-slider");
-var luminosityValue = document.getElementById("luminosity-value");
+const luminositySlider = document.getElementById("luminosity-slider");
+const luminosityValue = document.getElementById("luminosity-value");
 luminosityValue.innerHTML = luminositySlider.value;
 
 luminositySlider.oninput = function () {
