@@ -34,6 +34,11 @@ async function InitApp() {
     },
   ];
 
+  const toolboxElement = document.querySelector(".toolbox");
+      if (toolboxElement) {
+        toolboxElement.style.display = "none";
+      }
+
   SDK3DVerse.setViewports(viewports);
   SetResolution();
   let debounceResizeTimeout = null;
@@ -61,7 +66,6 @@ async function InitApp() {
     setTimeout(function () {
       document.getElementById("loader").classList.add("hidden");
     }, 500);
-
     SDK3DVerse.updateControllerSetting({ speed: 1 }); //reduce scroll speed
 }
 
@@ -104,8 +108,9 @@ async function ChangeCar(e) {
   startingPrice.innerHTML = gSelectedCar.price;
   startingPriceMobile.innerHTML =
     gSelectedCar.price;
+  switchCar(e.value);
   await ApplySelectedCar();
-  await InitColor();
+  // await InitColor();
   await ApplySelectedMaterial();
 }
 
@@ -190,7 +195,7 @@ async function SelectPart(partName, partSceneUUID) {
 }
 
 var isCarSwitchEnabled = true;
-var carSwitchDelay = 0; //delay to avoid car model switch spam
+var carSwitchDelay = 3000; //delay to avoid car model switch spam
 
 async function nextCar() {
   if (isCarSwitchEnabled){
@@ -415,6 +420,11 @@ function launchModelSelection() {
     element.classList.add("hidden");
   });
 
+  const toolboxElement = document.querySelector(".toolbox");
+  if (toolboxElement) {
+    toolboxElement.style.display = "none";
+  }
+
   document.getElementById("starting-price").innerHTML = gSelectedCar.price;
 }
 
@@ -429,6 +439,11 @@ function launchCustomization() {
     element.classList.add("hidden");
   });
 
+  const toolboxElement = document.querySelector(".toolbox");
+  if (toolboxElement) {
+    toolboxElement.style.display = "block";
+  }
+
   hiddenButtons = document.querySelectorAll(".hidden-button");
   hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
 
@@ -442,84 +457,13 @@ function launchReview() {
   thirdSectionElements.forEach((element) => {
     element.classList.remove("hidden");
   });
+
+  const toolboxElement = document.querySelector(".toolbox");
+  if (toolboxElement) {
+    toolboxElement.style.display = "none";
+  }
 }
 
-// ---------------------------------------------------------------
-
-toolboxPanel = document.getElementById("tab-panels");
-
-function showTabOne() {
-  document.getElementById("first-tab").classList.remove("hidden");
-  document.getElementById("second-tab").classList.add("hidden");
-  document.getElementById("third-tab").classList.add("hidden");
-
-  document.getElementById("first-tab-selector").classList.add("active-tab");
-  document.getElementById("second-tab-selector").classList.remove("active-tab");
-  document.getElementById("third-tab-selector").classList.remove("active-tab");
-
-  document.getElementById("tab-panels").style.borderTopLeftRadius = "0px";
-  document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
-
-  toolboxPanel.classList.remove("hidden");
-}
-
-function showTabTwo() {
-  document.getElementById("first-tab").classList.add("hidden");
-  document.getElementById("second-tab").classList.remove("hidden");
-  document.getElementById("third-tab").classList.add("hidden");
-
-  document.getElementById("first-tab-selector").classList.remove("active-tab");
-  document.getElementById("second-tab-selector").classList.add("active-tab");
-  document.getElementById("third-tab-selector").classList.remove("active-tab");
-
-  document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
-  document.getElementById("tab-panels").style.borderTopRightRadius = "12px";
-
-  toolboxPanel.classList.remove("hidden");
-}
-
-function showTabThree() {
-  document.getElementById("first-tab").classList.add("hidden");
-  document.getElementById("second-tab").classList.add("hidden");
-  document.getElementById("third-tab").classList.remove("hidden");
-
-  document.getElementById("first-tab-selector").classList.remove("active-tab");
-  document.getElementById("second-tab-selector").classList.remove("active-tab");
-  document.getElementById("third-tab-selector").classList.add("active-tab");
-
-  document.getElementById("tab-panels").style.borderTopRightRadius = "0px";
-  document.getElementById("tab-panels").style.borderTopLeftRadius = "12px";
-
-  toolboxPanel.classList.remove("hidden");
-}
-
-const firstTabPanels = document.querySelectorAll(".first-panel-item");
-const secondTabPanels = document.querySelectorAll(".second-panel-item");
-const thirdTabPanels = document.querySelectorAll(".third-panel-item");
-
-firstTabPanels.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    firstTabPanels.forEach((tab) => tab.classList.remove("active-part"));
-    tab.classList.add("active-part");
-  });
-});
-
-secondTabPanels.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    secondTabPanels.forEach((tab) => tab.classList.remove("active-part"));
-    tab.classList.add("active-part");
-  });
-});
-
-thirdTabPanels.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    thirdTabPanels.forEach((tab) => tab.classList.remove("active-part"));
-    tab.classList.add("active-part");
-  });
-});
-
-
-// document.getElementsByClassName("active-part").addEventListener("click", closeToolbox);
 
 
 //----------------------------------------------------------
@@ -630,6 +574,7 @@ async function changeCubemap(cubemap) {
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
+
 //---------------------------------------------------------------------------
 async function changeLightIntensity(newIntensity) {
   const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
@@ -691,3 +636,12 @@ async function changeCameraPosition(
     10
   );
 }
+
+
+// window.launchModelSelection = launchModelSelection;
+// window.launchCustomization = launchCustomization;
+// window.launchReview = launchReview;
+
+window.changeSpoiler = ChangeSpoiler;
+window.changeRearBumper = ChangeRearBumper;
+window.changeFrontBumper = ChangeFrontBumper;
