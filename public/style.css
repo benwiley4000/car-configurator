@@ -54,11 +54,11 @@ canvas {
   background-color: #ec6244;
   border-radius: 15px;
 }
-path{
+.arrow-hover{
   transition: 0.1s ease;
 }
 
-.arrow:hover path{
+.arrow:hover .arrow-hover{
   stroke: #a1a1a1;
 }
 
