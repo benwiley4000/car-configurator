@@ -608,7 +608,7 @@ function onMediaQueryChange(e) {
         -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
         0.9640212059020996,
       ],
-      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 2 })
+      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 1 })
     );
   } else {
     console.log("> 768px");
