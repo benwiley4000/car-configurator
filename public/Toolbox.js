@@ -34,9 +34,15 @@ const categoryMapping = {
         // ... Add other conditions for other categories and functions here
     };
 
+    const resetToolbox = () => {
+      setSelectedCategory("frontBumpers"); // Set the first category as active
+      setSelectedPartIndex({}); // Clear the active part indices
+    };
+
     // Function to switch between cars
     window.switchCar = (index) => {
       setSelectedCarIndex(index);
+      resetToolbox();
     };
   
     // Function to switch between categories
