@@ -66,7 +66,7 @@ async function InitApp() {
     setTimeout(function () {
       document.getElementById("loader").classList.add("hidden");
     }, 500);
-    SDK3DVerse.updateControllerSetting({ speed: 1 }); //reduce scroll speed
+    // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -607,7 +607,8 @@ function onMediaQueryChange(e) {
       [
         -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
         0.9640212059020996,
-      ]
+      ],
+      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 2 })
     );
   } else {
     console.log("> 768px");
@@ -616,7 +617,8 @@ function onMediaQueryChange(e) {
       [
         -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
         0.9428451061248779,
-      ]
+      ],
+      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 })
     );
   }
 }
