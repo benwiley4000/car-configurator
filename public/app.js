@@ -2,7 +2,7 @@ import AppConfig from "./AppConfig.js";
 import { userToken } from "./secrets.js";
 
 //--------------------------------------------------------------------------------------------------
-window.addEventListener("load", InitApp);
+window.addEventListener("load", initApp);
 
 let gCarAttachment = null;
 let gSelectedCar = null;
@@ -15,14 +15,11 @@ let carParts = {
   rearBumper: null,
   spoiler: null,
 };
-let gCarIndex = 0;
 
 //--------------------------------------------------------------------------------------------------
-async function InitApp() {
+async function initApp() {
   SDK3DVerse.setApiVersion("v1");
   SDK3DVerse.webAPI.setUserToken(userToken);
-
-  ReactDOM.render(<Toolbox />, document.querySelector(".toolbox"));
 
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 
@@ -48,28 +45,28 @@ async function InitApp() {
   }
 
   SDK3DVerse.setViewports(viewports);
-  SetResolution();
+  setResolution();
   let debounceResizeTimeout = null;
   window.addEventListener("resize", () => {
     if (debounceResizeTimeout) {
       clearTimeout(debounceResizeTimeout);
     }
     debounceResizeTimeout = setTimeout(() => {
-      SetResolution(false);
+      setResolution(false);
       debounceResizeTimeout = null;
     }, 100);
   });
 
-  const sessionCreated = await Connect();
+  const sessionCreated = await connect();
 
-  await toggleGradientPlatform();
-  await changeCubemap(0);
-  await InitCarAttachment();
+  await CarConfiguratorViewModel.toggleGradientPlatform();
+  await CarConfiguratorViewModel.changeCubemap(0);
+  await initCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
-  await ChangeCar({ value: 0 });
+  await CarConfiguratorViewModel.changeCar({ value: 0 });
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
-  SetInformation("Loading complete");
+  setInformation("Loading complete");
   document.getElementById("loader").classList.add("opacity-0");
   setTimeout(function () {
     document.getElementById("loader").classList.add("hidden");
@@ -78,7 +75,7 @@ async function InitApp() {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function InitCarAttachment() {
+async function initCarAttachment() {
   [gCarAttachment] =
     await SDK3DVerse.engineAPI.findEntitiesByNames("CAR_ATTACHMENT");
 }
@@ -94,66 +91,8 @@ const carEngineCapacity = document.getElementById("engine-capacity-number");
 const startingPrice = document.getElementById("starting-price");
 const startingPriceMobile = document.getElementById("starting-price-mobile");
 
-async function ChangeCar(e) {
-  gSelectedCar = AppConfig.cars[e.value];
-  await RemoveExistingCar();
-  carName.innerHTML = gSelectedCar.name;
-  firstWordFromId("car_name", "highlighted-word");
-  carDescription.innerHTML = gSelectedCar.description;
-  carMaximumSpeed.innerHTML = gSelectedCar.maxSpeed;
-  carAcceleration.innerHTML = gSelectedCar.acceleration;
-  carMaximumPower.innerHTML = gSelectedCar.maximumPower;
-  carMaximumTorque.innerHTML = gSelectedCar.maximumTorque;
-  carEngineCapacity.innerHTML = gSelectedCar.engineCapacity;
-  startingPrice.innerHTML = gSelectedCar.price;
-  startingPriceMobile.innerHTML = gSelectedCar.price;
-  switchCar(e.value);
-  await ApplySelectedCar();
-  // await InitColor();
-  await ApplySelectedMaterial();
-}
-
 //--------------------------------------------------------------------------------------------------
-async function changeSpoiler(i) {
-  if (i >= gSelectedCar.spoilers.length) {
-    return;
-  }
-
-  carParts.spoiler = await ChangePart(
-    carParts.spoiler,
-    gSelectedCar.name + " SPOILER " + i,
-    gSelectedCar.spoilers[i],
-  );
-}
-
-//--------------------------------------------------------------------------------------------------
-async function changeFrontBumper(i) {
-  if (i >= gSelectedCar.frontBumpers.length) {
-    return;
-  }
-
-  carParts.frontBumper = await ChangePart(
-    carParts.frontBumper,
-    gSelectedCar.name + " FRONT BUMPER " + i,
-    gSelectedCar.frontBumpers[i],
-  );
-}
-
-//--------------------------------------------------------------------------------------------------
-async function changeRearBumper(i) {
-  if (i >= gSelectedCar.rearBumpers.length) {
-    return;
-  }
-
-  carParts.rearBumper = await ChangePart(
-    carParts.rearBumper,
-    gSelectedCar.name + " REAR BUMPER " + i,
-    gSelectedCar.rearBumpers[i],
-  );
-}
-
-//--------------------------------------------------------------------------------------------------
-async function RemoveExistingCar() {
+async function removeExistingCar() {
   const children = await SDK3DVerse.engineAPI.getEntityChildren(gCarAttachment);
   await SDK3DVerse.engineAPI.deleteEntities(children);
 
@@ -164,28 +103,16 @@ async function RemoveExistingCar() {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ApplySelectedCar() {
-  carParts.body = await ChangePart(
-    carParts.body,
-    gSelectedCar.name,
-    gSelectedCar.sceneUUID,
-  );
-  await changeFrontBumper(0);
-  await changeRearBumper(0);
-  await changeSpoiler(0);
-}
-
-//--------------------------------------------------------------------------------------------------
-async function ChangePart(part, name, partUUID) {
+async function changePart(part, name, partUUID) {
   if (part !== null) {
     await SDK3DVerse.engineAPI.deleteEntities([part]);
   }
 
-  return await SelectPart(name, partUUID);
+  return await selectPart(name, partUUID);
 }
 
 //--------------------------------------------------------------------------------------------------
-async function SelectPart(partName, partSceneUUID) {
+async function selectPart(partName, partSceneUUID) {
   const part = { debug_name: { value: partName } };
   SDK3DVerse.utils.resolveComponentDependencies(part, "scene_ref");
 
@@ -193,64 +120,15 @@ async function SelectPart(partName, partSceneUUID) {
   return await SDK3DVerse.engineAPI.spawnEntity(gCarAttachment, part);
 }
 
-var isCarSwitchEnabled = true;
-var carSwitchDelay = 3000; //delay to avoid car model switch spam
-
-async function nextCar() {
-  if (isCarSwitchEnabled) {
-    isCarSwitchEnabled = false;
-    gCarIndex = (gCarIndex + 1) % AppConfig.cars.length;
-    await ChangeCar({ value: gCarIndex });
-  }
-  setTimeout(function () {
-    isCarSwitchEnabled = true;
-  }, carSwitchDelay);
-}
-async function previousCar() {
-  if (isCarSwitchEnabled) {
-    isCarSwitchEnabled = false;
-    gCarIndex = gCarIndex === 0 ? AppConfig.cars.length - 1 : gCarIndex - 1;
-    await ChangeCar({ value: gCarIndex });
-  }
-  setTimeout(function () {
-    isCarSwitchEnabled = true;
-  }, carSwitchDelay);
-}
-
 //--------------------------------------------------------------------------------------------------
-// use setTimeout to delay a task that may be async (returning a promise) or not.
-// wrap the setTimeout in a Promise that can be awaited.
-function asyncSetTimeout(task, delay) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let result;
-      try {
-        result = task();
-      } catch (error) {
-        // the task has thrown an error
-        return reject(error);
-      }
-
-      if (result && typeof result.then === "function") {
-        // the result is a promise so we deal with it
-        return result.then(resolve).catch(reject);
-      }
-
-      // the result is not a promise so we can resolve it
-      return resolve(result);
-    }, delay);
-  });
-}
-
-//--------------------------------------------------------------------------------------------------
-function SetInformation(str) {
+function setInformation(str) {
   const infoSpan = document.getElementById("info_span");
   infoSpan.innerHTML = str;
   console.debug(str);
 }
 
 //--------------------------------------------------------------------------------------------------
-function SetResolution(showInfo = true) {
+function setResolution(showInfo = true) {
   const container = document.getElementById("container");
   const canvasSize = container.getBoundingClientRect();
 
@@ -272,36 +150,13 @@ function SetResolution(showInfo = true) {
   SDK3DVerse.setResolution(w, h, scale);
 
   if (showInfo) {
-    SetInformation(`Setting resolution to ${w} x ${h} (scale=${scale})`);
+    setInformation(`Setting resolution to ${w} x ${h} (scale=${scale})`);
   }
 }
 
-let rotationState = false;
 //--------------------------------------------------------------------------------------------------
-const rotateOnIcon = document.getElementById("rotate-on");
-const rotateOffIcon = document.getElementById("rotate-off");
-function toggleRotation() {
-  const event = rotationState ? "pause_simulation" : "start_simulation";
-  rotationState = !rotationState;
-
-  SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
-
-  rotateOnIcon.classList.toggle("hidden");
-  rotateOffIcon.classList.toggle("hidden");
-}
-
-//--------------------------------------------------------------------------------------------------
-function Reset() {
-  SDK3DVerse.engineAPI.fireEvent(
-    SDK3DVerse.utils.invalidUUID,
-    "stop_simulation",
-  );
-  rotationState = false;
-}
-
-//--------------------------------------------------------------------------------------------------
-async function Connect() {
-  SetInformation("Connecting to 3dverse...");
+async function connect() {
+  setInformation("Connecting to 3dverse...");
 
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID,
@@ -310,35 +165,12 @@ async function Connect() {
   SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
   SDK3DVerse.startStreamer(connectionInfo);
   await SDK3DVerse.connectToEditor();
-  SetInformation("Connection to 3dverse established...");
+  setInformation("Connection to 3dverse established...");
   return true; //connectionInfo.sessionCreated;
 }
 
 //--------------------------------------------------------------------------------------------------
-async function InitColor() {
-  const desc = await getAssetDescription(
-    "materials",
-    gSelectedCar.paintMaterialUUID,
-  );
-  desc.dataJson.albedo = gColor;
-}
-
-//--------------------------------------------------------------------------------------------------
-async function changeColor(color) {
-  const desc = await getAssetDescription(
-    "materials",
-    gSelectedMaterial.matUUID,
-  );
-  gColor = color;
-  desc.dataJson.albedo = color;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.paintMaterialUUID,
-    desc,
-  );
-}
-
-//--------------------------------------------------------------------------------------------------
-async function ApplySelectedMaterial() {
+async function applySelectedMaterial() {
   const desc = await getAssetDescription(
     "materials",
     gSelectedMaterial.matUUID,
@@ -366,123 +198,6 @@ async function getAssetDescription(assetType, assetUUID) {
   return data;
 }
 
-const lightOnIcon = document.getElementById("light-on");
-const lightOffIcon = document.getElementById("light-off");
-async function toggleLights() {
-  lightOnIcon.classList.toggle("hidden");
-  lightOffIcon.classList.toggle("hidden");
-
-  const desc1 = await getAssetDescription(
-    "materials",
-    gSelectedCar.headLightsMatUUID,
-  );
-  desc1.dataJson.emissionIntensity = gIntensity;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.headLightsMatUUID,
-    desc1,
-  );
-
-  const desc2 = await getAssetDescription(
-    "materials",
-    gSelectedCar.rearLightsMatUUID,
-  );
-  desc2.dataJson.emissionIntensity = gIntensity;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.rearLightsMatUUID,
-    desc2,
-  );
-
-  gIntensity = gIntensity === 0 ? 100 : 0;
-}
-
-// ------------------------------------------------
-
-async function toggleGradientPlatform() {
-  const gradientPlatforms =
-    await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
-  const gradientPlatform = gradientPlatforms[0];
-  if (gradientPlatform.isVisible()) {
-    await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
-  } else {
-    await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
-  }
-}
-
-// --------------------------------------------------------------
-
-const firstSectionElements = document.querySelectorAll(
-  ".first-section-element",
-);
-const secondSectionElements = document.querySelectorAll(
-  ".second-section-element",
-);
-const thirdSectionElements = document.querySelectorAll(
-  ".third-section-element",
-);
-
-function launchModelSelection() {
-  firstSectionElements.forEach((element) => {
-    element.classList.remove("hidden");
-  });
-  secondSectionElements.forEach((element) => {
-    element.classList.add("hidden");
-  });
-
-  const toolboxElement = document.querySelector(".toolbox");
-  if (toolboxElement) {
-    toolboxElement.style.display = "none";
-  }
-
-  document.getElementById("starting-price").innerHTML = gSelectedCar.price;
-}
-
-function launchCustomization() {
-  firstSectionElements.forEach((element) => {
-    element.classList.add("hidden");
-  });
-  secondSectionElements.forEach((element) => {
-    element.classList.remove("hidden");
-  });
-  thirdSectionElements.forEach((element) => {
-    element.classList.add("hidden");
-  });
-
-  const toolboxElement = document.querySelector(".toolbox");
-  if (toolboxElement) {
-    toolboxElement.style.display = "block";
-  }
-
-  const hiddenButtons = document.querySelectorAll(".hidden-button");
-  hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
-
-  document.getElementById("final-price").innerHTML = gSelectedCar.price;
-}
-
-function launchReview() {
-  secondSectionElements.forEach((element) => {
-    element.classList.add("hidden");
-  });
-  thirdSectionElements.forEach((element) => {
-    element.classList.remove("hidden");
-  });
-
-  const toolboxElement = document.querySelector(".toolbox");
-  if (toolboxElement) {
-    toolboxElement.style.display = "none";
-  }
-}
-
-//----------------------------------------------------------
-
-const colors = document.querySelectorAll(".color");
-
-colors.forEach((color) => {
-  color.addEventListener("click", () => {
-    colors.forEach((color) => color.classList.remove("active-color"));
-    color.classList.add("active-color");
-  });
-});
-
 // ---------------------------------------------------------
 
 const materialIcons = document.querySelectorAll(".material-icon");
@@ -493,16 +208,6 @@ materialIcons.forEach((icon) => {
     icon.classList.add("active-material");
   });
 });
-
-//--------------------------------------------------------------------------------------------------
-async function changeMaterial(matIndex) {
-  gSelectedMaterial = AppConfig.materials[matIndex];
-  await ApplySelectedMaterial();
-
-  colors.forEach((color) => {
-    colors.forEach((color) => color.classList.remove("active-color"));
-  });
-}
 
 //-----------------------------------------------------------------------------------
 function firstWordFromId(selectId, addClass) {
@@ -516,54 +221,6 @@ function firstWordFromId(selectId, addClass) {
     ">".concat(splitWords[0], "</span>") +
     "&#32;" +
     originalString.substr(originalString.indexOf(" ") + 1);
-}
-
-//---------------------------------------------------------------------------
-const settingsOnIcon = document.getElementById("settings-on");
-const settingsOffIcon = document.getElementById("settings-off");
-const settingsPanel = document.getElementById("settings-panel");
-
-function toggleSettingsPanel() {
-  settingsOnIcon.classList.toggle("hidden");
-  settingsOffIcon.classList.toggle("hidden");
-  settingsPanel.classList.toggle("hidden");
-}
-
-// --------------------------------------------------------------------------
-const cubemaps = document.querySelectorAll(".cubemap");
-
-cubemaps.forEach((cubemap) => {
-  cubemap.addEventListener("click", () => {
-    cubemaps.forEach((cubemap) => cubemap.classList.remove("active-cubemap"));
-    cubemap.classList.add("active-cubemap");
-  });
-});
-
-//---------------------------------------------------------------------------
-function toggleDisplayBackground() {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-  const camera = viewport.getCamera();
-  let cameraComponent = camera.getComponent("camera");
-  // cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
-  cameraComponent.dataJSON.displayBackground =
-    !cameraComponent.dataJSON.displayBackground;
-  camera.setComponent("camera", cameraComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
-}
-
-async function changeCubemap(cubemapIndex) {
-  const cubemap = AppConfig.cubemaps[cubemapIndex];
-  const environmentEntities =
-    await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
-  const environmentEntity = environmentEntities[0];
-  let envComponent = await environmentEntity.getComponent("environment");
-  envComponent.skyboxUUID = cubemap.skyboxUUID;
-  envComponent.radianceUUID = cubemap.radianceUUID;
-  envComponent.irradianceUUID = cubemap.irradianceUUID;
-  await environmentEntity.setComponent("environment", envComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
 }
 
 //---------------------------------------------------------------------------
@@ -618,7 +275,7 @@ async function changeCameraPosition(
   destinationPosition,
   destinationOrientation,
 ) {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const { cameraAPI } = SDK3DVerse.engineAPI;
   const viewport =
     cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
 
@@ -629,26 +286,319 @@ async function changeCameraPosition(
     10,
   );
 }
-window.changeFrontBumper = changeFrontBumper;
 
-Object.assign(window, {
-  nextCar,
-  previousCar,
-  changeSpoiler,
-  changeRearBumper,
-  changeFrontBumper,
-  launchModelSelection,
-  launchCustomization,
-  launchReview,
-  changeColor,
-  changeMaterial,
-  toggleLights,
-  toggleRotation,
-  toggleSettingsPanel,
-  toggleGradientPlatform,
-  toggleDisplayBackground,
-  changeCubemap,
+const firstSectionElements = document.querySelectorAll(
+  ".first-section-element",
+);
+const secondSectionElements = document.querySelectorAll(
+  ".second-section-element",
+);
+const thirdSectionElements = document.querySelectorAll(
+  ".third-section-element",
+);
+
+const colors = document.querySelectorAll(".color");
+
+// initialize color states
+colors.forEach((color) => {
+  color.addEventListener("click", () => {
+    colors.forEach((color) => color.classList.remove("active-color"));
+    color.classList.add("active-color");
+  });
 });
+
+const lightOnIcon = document.getElementById("light-on");
+const lightOffIcon = document.getElementById("light-off");
+
+let rotationState = false;
+const rotateOnIcon = document.getElementById("rotate-on");
+const rotateOffIcon = document.getElementById("rotate-off");
+
+const settingsOnIcon = document.getElementById("settings-on");
+const settingsOffIcon = document.getElementById("settings-off");
+const settingsPanel = document.getElementById("settings-panel");
+
+// this currently sets up cubemap state independent of the state
+// in code. we might want to change that.
+const cubemaps = document.querySelectorAll(".cubemap");
+cubemaps.forEach((cubemap) => {
+  cubemap.addEventListener("click", () => {
+    cubemaps.forEach((cubemap) => cubemap.classList.remove("active-cubemap"));
+    cubemap.classList.add("active-cubemap");
+  });
+});
+
+/** @global */
+const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
+  /** @private */
+  isCarSwitchEnabled = true;
+  /** @private */
+  carSwitchDelay = 3000; // delay to avoid car model switch spam
+  /** @private */
+  selectedCarIndex = 0;
+  /** @private */
+  toolboxRoot = ReactDOM.createRoot(document.querySelector(".toolbox"));
+
+  constructor() {
+    this.renderToolbox();
+  }
+
+  // PRIVATE METHODS
+
+  renderToolbox() {
+    this.toolboxRoot.render(
+      <Toolbox viewModel={this} selectedCarIndex={this.selectedCarIndex} />,
+    );
+  }
+
+  async applySelectedCar() {
+    carParts.body = await changePart(
+      carParts.body,
+      gSelectedCar.name,
+      gSelectedCar.sceneUUID,
+    );
+    await this.changeFrontBumper(0);
+    await this.changeRearBumper(0);
+    await this.changeSpoiler(0);
+  }
+
+  async changeCar({ value: selectedCarIndex }) {
+    gSelectedCar = AppConfig.cars[selectedCarIndex];
+    await removeExistingCar();
+    carName.innerHTML = gSelectedCar.name;
+    firstWordFromId("car_name", "highlighted-word");
+    carDescription.innerHTML = gSelectedCar.description;
+    carMaximumSpeed.innerHTML = gSelectedCar.maxSpeed;
+    carAcceleration.innerHTML = gSelectedCar.acceleration;
+    carMaximumPower.innerHTML = gSelectedCar.maximumPower;
+    carMaximumTorque.innerHTML = gSelectedCar.maximumTorque;
+    carEngineCapacity.innerHTML = gSelectedCar.engineCapacity;
+    startingPrice.innerHTML = gSelectedCar.price;
+    startingPriceMobile.innerHTML = gSelectedCar.price;
+    this.renderToolbox();
+    await this.applySelectedCar();
+    await applySelectedMaterial();
+  }
+
+  // PUBLIC METHODS
+
+  async nextCar() {
+    if (this.isCarSwitchEnabled) {
+      this.isCarSwitchEnabled = false;
+      this.selectedCarIndex =
+        (this.selectedCarIndex + 1) % AppConfig.cars.length;
+      await this.changeCar({ value: this.selectedCarIndex });
+    }
+    setTimeout(function () {
+      this.isCarSwitchEnabled = true;
+    }, this.carSwitchDelay);
+  }
+
+  async previousCar() {
+    if (this.isCarSwitchEnabled) {
+      this.isCarSwitchEnabled = false;
+      this.selectedCarIndex =
+        this.selectedCarIndex === 0
+          ? AppConfig.cars.length - 1
+          : this.selectedCarIndex - 1;
+      await this.changeCar({ value: this.selectedCarIndex });
+    }
+    setTimeout(function () {
+      this.isCarSwitchEnabled = true;
+    }, this.carSwitchDelay);
+  }
+
+  async changeSpoiler(i) {
+    if (i >= gSelectedCar.spoilers.length) {
+      return;
+    }
+
+    carParts.spoiler = await changePart(
+      carParts.spoiler,
+      gSelectedCar.name + " SPOILER " + i,
+      gSelectedCar.spoilers[i],
+    );
+  }
+
+  async changeFrontBumper(i) {
+    if (i >= gSelectedCar.frontBumpers.length) {
+      return;
+    }
+
+    carParts.frontBumper = await changePart(
+      carParts.frontBumper,
+      gSelectedCar.name + " FRONT BUMPER " + i,
+      gSelectedCar.frontBumpers[i],
+    );
+  }
+
+  async changeRearBumper(i) {
+    if (i >= gSelectedCar.rearBumpers.length) {
+      return;
+    }
+
+    carParts.rearBumper = await changePart(
+      carParts.rearBumper,
+      gSelectedCar.name + " REAR BUMPER " + i,
+      gSelectedCar.rearBumpers[i],
+    );
+  }
+
+  launchModelSelection() {
+    firstSectionElements.forEach((element) => {
+      element.classList.remove("hidden");
+    });
+    secondSectionElements.forEach((element) => {
+      element.classList.add("hidden");
+    });
+
+    const toolboxElement = document.querySelector(".toolbox");
+    if (toolboxElement) {
+      toolboxElement.style.display = "none";
+    }
+
+    document.getElementById("starting-price").innerHTML = gSelectedCar.price;
+  }
+
+  launchCustomization() {
+    firstSectionElements.forEach((element) => {
+      element.classList.add("hidden");
+    });
+    secondSectionElements.forEach((element) => {
+      element.classList.remove("hidden");
+    });
+    thirdSectionElements.forEach((element) => {
+      element.classList.add("hidden");
+    });
+
+    const toolboxElement = document.querySelector(".toolbox");
+    if (toolboxElement) {
+      toolboxElement.style.display = "block";
+    }
+
+    const hiddenButtons = document.querySelectorAll(".hidden-button");
+    hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
+
+    document.getElementById("final-price").innerHTML = gSelectedCar.price;
+  }
+
+  launchReview() {
+    secondSectionElements.forEach((element) => {
+      element.classList.add("hidden");
+    });
+    thirdSectionElements.forEach((element) => {
+      element.classList.remove("hidden");
+    });
+
+    const toolboxElement = document.querySelector(".toolbox");
+    if (toolboxElement) {
+      toolboxElement.style.display = "none";
+    }
+  }
+
+  async changeColor(color) {
+    const desc = await getAssetDescription(
+      "materials",
+      gSelectedMaterial.matUUID,
+    );
+    gColor = color;
+    desc.dataJson.albedo = color;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      gSelectedCar.paintMaterialUUID,
+      desc,
+    );
+  }
+
+  async changeMaterial(matIndex) {
+    gSelectedMaterial = AppConfig.materials[matIndex];
+    await applySelectedMaterial();
+
+    // remove active color state after changing materials
+    colors.forEach((color) => {
+      colors.forEach((color) => color.classList.remove("active-color"));
+    });
+  }
+
+  async changeCubemap(cubemapIndex) {
+    const cubemap = AppConfig.cubemaps[cubemapIndex];
+    const environmentEntities =
+      await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
+    const environmentEntity = environmentEntities[0];
+    let envComponent = await environmentEntity.getComponent("environment");
+    envComponent.skyboxUUID = cubemap.skyboxUUID;
+    envComponent.radianceUUID = cubemap.radianceUUID;
+    envComponent.irradianceUUID = cubemap.irradianceUUID;
+    await environmentEntity.setComponent("environment", envComponent);
+    SDK3DVerse.engineAPI.propagateChanges();
+  }
+
+  async toggleLights() {
+    lightOnIcon.classList.toggle("hidden");
+    lightOffIcon.classList.toggle("hidden");
+
+    const desc1 = await getAssetDescription(
+      "materials",
+      gSelectedCar.headLightsMatUUID,
+    );
+    desc1.dataJson.emissionIntensity = gIntensity;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      gSelectedCar.headLightsMatUUID,
+      desc1,
+    );
+
+    const desc2 = await getAssetDescription(
+      "materials",
+      gSelectedCar.rearLightsMatUUID,
+    );
+    desc2.dataJson.emissionIntensity = gIntensity;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      gSelectedCar.rearLightsMatUUID,
+      desc2,
+    );
+
+    gIntensity = gIntensity === 0 ? 100 : 0;
+  }
+
+  toggleRotation() {
+    const event = rotationState ? "pause_simulation" : "start_simulation";
+    rotationState = !rotationState;
+
+    SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+
+    rotateOnIcon.classList.toggle("hidden");
+    rotateOffIcon.classList.toggle("hidden");
+  }
+
+  toggleSettingsPanel() {
+    settingsOnIcon.classList.toggle("hidden");
+    settingsOffIcon.classList.toggle("hidden");
+    settingsPanel.classList.toggle("hidden");
+  }
+
+  async toggleGradientPlatform() {
+    const [gradientPlatform] =
+      await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
+    if (gradientPlatform.isVisible()) {
+      await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
+    } else {
+      await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
+    }
+  }
+
+  toggleDisplayBackground() {
+    const { cameraAPI } = SDK3DVerse.engineAPI;
+    const viewport =
+      cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+    const camera = viewport.getCamera();
+    const cameraComponent = camera.getComponent("camera");
+    cameraComponent.dataJSON.displayBackground =
+      !cameraComponent.dataJSON.displayBackground;
+    camera.setComponent("camera", cameraComponent);
+    SDK3DVerse.engineAPI.propagateChanges();
+  }
+})();
+
+Object.assign(window, { CarConfiguratorViewModel });
 
 // Separate mapping object for new category and part names
 const categoryMapping = {
@@ -664,12 +614,11 @@ const partNameMapping = {
   // Add more mappings for other categories if needed
 };
 
-function Toolbox() {
+function Toolbox({ viewModel, selectedCarIndex }) {
   // Extract data from AppConfig.js
   const { cars } = AppConfig;
 
-  // State variables to keep track of the selected car, category, and part
-  const [selectedCarIndex, setSelectedCarIndex] = React.useState(0);
+  // State variables to keep track of the selected category, and part
   const [selectedCategory, setSelectedCategory] =
     React.useState("frontBumpers");
   const [selectedPartIndex, setSelectedPartIndex] = React.useState({});
@@ -678,25 +627,22 @@ function Toolbox() {
   const callSpecificFunction = (category, elementIndex) => {
     // Check the category and index and call the corresponding function
     if (category === "spoilers") {
-      changeSpoiler(elementIndex);
+      viewModel.changeSpoiler(elementIndex);
     } else if (category === "frontBumpers") {
-      changeFrontBumper(elementIndex);
+      viewModel.changeFrontBumper(elementIndex);
     } else if (category === "rearBumpers") {
-      changeRearBumper(elementIndex);
+      viewModel.changeRearBumper(elementIndex);
     }
     // ... Add other conditions for other categories and functions here
   };
 
-  const resetToolbox = () => {
-    setSelectedCategory("frontBumpers"); // Set the first category as active
-    setSelectedPartIndex({}); // Clear the active part indices
-  };
-
-  // Function to switch between cars
-  window.switchCar = (index) => {
-    setSelectedCarIndex(index);
-    resetToolbox();
-  };
+  React.useEffect(
+    function resetToolbox() {
+      setSelectedCategory("frontBumpers"); // Set the first category as active
+      setSelectedPartIndex({}); // Clear the active part indices
+    },
+    [selectedCarIndex],
+  );
 
   // Function to switch between categories
   const switchCategory = (category) => {
