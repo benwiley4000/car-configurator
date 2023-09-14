@@ -29,7 +29,8 @@ AppConfig = {
   cars: [
     {
       name: "Dodge Viper SRT",
-      description: "The legend became infamous after ex-Top Gear presenter Richard Hammond crashed one of only eight cars build.",
+      description:
+        "The legend became infamous after ex-Top Gear presenter Richard Hammond crashed one of only eight cars build.",
       price: "346 000$",
       sceneUUID: "6d4481b2-69fb-4521-ac39-47f3a9ad7c7e",
       paintMaterialUUID: "85f74efa-1f3e-4ddb-8b16-dad907d2ecad",
@@ -55,7 +56,8 @@ AppConfig = {
     },
     {
       name: "Lamborghini Urus",
-      description: "Lamborghini Urus is the first Super Sport Utility Vehicle in the world, merging the soul of a super sports car with the practical functionality of an SUV.",
+      description:
+        "Lamborghini Urus is the first Super Sport Utility Vehicle in the world, merging the soul of a super sports car with the practical functionality of an SUV.",
       price: "228 000$",
       sceneUUID: "0c6a9f74-feb4-4aed-8f59-463c24da1b2f",
       paintMaterialUUID: "20f3387f-b549-49ce-bf21-1fec67abef63",

@@ -54,11 +54,11 @@ canvas {
   background-color: #ec6244;
   border-radius: 15px;
 }
-.arrow-hover{
+.arrow-hover {
   transition: 0.1s ease;
 }
 
-.arrow:hover .arrow-hover{
+.arrow:hover .arrow-hover {
   stroke: #a1a1a1;
 }
 
@@ -91,7 +91,6 @@ canvas {
 }
 
 /* PART SELECTION MENU */
-
 
 .active-tab {
   background-color: #272727 !important;
@@ -174,7 +173,7 @@ canvas {
 /* MEDIA QUERIES */
 
 @media (max-width: 768px) {
-  .toolbox{
+  .toolbox {
     display: none;
   }
   #model-infos {
@@ -216,7 +215,7 @@ canvas {
   .cubemap {
     margin: 0 !important;
   }
-  #car_description{
+  #car_description {
     display: none !important;
   }
 }

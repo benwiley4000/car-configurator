@@ -35,9 +35,9 @@ async function InitApp() {
   ];
 
   const toolboxElement = document.querySelector(".toolbox");
-      if (toolboxElement) {
-        toolboxElement.style.display = "none";
-      }
+  if (toolboxElement) {
+    toolboxElement.style.display = "none";
+  }
 
   SDK3DVerse.setViewports(viewports);
   SetResolution();
@@ -62,52 +62,43 @@ async function InitApp() {
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
   SetInformation("Loading complete");
-    document.getElementById("loader").classList.add("opacity-0");
-    setTimeout(function () {
-      document.getElementById("loader").classList.add("hidden");
-    }, 500);
-    // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
+  document.getElementById("loader").classList.add("opacity-0");
+  setTimeout(function () {
+    document.getElementById("loader").classList.add("hidden");
+  }, 500);
+  // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
 }
 
 //--------------------------------------------------------------------------------------------------
 async function InitCarAttachment() {
-  [gCarAttachment] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-    "CAR_ATTACHMENT"
-  );
+  [gCarAttachment] =
+    await SDK3DVerse.engineAPI.findEntitiesByNames("CAR_ATTACHMENT");
 }
 
 //--------------------------------------------------------------------------------------------------
 const carName = document.getElementById("car_name");
 const carDescription = document.getElementById("car_description");
 const carMaximumSpeed = document.getElementById("maximum-speed-number");
-const carAcceleration =  document.getElementById("acceleration-number");
+const carAcceleration = document.getElementById("acceleration-number");
 const carMaximumPower = document.getElementById("maximum-power-number");
 const carMaximumTorque = document.getElementById("maximum-torque-number");
 const carEngineCapacity = document.getElementById("engine-capacity-number");
 const startingPrice = document.getElementById("starting-price");
 const startingPriceMobile = document.getElementById("starting-price-mobile");
 
-
 async function ChangeCar(e) {
   gSelectedCar = AppConfig.cars[e.value];
   await RemoveExistingCar();
   carName.innerHTML = gSelectedCar.name;
   firstWordFromId("car_name", "highlighted-word");
-  carDescription.innerHTML =
-    gSelectedCar.description;
-  carMaximumSpeed.innerHTML =
-    gSelectedCar.maxSpeed;
-  carAcceleration.innerHTML =
-    gSelectedCar.acceleration;
-  carMaximumPower.innerHTML =
-    gSelectedCar.maximumPower;
-  carMaximumTorque.innerHTML =
-    gSelectedCar.maximumTorque;
-  carEngineCapacity.innerHTML =
-    gSelectedCar.engineCapacity;
+  carDescription.innerHTML = gSelectedCar.description;
+  carMaximumSpeed.innerHTML = gSelectedCar.maxSpeed;
+  carAcceleration.innerHTML = gSelectedCar.acceleration;
+  carMaximumPower.innerHTML = gSelectedCar.maximumPower;
+  carMaximumTorque.innerHTML = gSelectedCar.maximumTorque;
+  carEngineCapacity.innerHTML = gSelectedCar.engineCapacity;
   startingPrice.innerHTML = gSelectedCar.price;
-  startingPriceMobile.innerHTML =
-    gSelectedCar.price;
+  startingPriceMobile.innerHTML = gSelectedCar.price;
   switchCar(e.value);
   await ApplySelectedCar();
   // await InitColor();
@@ -123,7 +114,7 @@ async function ChangeSpoiler(i) {
   carParts.spoiler = await ChangePart(
     carParts.spoiler,
     gSelectedCar.name + " SPOILER " + i,
-    gSelectedCar.spoilers[i]
+    gSelectedCar.spoilers[i],
   );
 }
 
@@ -136,7 +127,7 @@ async function ChangeFrontBumper(i) {
   carParts.frontBumper = await ChangePart(
     carParts.frontBumper,
     gSelectedCar.name + " FRONT BUMPER " + i,
-    gSelectedCar.frontBumpers[i]
+    gSelectedCar.frontBumpers[i],
   );
 }
 
@@ -149,7 +140,7 @@ async function ChangeRearBumper(i) {
   carParts.rearBumper = await ChangePart(
     carParts.rearBumper,
     gSelectedCar.name + " REAR BUMPER " + i,
-    gSelectedCar.rearBumpers[i]
+    gSelectedCar.rearBumpers[i],
   );
 }
 
@@ -169,7 +160,7 @@ async function ApplySelectedCar() {
   carParts.body = await ChangePart(
     carParts.body,
     gSelectedCar.name,
-    gSelectedCar.sceneUUID
+    gSelectedCar.sceneUUID,
   );
   await ChangeFrontBumper(0);
   await ChangeRearBumper(0);
@@ -198,24 +189,24 @@ var isCarSwitchEnabled = true;
 var carSwitchDelay = 3000; //delay to avoid car model switch spam
 
 async function nextCar() {
-  if (isCarSwitchEnabled){
+  if (isCarSwitchEnabled) {
     isCarSwitchEnabled = false;
     gCarIndex = (gCarIndex + 1) % AppConfig.cars.length;
     await ChangeCar({ value: gCarIndex });
   }
   setTimeout(function () {
     isCarSwitchEnabled = true;
-  }, carSwitchDelay)
+  }, carSwitchDelay);
 }
 async function previousCar() {
-  if (isCarSwitchEnabled){
+  if (isCarSwitchEnabled) {
     isCarSwitchEnabled = false;
     gCarIndex = gCarIndex === 0 ? AppConfig.cars.length - 1 : gCarIndex - 1;
     await ChangeCar({ value: gCarIndex });
   }
   setTimeout(function () {
     isCarSwitchEnabled = true;
-  }, carSwitchDelay)
+  }, carSwitchDelay);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -295,7 +286,7 @@ function ToggleRotation() {
 function Reset() {
   SDK3DVerse.engineAPI.fireEvent(
     SDK3DVerse.utils.invalidUUID,
-    "stop_simulation"
+    "stop_simulation",
   );
   rotationState = false;
 }
@@ -305,7 +296,7 @@ async function Connect() {
   SetInformation("Connecting to 3dverse...");
 
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
-    AppConfig.sceneUUID
+    AppConfig.sceneUUID,
   );
   connectionInfo.useSSL = true;
   SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
@@ -319,7 +310,7 @@ async function Connect() {
 async function InitColor() {
   const desc = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
-    gSelectedCar.paintMaterialUUID
+    gSelectedCar.paintMaterialUUID,
   );
   desc.dataJson.albedo = gColor;
 }
@@ -328,13 +319,13 @@ async function InitColor() {
 async function ChangeColor(color) {
   const desc = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
-    gSelectedMaterial.matUUID
+    gSelectedMaterial.matUUID,
   );
   gColor = color;
   desc.dataJson.albedo = color;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.paintMaterialUUID,
-    desc
+    desc,
   );
 }
 
@@ -342,12 +333,12 @@ async function ChangeColor(color) {
 async function ApplySelectedMaterial() {
   const desc = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
-    gSelectedMaterial.matUUID
+    gSelectedMaterial.matUUID,
   );
   desc.dataJson.albedo = gColor;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.paintMaterialUUID,
-    desc
+    desc,
   );
 }
 
@@ -365,22 +356,22 @@ async function ToggleLights() {
 
   const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
-    gSelectedCar.headLightsMatUUID
+    gSelectedCar.headLightsMatUUID,
   );
   desc1.dataJson.emissionIntensity = gIntensity;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.headLightsMatUUID,
-    desc1
+    desc1,
   );
 
   const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
     "material",
-    gSelectedCar.rearLightsMatUUID
+    gSelectedCar.rearLightsMatUUID,
   );
   desc2.dataJson.emissionIntensity = gIntensity;
   SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
     gSelectedCar.rearLightsMatUUID,
-    desc2
+    desc2,
   );
 
   gIntensity = gIntensity === 0 ? 100 : 0;
@@ -389,9 +380,8 @@ async function ToggleLights() {
 // ------------------------------------------------
 
 async function ToggleGradientPlatform() {
-  const gradientPlatforms = await SDK3DVerse.engineAPI.findEntitiesByNames(
-    "SM_StaticPlatform"
-  );
+  const gradientPlatforms =
+    await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
   const gradientPlatform = gradientPlatforms[0];
   if (gradientPlatform.isVisible()) {
     await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
@@ -403,13 +393,13 @@ async function ToggleGradientPlatform() {
 // --------------------------------------------------------------
 
 const firstSectionElements = document.querySelectorAll(
-  ".first-section-element"
+  ".first-section-element",
 );
 const secondSectionElements = document.querySelectorAll(
-  ".second-section-element"
+  ".second-section-element",
 );
 const thirdSectionElements = document.querySelectorAll(
-  ".third-section-element"
+  ".third-section-element",
 );
 
 function launchModelSelection() {
@@ -463,8 +453,6 @@ function launchReview() {
     toolboxElement.style.display = "none";
   }
 }
-
-
 
 //----------------------------------------------------------
 
@@ -562,9 +550,8 @@ function toggleDisplayBackground() {
 // }
 
 async function changeCubemap(cubemap) {
-  const environmentEntities = await SDK3DVerse.engineAPI.findEntitiesByNames(
-    "Env"
-  );
+  const environmentEntities =
+    await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
   const environmentEntity = environmentEntities[0];
   let envComponent = await environmentEntity.getComponent("environment");
   envComponent.skyboxUUID = cubemap.skyboxUUID;
@@ -573,7 +560,6 @@ async function changeCubemap(cubemap) {
   await environmentEntity.setComponent("environment", envComponent);
   SDK3DVerse.engineAPI.propagateChanges();
 }
-
 
 //---------------------------------------------------------------------------
 async function changeLightIntensity(newIntensity) {
@@ -608,7 +594,7 @@ function onMediaQueryChange(e) {
         -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
         0.9640212059020996,
       ],
-      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 })
+      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 }),
     );
   } else {
     console.log("> 768px");
@@ -618,14 +604,14 @@ function onMediaQueryChange(e) {
         -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
         0.9428451061248779,
       ],
-      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 })
+      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }),
     );
   }
 }
 
 async function changeCameraPosition(
   destinationPosition,
-  destinationOrientation
+  destinationOrientation,
 ) {
   const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
   const viewport =
@@ -635,10 +621,9 @@ async function changeCameraPosition(
     viewport,
     destinationPosition,
     destinationOrientation,
-    10
+    10,
   );
 }
-
 
 // window.launchModelSelection = launchModelSelection;
 // window.launchCustomization = launchCustomization;
