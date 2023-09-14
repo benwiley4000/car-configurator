@@ -1,3 +1,6 @@
+import AppConfig from "./AppConfig.js";
+import { userToken } from "./secrets.js";
+
 //--------------------------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 
@@ -16,6 +19,11 @@ let gCarIndex = 0;
 
 //--------------------------------------------------------------------------------------------------
 async function InitApp() {
+  SDK3DVerse.setApiVersion("v1");
+  SDK3DVerse.webAPI.setUserToken(userToken);
+
+  ReactDOM.render(<Toolbox />, document.querySelector(".toolbox"));
+
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 
   // -------------- Media Query
@@ -54,8 +62,8 @@ async function InitApp() {
 
   const sessionCreated = await Connect();
 
-  await ToggleGradientPlatform();
-  await changeCubemap(AppConfig.cubemaps[0]);
+  await toggleGradientPlatform();
+  await changeCubemap(0);
   await InitCarAttachment();
   gSelectedMaterial = AppConfig.materials[0];
   await ChangeCar({ value: 0 });
@@ -106,7 +114,7 @@ async function ChangeCar(e) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeSpoiler(i) {
+async function changeSpoiler(i) {
   if (i >= gSelectedCar.spoilers.length) {
     return;
   }
@@ -119,7 +127,7 @@ async function ChangeSpoiler(i) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeFrontBumper(i) {
+async function changeFrontBumper(i) {
   if (i >= gSelectedCar.frontBumpers.length) {
     return;
   }
@@ -132,7 +140,7 @@ async function ChangeFrontBumper(i) {
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeRearBumper(i) {
+async function changeRearBumper(i) {
   if (i >= gSelectedCar.rearBumpers.length) {
     return;
   }
@@ -162,9 +170,9 @@ async function ApplySelectedCar() {
     gSelectedCar.name,
     gSelectedCar.sceneUUID,
   );
-  await ChangeFrontBumper(0);
-  await ChangeRearBumper(0);
-  await ChangeSpoiler(0);
+  await changeFrontBumper(0);
+  await changeRearBumper(0);
+  await changeSpoiler(0);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -270,9 +278,9 @@ function SetResolution(showInfo = true) {
 
 let rotationState = false;
 //--------------------------------------------------------------------------------------------------
-rotateOnIcon = document.getElementById("rotate-on");
-rotateOffIcon = document.getElementById("rotate-off");
-function ToggleRotation() {
+const rotateOnIcon = document.getElementById("rotate-on");
+const rotateOffIcon = document.getElementById("rotate-off");
+function toggleRotation() {
   const event = rotationState ? "pause_simulation" : "start_simulation";
   rotationState = !rotationState;
 
@@ -308,17 +316,17 @@ async function Connect() {
 
 //--------------------------------------------------------------------------------------------------
 async function InitColor() {
-  const desc = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
+  const desc = await getAssetDescription(
+    "materials",
     gSelectedCar.paintMaterialUUID,
   );
   desc.dataJson.albedo = gColor;
 }
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeColor(color) {
-  const desc = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
+async function changeColor(color) {
+  const desc = await getAssetDescription(
+    "materials",
     gSelectedMaterial.matUUID,
   );
   gColor = color;
@@ -331,8 +339,8 @@ async function ChangeColor(color) {
 
 //--------------------------------------------------------------------------------------------------
 async function ApplySelectedMaterial() {
-  const desc = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
+  const desc = await getAssetDescription(
+    "materials",
     gSelectedMaterial.matUUID,
   );
   desc.dataJson.albedo = gColor;
@@ -342,20 +350,30 @@ async function ApplySelectedMaterial() {
   );
 }
 
-SDK3DVerse.webAPI.getAssetDescription = async function (assetType, assetUUID) {
-  return await this.httpGet(`asset/desc/${assetType}/${assetUUID}`, {
-    token: this.apiToken,
-  });
-};
+async function getAssetDescription(assetType, assetUUID) {
+  const res = await fetch(
+    `https://api.3dverse.com/app/v1/assets/${assetType}/${assetUUID}/description`,
+    {
+      headers: {
+        User_token: userToken,
+      },
+    },
+  );
+  const data = await res.json();
+  if (res.status >= 400) {
+    throw data;
+  }
+  return data;
+}
 
 const lightOnIcon = document.getElementById("light-on");
 const lightOffIcon = document.getElementById("light-off");
-async function ToggleLights() {
+async function toggleLights() {
   lightOnIcon.classList.toggle("hidden");
   lightOffIcon.classList.toggle("hidden");
 
-  const desc1 = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
+  const desc1 = await getAssetDescription(
+    "materials",
     gSelectedCar.headLightsMatUUID,
   );
   desc1.dataJson.emissionIntensity = gIntensity;
@@ -364,8 +382,8 @@ async function ToggleLights() {
     desc1,
   );
 
-  const desc2 = await SDK3DVerse.webAPI.getAssetDescription(
-    "material",
+  const desc2 = await getAssetDescription(
+    "materials",
     gSelectedCar.rearLightsMatUUID,
   );
   desc2.dataJson.emissionIntensity = gIntensity;
@@ -379,7 +397,7 @@ async function ToggleLights() {
 
 // ------------------------------------------------
 
-async function ToggleGradientPlatform() {
+async function toggleGradientPlatform() {
   const gradientPlatforms =
     await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
   const gradientPlatform = gradientPlatforms[0];
@@ -434,7 +452,7 @@ function launchCustomization() {
     toolboxElement.style.display = "block";
   }
 
-  hiddenButtons = document.querySelectorAll(".hidden-button");
+  const hiddenButtons = document.querySelectorAll(".hidden-button");
   hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
 
   document.getElementById("final-price").innerHTML = gSelectedCar.price;
@@ -477,7 +495,7 @@ materialIcons.forEach((icon) => {
 });
 
 //--------------------------------------------------------------------------------------------------
-async function ChangeMaterial(matIndex) {
+async function changeMaterial(matIndex) {
   gSelectedMaterial = AppConfig.materials[matIndex];
   await ApplySelectedMaterial();
 
@@ -535,21 +553,8 @@ function toggleDisplayBackground() {
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
-// async function changeCubemap(cubemap) {
-//   const environementEntitys = await SDK3DVerse.engineAPI.findEntitiesByNames(
-//     "Env"
-//   );
-//   const environementEntity = environementEntitys[0];
-//   let envComponent = environementEntity.getComponent("environment");
-//   envComponent = SDK3DVerse.utils.clone(envComponent); //clone du component environment
-//   envComponent.skyboxUUID = cubemap.skyboxUUID;
-//   envComponent.radianceUUID = cubemap.radianceUUID;
-//   envComponent.irradianceUUID = cubemap.irradianceUUID;
-//   environementEntity.setComponent("environment", envComponent);
-//   SDK3DVerse.engineAPI.propagateChanges();
-// }
-
-async function changeCubemap(cubemap) {
+async function changeCubemap(cubemapIndex) {
+  const cubemap = AppConfig.cubemaps[cubemapIndex];
   const environmentEntities =
     await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
   const environmentEntity = environmentEntities[0];
@@ -624,11 +629,177 @@ async function changeCameraPosition(
     10,
   );
 }
+window.changeFrontBumper = changeFrontBumper;
 
-// window.launchModelSelection = launchModelSelection;
-// window.launchCustomization = launchCustomization;
-// window.launchReview = launchReview;
+Object.assign(window, {
+  nextCar,
+  previousCar,
+  changeSpoiler,
+  changeRearBumper,
+  changeFrontBumper,
+  launchModelSelection,
+  launchCustomization,
+  launchReview,
+  changeColor,
+  changeMaterial,
+  toggleLights,
+  toggleRotation,
+  toggleSettingsPanel,
+  toggleGradientPlatform,
+  toggleDisplayBackground,
+  changeCubemap,
+});
 
-window.changeSpoiler = ChangeSpoiler;
-window.changeRearBumper = ChangeRearBumper;
-window.changeFrontBumper = ChangeFrontBumper;
+// Separate mapping object for new category and part names
+const categoryMapping = {
+  frontBumpers: "Front Bumper",
+  rearBumpers: "Rear Bumper",
+  spoilers: "Spoiler",
+};
+
+const partNameMapping = {
+  frontBumpers: "Front Bumper",
+  rearBumpers: "Rear Bumper",
+  spoilers: "Spoiler",
+  // Add more mappings for other categories if needed
+};
+
+function Toolbox() {
+  // Extract data from AppConfig.js
+  const { cars } = AppConfig;
+
+  // State variables to keep track of the selected car, category, and part
+  const [selectedCarIndex, setSelectedCarIndex] = React.useState(0);
+  const [selectedCategory, setSelectedCategory] =
+    React.useState("frontBumpers");
+  const [selectedPartIndex, setSelectedPartIndex] = React.useState({});
+
+  // Function to call the specific function for a given category and element index
+  const callSpecificFunction = (category, elementIndex) => {
+    // Check the category and index and call the corresponding function
+    if (category === "spoilers") {
+      changeSpoiler(elementIndex);
+    } else if (category === "frontBumpers") {
+      changeFrontBumper(elementIndex);
+    } else if (category === "rearBumpers") {
+      changeRearBumper(elementIndex);
+    }
+    // ... Add other conditions for other categories and functions here
+  };
+
+  const resetToolbox = () => {
+    setSelectedCategory("frontBumpers"); // Set the first category as active
+    setSelectedPartIndex({}); // Clear the active part indices
+  };
+
+  // Function to switch between cars
+  window.switchCar = (index) => {
+    setSelectedCarIndex(index);
+    resetToolbox();
+  };
+
+  // Function to switch between categories
+  const switchCategory = (category) => {
+    setSelectedCategory(category);
+  };
+
+  if (selectedCarIndex >= cars.length) {
+    // If the selected car index is out of bounds, show a message
+    return <div>No data found for the selected car.</div>;
+  }
+
+  // Get the selected car based on the index
+  const selectedCar = cars[selectedCarIndex];
+
+  // Filter out categories that are empty for the selected car
+  const availableCategories = Object.keys(selectedCar).filter(
+    (category) =>
+      Array.isArray(selectedCar[category]) && selectedCar[category].length > 0,
+  );
+
+  // Get the data for the selected category
+  const selectedCategoryData = selectedCar[selectedCategory];
+
+  // Function to set the selected part index within the category
+  const switchPart = (index) => {
+    setSelectedPartIndex((prevSelectedParts) => ({
+      ...prevSelectedParts,
+      [selectedCategory]: index,
+    }));
+  };
+
+  // Get the selected part index within the category
+  const currentSelectedPartIndex = selectedPartIndex[selectedCategory] || 0;
+
+  // Function to get the updated category name
+  const getUpdatedCategoryName = (category) => {
+    return categoryMapping[category] || category;
+  };
+
+  // Function to get the updated part name
+  const getUpdatedPartName = (category, index) => {
+    const partName = partNameMapping[category] || category;
+    return `${partName} ${index + 1}`;
+  };
+
+  return (
+    <>
+      <div className="toolbox absolute top-[7vh] left-[5vw] second-section-element text-base font-semibold w-[450px]">
+        {/* Switch between categories */}
+        <div className="flex">
+          {availableCategories.map((category, index) => (
+            <button
+              key={category}
+              onClick={() => {
+                switchCategory(category);
+              }}
+              className={
+                selectedCategory === category
+                  ? "active-tab rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
+                  : "rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
+              }
+            >
+              {getUpdatedCategoryName(category)}
+            </button>
+          ))}
+        </div>
+
+        {/* Display the data for the selected category */}
+        {selectedCategoryData.length > 0 ? (
+          <div className="toolbox-panel w-full bg-[#272727] rounded-xl text-white w-full p-4 transition font-medium space-y-2">
+            {selectedCategoryData.map((item, index) => (
+              <div
+                key={index}
+                className={
+                  currentSelectedPartIndex === index
+                    ? "active-part part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
+                    : "part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
+                }
+                onClick={() => {
+                  switchPart(index);
+                  callSpecificFunction(selectedCategory, index);
+                }}
+              >
+                <div>{getUpdatedPartName(selectedCategory, index)}</div>
+                <div
+                  id="check-circle"
+                  className="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]"
+                  key={index + 1}
+                >
+                  <img
+                    src="./img/white-check.png"
+                    className={
+                      currentSelectedPartIndex === index
+                        ? "w-1/2 h-1/2"
+                        : "hidden"
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
