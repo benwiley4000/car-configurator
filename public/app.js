@@ -6,8 +6,6 @@ window.addEventListener("load", initApp);
 
 let gCarAttachment = null;
 let gSelectedCar = null;
-let gSelectedMaterial = null;
-let gColor = null;
 let gIntensity = 0;
 let carParts = {
   body: null,
@@ -59,11 +57,10 @@ async function initApp() {
 
   const sessionCreated = await connect();
 
-  await CarConfiguratorViewModel.toggleGradientPlatform();
-  await CarConfiguratorViewModel.changeCubemap(0);
+  await CarConfiguratorController.toggleGradientPlatform();
+  await CarConfiguratorController.changeCubemap(0);
   await initCarAttachment();
-  gSelectedMaterial = AppConfig.materials[0];
-  await CarConfiguratorViewModel.changeCar({ value: 0 });
+  await CarConfiguratorController.changeCar({ value: 0 });
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
   setInformation("Loading complete");
@@ -76,8 +73,9 @@ async function initApp() {
 
 //--------------------------------------------------------------------------------------------------
 async function initCarAttachment() {
-  [gCarAttachment] =
-    await SDK3DVerse.engineAPI.findEntitiesByNames("CAR_ATTACHMENT");
+  [gCarAttachment] = await SDK3DVerse.engineAPI.findEntitiesByNames(
+    "CAR_ATTACHMENT",
+  );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -169,19 +167,6 @@ async function connect() {
   return true; //connectionInfo.sessionCreated;
 }
 
-//--------------------------------------------------------------------------------------------------
-async function applySelectedMaterial() {
-  const desc = await getAssetDescription(
-    "materials",
-    gSelectedMaterial.matUUID,
-  );
-  desc.dataJson.albedo = gColor;
-  SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-    gSelectedCar.paintMaterialUUID,
-    desc,
-  );
-}
-
 async function getAssetDescription(assetType, assetUUID) {
   const res = await fetch(
     `https://api.3dverse.com/app/v1/assets/${assetType}/${assetUUID}/description`,
@@ -197,17 +182,6 @@ async function getAssetDescription(assetType, assetUUID) {
   }
   return data;
 }
-
-// ---------------------------------------------------------
-
-const materialIcons = document.querySelectorAll(".material-icon");
-
-materialIcons.forEach((icon) => {
-  icon.addEventListener("click", () => {
-    materialIcons.forEach((icon) => icon.classList.remove("active-material"));
-    icon.classList.add("active-material");
-  });
-});
 
 //-----------------------------------------------------------------------------------
 function firstWordFromId(selectId, addClass) {
@@ -297,16 +271,6 @@ const thirdSectionElements = document.querySelectorAll(
   ".third-section-element",
 );
 
-const colors = document.querySelectorAll(".color");
-
-// initialize color states
-colors.forEach((color) => {
-  color.addEventListener("click", () => {
-    colors.forEach((color) => color.classList.remove("active-color"));
-    color.classList.add("active-color");
-  });
-});
-
 const lightOnIcon = document.getElementById("light-on");
 const lightOffIcon = document.getElementById("light-off");
 
@@ -328,8 +292,179 @@ cubemaps.forEach((cubemap) => {
   });
 });
 
+const CarConfiguratorModel = new (class CarConfiguratorModel {
+  /**
+   * @typedef {{
+   *   color: [Number, Number, number];
+   *   selectedMaterial: (typeof AppConfig)['materials'][number]
+   * }} CarConfiguratorState
+   */
+
+  /** @private @type {CarConfiguratorState} */
+  internalState = {
+    color: [0, 0, 0],
+    selectedMaterial: AppConfig.materials[0],
+  };
+  /** @private */
+  subscribers = [];
+
+  constructor() {
+    // TODO: asynchronously initialize state from current scene graph
+  }
+
+  /**
+   * @private
+   * @param {Partial<CarConfiguratorState>} value
+   */
+  setState(value) {
+    const oldState = this.internalState;
+    this.internalState = {
+      ...oldState,
+      ...value,
+    };
+    const changedKeys = Object.keys(this.internalState).filter(
+      (key) => this.internalState[key] !== oldState[key],
+    );
+
+    // notify subscribers
+    for (const [watchedKeys, handler] of this.subscribers) {
+      if (changedKeys.some((key) => watchedKeys.includes(key))) {
+        handler();
+      }
+    }
+  }
+
+  /** @private */
+  async applySelectedMaterial() {
+    const desc = await getAssetDescription(
+      "materials",
+      this.state.selectedMaterial.matUUID,
+    );
+    desc.dataJson.albedo = this.state.color;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      gSelectedCar.paintMaterialUUID,
+      desc,
+    );
+  }
+
+  get state() {
+    return this.internalState;
+  }
+
+  set state(value) {
+    throw new Error("Cannot write state directly.");
+  }
+
+  /**
+   * @param {(keyof CarConfiguratorState)[]} watchedKeys
+   * @param {() => void} handler
+   */
+  subscribe(watchedKeys, handler) {
+    this.subscribers.push([watchedKeys, handler]);
+  }
+
+  /**
+   * @param {[number, number, number]} color
+   */
+  async changeColor(color) {
+    this.setState({ color });
+    this.applySelectedMaterial();
+  }
+
+  /**
+   * @param {number} matIndex
+   */
+  async changeMaterial(matIndex) {
+    this.setState({ selectedMaterial: AppConfig.materials[matIndex] });
+    this.applySelectedMaterial();
+  }
+})();
+
 /** @global */
-const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
+const CarSelectionController = new (class CarSelectionController {})();
+
+/** @global */
+const CarPartsController = new (class CarPartsController {})();
+
+/** @global */
+const CarColorsController = new (class CarColorsController {
+  constructor() {
+    this.render();
+    CarConfiguratorModel.subscribe(["color"], this.render);
+  }
+
+  /**
+   * @private
+   * @param {HTMLElement} colorElement
+   * @returns {[number, number, number]}
+   */
+  getRgbForColorElement(colorElement) {
+    const [r, g, b] = colorElement
+      .getAttribute("data-color")
+      .split(",")
+      .map(Number);
+    return [r, g, b];
+  }
+
+  /** @private */
+  render = () => {
+    const colors = document.querySelectorAll(".color");
+    colors.forEach((color) => {
+      const rgb = this.getRgbForColorElement(color);
+      if (CarConfiguratorModel.state.color.every((v, i) => rgb[i] === v)) {
+        color.classList.add("active-color");
+      } else {
+        color.classList.remove("active-color");
+      }
+    });
+  };
+
+  // UI EVENT HANDLERS:
+
+  handleColorSelection = (e) => {
+    CarConfiguratorModel.changeColor(this.getRgbForColorElement(e.target));
+  };
+})();
+
+const CarMaterialsController = new (class CarMaterialsController {
+  constructor() {
+    this.render();
+    CarConfiguratorModel.subscribe(["selectedMaterial"], this.render);
+  }
+
+  /** @private */
+  render = () => {
+    const materialIcons = document.querySelectorAll(".material-icon");
+
+    materialIcons.forEach((icon) => {
+      icon.addEventListener("click", () => {
+        materialIcons.forEach((icon) =>
+          icon.classList.remove("active-material"),
+        );
+        icon.classList.add("active-material");
+      });
+    });
+  };
+
+  // UI EVENT HANDLERS:
+
+  handleMaterialSelection = (e) => {
+    const materialIndex = Number(e.target.getAttribute("data-material-index"));
+    CarConfiguratorModel.changeMaterial(materialIndex);
+  };
+})();
+
+/** @global */
+const CarBackgroundController = new (class CarBackgroundController {})();
+
+/** @global */
+const CarConfigStepperController = new (class CarConfigStepperController {})();
+
+/** @global */
+const CarOptionsBarController = new (class CarOptionsBarController {})();
+
+/** @global */
+const CarConfiguratorController = new (class CarConfiguratorController {
   /** @private */
   isCarSwitchEnabled = true;
   /** @private */
@@ -377,7 +512,8 @@ const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
     startingPriceMobile.innerHTML = gSelectedCar.price;
     this.renderToolbox();
     await this.applySelectedCar();
-    await applySelectedMaterial();
+    // TODO: replace with internal call once in model
+    await CarConfiguratorModel.applySelectedMaterial();
   }
 
   // PUBLIC METHODS
@@ -496,33 +632,11 @@ const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
     }
   }
 
-  async changeColor(color) {
-    const desc = await getAssetDescription(
-      "materials",
-      gSelectedMaterial.matUUID,
-    );
-    gColor = color;
-    desc.dataJson.albedo = color;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      gSelectedCar.paintMaterialUUID,
-      desc,
-    );
-  }
-
-  async changeMaterial(matIndex) {
-    gSelectedMaterial = AppConfig.materials[matIndex];
-    await applySelectedMaterial();
-
-    // remove active color state after changing materials
-    colors.forEach((color) => {
-      colors.forEach((color) => color.classList.remove("active-color"));
-    });
-  }
-
   async changeCubemap(cubemapIndex) {
     const cubemap = AppConfig.cubemaps[cubemapIndex];
-    const environmentEntities =
-      await SDK3DVerse.engineAPI.findEntitiesByNames("Env");
+    const environmentEntities = await SDK3DVerse.engineAPI.findEntitiesByNames(
+      "Env",
+    );
     const environmentEntity = environmentEntities[0];
     let envComponent = await environmentEntity.getComponent("environment");
     envComponent.skyboxUUID = cubemap.skyboxUUID;
@@ -576,8 +690,9 @@ const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
   }
 
   async toggleGradientPlatform() {
-    const [gradientPlatform] =
-      await SDK3DVerse.engineAPI.findEntitiesByNames("SM_StaticPlatform");
+    const [gradientPlatform] = await SDK3DVerse.engineAPI.findEntitiesByNames(
+      "SM_StaticPlatform",
+    );
     if (gradientPlatform.isVisible()) {
       await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
     } else {
@@ -598,7 +713,11 @@ const CarConfiguratorViewModel = new (class CarConfiguratorViewModel {
   }
 })();
 
-Object.assign(window, { CarConfiguratorViewModel });
+Object.assign(window, {
+  CarColorsController,
+  CarMaterialsController,
+  CarConfiguratorController,
+});
 
 // Separate mapping object for new category and part names
 const categoryMapping = {
