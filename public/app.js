@@ -310,6 +310,7 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
 
   constructor() {
     // TODO: asynchronously initialize state from current scene graph
+    // TODO: update state when receiving scene graph updates from 3dverse
   }
 
   /**
