@@ -1,17 +1,30 @@
 import AppConfig from "./AppConfig.js";
 import { userToken } from "./secrets.js";
 
+// Include external library definitions to help with autocompletion
+/// <reference path="./vendor/handlebars.d.ts" />
+
+// TODO: get rid of this and use real types
+/** @type {any} */
+const SDK3DVerse = window.SDK3DVerse;
+
 //--------------------------------------------------------------------------------------------------
 window.addEventListener("load", initApp);
 
+const PARTS_CATEGORY_MAPPING = {
+  frontBumpers: "Front Bumper",
+  rearBumpers: "Rear Bumper",
+  spoilers: "Spoiler",
+};
+
 let gCarAttachment = null;
-let gSelectedCar = null;
+let gSelectedCar = AppConfig.cars[0];
 let gIntensity = 0;
 let carParts = {
   body: null,
-  frontBumper: null,
-  rearBumper: null,
-  spoiler: null,
+  frontBumpers: null,
+  rearBumpers: null,
+  spoilers: null,
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -37,7 +50,8 @@ async function initApp() {
     },
   ];
 
-  const toolboxElement = document.querySelector(".toolbox");
+  /** @type {HTMLElement} */
+  const toolboxElement = document.querySelector(".car-parts");
   if (toolboxElement) {
     toolboxElement.style.display = "none";
   }
@@ -230,8 +244,8 @@ function onMediaQueryChange(e) {
         -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
         0.9640212059020996,
       ],
-      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 }),
     );
+    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 });
   } else {
     console.log("> 768px");
     changeCameraPosition(
@@ -240,11 +254,15 @@ function onMediaQueryChange(e) {
         -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
         0.9428451061248779,
       ],
-      SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }),
     );
+    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 });
   }
 }
 
+/**
+ * @param {[number, number, number]} destinationPosition
+ * @param {[number, number, number, number]} destinationOrientation
+ */
 async function changeCameraPosition(
   destinationPosition,
   destinationOrientation,
@@ -292,16 +310,24 @@ cubemaps.forEach((cubemap) => {
   });
 });
 
-const CarConfiguratorModel = new (class CarConfiguratorModel {
+const CarConfiguratorStore = new (class CarConfiguratorStore {
   /**
    * @typedef {{
+   *   selectedPartCategory: keyof (typeof PARTS_CATEGORY_MAPPING);
+   *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
    *   color: [Number, Number, number];
-   *   selectedMaterial: (typeof AppConfig)['materials'][number]
+   *   selectedMaterial: (typeof AppConfig)['materials'][number];
    * }} CarConfiguratorState
    */
 
   /** @private @type {CarConfiguratorState} */
   internalState = {
+    selectedPartCategory: Object.keys(PARTS_CATEGORY_MAPPING)[0],
+    selectedParts: {
+      frontBumpers: 0,
+      rearBumpers: 0,
+      spoilers: 0,
+    },
     color: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
   };
@@ -309,6 +335,9 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
   subscribers = [];
 
   constructor() {
+    // TODO: find way to initialize scene graph based on default settings
+    // (or just hardcode those default settings in scene graph). For example
+    // there is no color by default.
     // TODO: asynchronously initialize state from current scene graph
     // TODO: update state when receiving scene graph updates from 3dverse
   }
@@ -335,6 +364,14 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
     }
   }
 
+  get state() {
+    return this.internalState;
+  }
+
+  set state(value) {
+    throw new Error("Cannot write state directly.");
+  }
+
   /** @private */
   async applySelectedMaterial() {
     const desc = await getAssetDescription(
@@ -348,12 +385,17 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
     );
   }
 
-  get state() {
-    return this.internalState;
-  }
-
-  set state(value) {
-    throw new Error("Cannot write state directly.");
+  /** @private */
+  async applySelectedPart() {
+    const { selectedPartCategory, selectedParts } = this.state;
+    const selectedPartIndex = selectedParts[selectedPartCategory];
+    carParts[selectedPartCategory] = await changePart(
+      carParts[selectedPartCategory],
+      `${gSelectedCar.name} ${PARTS_CATEGORY_MAPPING[
+        selectedPartCategory
+      ].toUpperCase()} ${selectedPartIndex}`,
+      gSelectedCar[selectedPartCategory][selectedPartIndex],
+    );
   }
 
   /**
@@ -367,7 +409,7 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
   /**
    * @param {[number, number, number]} color
    */
-  async changeColor(color) {
+  changeColor(color) {
     this.setState({ color });
     this.applySelectedMaterial();
   }
@@ -375,9 +417,32 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
   /**
    * @param {number} matIndex
    */
-  async changeMaterial(matIndex) {
+  changeSelectedMaterial(matIndex) {
     this.setState({ selectedMaterial: AppConfig.materials[matIndex] });
     this.applySelectedMaterial();
+  }
+
+  /**
+   * @param {CarConfiguratorState['selectedPartCategory']} selectedPartCategory
+   */
+  changeSelectedPartCategory(selectedPartCategory) {
+    this.setState({ selectedPartCategory });
+  }
+
+  /**
+   * @param {number} partIndex
+   */
+  changeSelectedPart(partIndex) {
+    if (partIndex > gSelectedCar[this.state.selectedPartCategory].length) {
+      throw new Error("Invalid part index");
+    }
+    this.setState({
+      selectedParts: {
+        ...this.state.selectedParts,
+        [this.state.selectedPartCategory]: partIndex,
+      },
+    });
+    this.applySelectedPart();
   }
 })();
 
@@ -385,18 +450,65 @@ const CarConfiguratorModel = new (class CarConfiguratorModel {
 const CarSelectionController = new (class CarSelectionController {})();
 
 /** @global */
-const CarPartsController = new (class CarPartsController {})();
+const CarPartsController = new (class CarPartsController {
+  template = Handlebars.compile(
+    document.getElementById("car-parts-template").innerHTML,
+  );
+
+  constructor() {
+    this.render();
+    CarConfiguratorStore.subscribe(
+      ["selectedPartCategory", "selectedParts"],
+      this.render,
+    );
+  }
+
+  /** @private */
+  render = () => {
+    const carPartsElement = document.querySelector(".car-parts");
+
+    const { selectedPartCategory, selectedParts } = CarConfiguratorStore.state;
+    const selectedPartIndex = selectedParts[selectedPartCategory];
+
+    carPartsElement.innerHTML = this.template({
+      availableCategories: Object.keys(PARTS_CATEGORY_MAPPING).map((name) => ({
+        name,
+        displayName: PARTS_CATEGORY_MAPPING[name],
+        isSelected: selectedPartCategory === name,
+      })),
+      selectedCategoryData: gSelectedCar[selectedPartCategory].map((_, i) => ({
+        displayName: `${PARTS_CATEGORY_MAPPING[selectedPartCategory]} ${i + 1}`,
+        isSelected: selectedPartIndex === i,
+      })),
+    });
+  };
+
+  /**
+   *
+   * @param {CarConfiguratorState['selectedPartCategory']} category
+   */
+  switchCategory = (category) => {
+    CarConfiguratorStore.changeSelectedPartCategory(category);
+  };
+
+  /**
+   * @param {number} index
+   */
+  switchPartIndex = (index) => {
+    CarConfiguratorStore.changeSelectedPart(index);
+  };
+})();
 
 /** @global */
 const CarColorsController = new (class CarColorsController {
   constructor() {
     this.render();
-    CarConfiguratorModel.subscribe(["color"], this.render);
+    CarConfiguratorStore.subscribe(["color"], this.render);
   }
 
   /**
    * @private
-   * @param {HTMLElement} colorElement
+   * @param {Element} colorElement
    * @returns {[number, number, number]}
    */
   getRgbForColorElement(colorElement) {
@@ -412,7 +524,7 @@ const CarColorsController = new (class CarColorsController {
     const colors = document.querySelectorAll(".color");
     colors.forEach((color) => {
       const rgb = this.getRgbForColorElement(color);
-      if (CarConfiguratorModel.state.color.every((v, i) => rgb[i] === v)) {
+      if (CarConfiguratorStore.state.color.every((v, i) => rgb[i] === v)) {
         color.classList.add("active-color");
       } else {
         color.classList.remove("active-color");
@@ -423,14 +535,14 @@ const CarColorsController = new (class CarColorsController {
   // UI EVENT HANDLERS:
 
   handleColorSelection = (e) => {
-    CarConfiguratorModel.changeColor(this.getRgbForColorElement(e.target));
+    CarConfiguratorStore.changeColor(this.getRgbForColorElement(e.target));
   };
 })();
 
 const CarMaterialsController = new (class CarMaterialsController {
   constructor() {
     this.render();
-    CarConfiguratorModel.subscribe(["selectedMaterial"], this.render);
+    CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
   }
 
   /** @private */
@@ -451,7 +563,7 @@ const CarMaterialsController = new (class CarMaterialsController {
 
   handleMaterialSelection = (e) => {
     const materialIndex = Number(e.target.getAttribute("data-material-index"));
-    CarConfiguratorModel.changeMaterial(materialIndex);
+    CarConfiguratorStore.changeSelectedMaterial(materialIndex);
   };
 })();
 
@@ -472,20 +584,8 @@ const CarConfiguratorController = new (class CarConfiguratorController {
   carSwitchDelay = 3000; // delay to avoid car model switch spam
   /** @private */
   selectedCarIndex = 0;
-  /** @private */
-  toolboxRoot = ReactDOM.createRoot(document.querySelector(".toolbox"));
-
-  constructor() {
-    this.renderToolbox();
-  }
 
   // PRIVATE METHODS
-
-  renderToolbox() {
-    this.toolboxRoot.render(
-      <Toolbox viewModel={this} selectedCarIndex={this.selectedCarIndex} />,
-    );
-  }
 
   async applySelectedCar() {
     carParts.body = await changePart(
@@ -493,9 +593,14 @@ const CarConfiguratorController = new (class CarConfiguratorController {
       gSelectedCar.name,
       gSelectedCar.sceneUUID,
     );
-    await this.changeFrontBumper(0);
-    await this.changeRearBumper(0);
-    await this.changeSpoiler(0);
+    // TODO: integrate into store
+    CarConfiguratorStore.changeSelectedPartCategory("frontBumpers");
+    CarConfiguratorStore.changeSelectedPart(0);
+    CarConfiguratorStore.changeSelectedPartCategory("rearBumpers");
+    CarConfiguratorStore.changeSelectedPart(0);
+    CarConfiguratorStore.changeSelectedPartCategory("spoilers");
+    CarConfiguratorStore.changeSelectedPart(0);
+    CarConfiguratorStore.changeSelectedPartCategory("frontBumpers");
   }
 
   async changeCar({ value: selectedCarIndex }) {
@@ -511,10 +616,9 @@ const CarConfiguratorController = new (class CarConfiguratorController {
     carEngineCapacity.innerHTML = gSelectedCar.engineCapacity;
     startingPrice.innerHTML = gSelectedCar.price;
     startingPriceMobile.innerHTML = gSelectedCar.price;
-    this.renderToolbox();
     await this.applySelectedCar();
     // TODO: replace with internal call once in model
-    await CarConfiguratorModel.applySelectedMaterial();
+    CarConfiguratorStore.applySelectedMaterial();
   }
 
   // PUBLIC METHODS
@@ -545,42 +649,6 @@ const CarConfiguratorController = new (class CarConfiguratorController {
     }, this.carSwitchDelay);
   }
 
-  async changeSpoiler(i) {
-    if (i >= gSelectedCar.spoilers.length) {
-      return;
-    }
-
-    carParts.spoiler = await changePart(
-      carParts.spoiler,
-      gSelectedCar.name + " SPOILER " + i,
-      gSelectedCar.spoilers[i],
-    );
-  }
-
-  async changeFrontBumper(i) {
-    if (i >= gSelectedCar.frontBumpers.length) {
-      return;
-    }
-
-    carParts.frontBumper = await changePart(
-      carParts.frontBumper,
-      gSelectedCar.name + " FRONT BUMPER " + i,
-      gSelectedCar.frontBumpers[i],
-    );
-  }
-
-  async changeRearBumper(i) {
-    if (i >= gSelectedCar.rearBumpers.length) {
-      return;
-    }
-
-    carParts.rearBumper = await changePart(
-      carParts.rearBumper,
-      gSelectedCar.name + " REAR BUMPER " + i,
-      gSelectedCar.rearBumpers[i],
-    );
-  }
-
   launchModelSelection() {
     firstSectionElements.forEach((element) => {
       element.classList.remove("hidden");
@@ -589,7 +657,8 @@ const CarConfiguratorController = new (class CarConfiguratorController {
       element.classList.add("hidden");
     });
 
-    const toolboxElement = document.querySelector(".toolbox");
+    /** @type {HTMLElement} */
+    const toolboxElement = document.querySelector(".car-parts");
     if (toolboxElement) {
       toolboxElement.style.display = "none";
     }
@@ -608,7 +677,8 @@ const CarConfiguratorController = new (class CarConfiguratorController {
       element.classList.add("hidden");
     });
 
-    const toolboxElement = document.querySelector(".toolbox");
+    /** @type {HTMLElement} */
+    const toolboxElement = document.querySelector(".car-parts");
     if (toolboxElement) {
       toolboxElement.style.display = "block";
     }
@@ -627,7 +697,8 @@ const CarConfiguratorController = new (class CarConfiguratorController {
       element.classList.remove("hidden");
     });
 
-    const toolboxElement = document.querySelector(".toolbox");
+    /** @type {HTMLElement} */
+    const toolboxElement = document.querySelector(".car-parts");
     if (toolboxElement) {
       toolboxElement.style.display = "none";
     }
@@ -715,157 +786,12 @@ const CarConfiguratorController = new (class CarConfiguratorController {
 })();
 
 Object.assign(window, {
+  CarSelectionController,
+  CarPartsController,
   CarColorsController,
   CarMaterialsController,
+  CarBackgroundController,
+  CarConfigStepperController,
+  CarOptionsBarController,
   CarConfiguratorController,
 });
-
-// Separate mapping object for new category and part names
-const categoryMapping = {
-  frontBumpers: "Front Bumper",
-  rearBumpers: "Rear Bumper",
-  spoilers: "Spoiler",
-};
-
-const partNameMapping = {
-  frontBumpers: "Front Bumper",
-  rearBumpers: "Rear Bumper",
-  spoilers: "Spoiler",
-  // Add more mappings for other categories if needed
-};
-
-function Toolbox({ viewModel, selectedCarIndex }) {
-  // Extract data from AppConfig.js
-  const { cars } = AppConfig;
-
-  // State variables to keep track of the selected category, and part
-  const [selectedCategory, setSelectedCategory] =
-    React.useState("frontBumpers");
-  const [selectedPartIndex, setSelectedPartIndex] = React.useState({});
-
-  // Function to call the specific function for a given category and element index
-  const callSpecificFunction = (category, elementIndex) => {
-    // Check the category and index and call the corresponding function
-    if (category === "spoilers") {
-      viewModel.changeSpoiler(elementIndex);
-    } else if (category === "frontBumpers") {
-      viewModel.changeFrontBumper(elementIndex);
-    } else if (category === "rearBumpers") {
-      viewModel.changeRearBumper(elementIndex);
-    }
-    // ... Add other conditions for other categories and functions here
-  };
-
-  React.useEffect(
-    function resetToolbox() {
-      setSelectedCategory("frontBumpers"); // Set the first category as active
-      setSelectedPartIndex({}); // Clear the active part indices
-    },
-    [selectedCarIndex],
-  );
-
-  // Function to switch between categories
-  const switchCategory = (category) => {
-    setSelectedCategory(category);
-  };
-
-  if (selectedCarIndex >= cars.length) {
-    // If the selected car index is out of bounds, show a message
-    return <div>No data found for the selected car.</div>;
-  }
-
-  // Get the selected car based on the index
-  const selectedCar = cars[selectedCarIndex];
-
-  // Filter out categories that are empty for the selected car
-  const availableCategories = Object.keys(selectedCar).filter(
-    (category) =>
-      Array.isArray(selectedCar[category]) && selectedCar[category].length > 0,
-  );
-
-  // Get the data for the selected category
-  const selectedCategoryData = selectedCar[selectedCategory];
-
-  // Function to set the selected part index within the category
-  const switchPart = (index) => {
-    setSelectedPartIndex((prevSelectedParts) => ({
-      ...prevSelectedParts,
-      [selectedCategory]: index,
-    }));
-  };
-
-  // Get the selected part index within the category
-  const currentSelectedPartIndex = selectedPartIndex[selectedCategory] || 0;
-
-  // Function to get the updated category name
-  const getUpdatedCategoryName = (category) => {
-    return categoryMapping[category] || category;
-  };
-
-  // Function to get the updated part name
-  const getUpdatedPartName = (category, index) => {
-    const partName = partNameMapping[category] || category;
-    return `${partName} ${index + 1}`;
-  };
-
-  return (
-    <>
-      <div className="toolbox absolute top-[7vh] left-[5vw] second-section-element text-base font-semibold w-[450px]">
-        {/* Switch between categories */}
-        <div className="flex">
-          {availableCategories.map((category, index) => (
-            <button
-              key={category}
-              onClick={() => {
-                switchCategory(category);
-              }}
-              className={
-                selectedCategory === category
-                  ? "active-tab rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
-                  : "rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
-              }
-            >
-              {getUpdatedCategoryName(category)}
-            </button>
-          ))}
-        </div>
-
-        {/* Display the data for the selected category */}
-        {selectedCategoryData.length > 0 ? (
-          <div className="toolbox-panel w-full bg-[#272727] rounded-xl text-white w-full p-4 transition font-medium space-y-2">
-            {selectedCategoryData.map((item, index) => (
-              <div
-                key={index}
-                className={
-                  currentSelectedPartIndex === index
-                    ? "active-part part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
-                    : "part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
-                }
-                onClick={() => {
-                  switchPart(index);
-                  callSpecificFunction(selectedCategory, index);
-                }}
-              >
-                <div>{getUpdatedPartName(selectedCategory, index)}</div>
-                <div
-                  id="check-circle"
-                  className="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]"
-                  key={index + 1}
-                >
-                  <img
-                    src="./img/white-check.png"
-                    className={
-                      currentSelectedPartIndex === index
-                        ? "w-1/2 h-1/2"
-                        : "hidden"
-                    }
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </>
-  );
-}

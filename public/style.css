@@ -173,7 +173,7 @@ canvas {
 /* MEDIA QUERIES */
 
 @media (max-width: 768px) {
-  .toolbox {
+  .car-parts {
     display: none;
   }
   #model-infos {
