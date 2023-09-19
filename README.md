@@ -33,7 +33,7 @@ A sample car configurator using 3dverse labs microverse
 ## app changes
 - Add tooltips to UI (in form of title="")
 - We might be able to make the loading time feel faster by either giving more information, or trying to find some optimizations, or both.
-- Implement session auto-refresh (if necessary, use console logs in SDK to check), and add UI for reconnecting after session is closed.
+- Implement session timeout warning, and add UI for reconnecting after session is closed.
 - Randomize initial viewing angle to increase the chance that you can see others in the scene.
 - Edit UI for nav arrows 
 - Add some UI to show others in the scene. Maybe we can publish the client list as an embeddable react component.
@@ -47,6 +47,7 @@ A sample car configurator using 3dverse labs microverse
 - Replace undocumented ftl API usage with something else
 - Maybe repetitive routines?
 - Make sure clients show up with avatars and colors
+- Maybe make it possible to pass a set of scene changes along with createSession, or to precreate entities on the backend with preset entity visible states
 
 ## Other stuff
 - Maybe make react component for client list and embed it?
