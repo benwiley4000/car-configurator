@@ -227,18 +227,27 @@ async function removeExistingCar() {
  * @param {string} [category]
  */
 async function changePart(partEntity, category) {
-  // make chosen part visible
-  if (partEntity) {
-    await reparentEntities([partEntity], gVisibleCarParts);
-  }
+  // we will move multiple entities and we want this to
+  // happen all at once in the renderer.
+  SDK3DVerse.engineAPI.editorAPI.prepareSequence();
+
+  let reparentingPromises = [];
 
   // hide previous part for category
   if (category && selectedCarPartEntities[category]) {
-    await reparentEntities(
-      [selectedCarPartEntities[category]],
-      gHiddenCarParts,
+    reparentingPromises.push(
+      reparentEntities([selectedCarPartEntities[category]], gHiddenCarParts),
     );
   }
+
+  // make chosen part visible
+  if (partEntity) {
+    reparentingPromises.push(reparentEntities([partEntity], gVisibleCarParts));
+  }
+
+  SDK3DVerse.engineAPI.editorAPI.commitSequence("swap-entities");
+
+  await Promise.all(reparentingPromises);
 
   if (category) {
     selectedCarPartEntities[category] = partEntity;
