@@ -17,10 +17,35 @@ const PARTS_CATEGORY_MAPPING = {
   spoilers: "Spoiler",
 };
 
-let gCarAttachment = null;
+// The VISIBLE_CART_PARTS entity is where we put
+// car parts to show
+let gVisibleCarParts = null;
+// We pre-instantiate car parts in HIDDEN_CAR_PARTS
+// so we can show them later by moving them to
+// VISIBLE_CAR_PARTS. HIDDEN_CAR_PARTS is technically
+// visible but it is moved far away from the camera
+// so we never see it.
+let gHiddenCarParts = null;
 let gSelectedCar = AppConfig.cars[0];
 let gIntensity = 0;
-let carParts = {
+/**
+ * @type {{
+ *   body: object;
+ *   frontBumpers: object[];
+ *   rearBumpers: object[];
+ *   spoilers: object[];
+ * }[]}
+ */
+const allCarPartEntities = [];
+/**
+ * @type {{
+ *   body: object | null;
+ *   frontBumpers: object | null;
+ *   rearBumpers: object | null;
+ *   spoilers: object | null;
+ * }}
+ */
+let selectedCarPartEntities = {
   body: null,
   frontBumpers: null,
   rearBumpers: null,
@@ -87,9 +112,75 @@ async function initApp() {
 
 //--------------------------------------------------------------------------------------------------
 async function initCarAttachment() {
-  [gCarAttachment] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-    "CAR_ATTACHMENT",
-  );
+  [gVisibleCarParts, gHiddenCarParts] =
+    await SDK3DVerse.engineAPI.findEntitiesByNames(
+      "VISIBLE_CAR_PARTS",
+      "HIDDEN_CAR_PARTS",
+    );
+  /**
+   * @param {object} entity
+   */
+  const isEntityVisible = (entity) =>
+    entity.getParent().getID() === gVisibleCarParts.getID();
+  for (const { name, frontBumpers, rearBumpers, spoilers } of AppConfig.cars) {
+    const entitiesForCar = {
+      body: null,
+      frontBumpers: [],
+      rearBumpers: [],
+      spoilers: [],
+    };
+
+    await Promise.all([
+      (async () => {
+        const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
+        entitiesForCar.body = body;
+        if (isEntityVisible(entitiesForCar.body)) {
+          selectedCarPartEntities.body = entitiesForCar.body;
+        }
+      })(),
+      (async () => {
+        if (!frontBumpers.length) {
+          return;
+        }
+        entitiesForCar.frontBumpers =
+          await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
+        for (const frontBumper of entitiesForCar.frontBumpers) {
+          if (isEntityVisible(frontBumper)) {
+            selectedCarPartEntities.frontBumpers = frontBumper;
+            break;
+          }
+        }
+      })(),
+      (async () => {
+        if (!rearBumpers.length) {
+          return;
+        }
+        entitiesForCar.rearBumpers =
+          await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
+        for (const rearBumper of entitiesForCar.rearBumpers) {
+          if (isEntityVisible(rearBumper)) {
+            selectedCarPartEntities.rearBumpers = rearBumper;
+            break;
+          }
+        }
+      })(),
+      (async () => {
+        if (!spoilers.length) {
+          return;
+        }
+        entitiesForCar.spoilers =
+          await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
+        for (const spoiler of entitiesForCar.spoilers) {
+          if (isEntityVisible(spoiler)) {
+            selectedCarPartEntities.spoilers = spoiler;
+            break;
+          }
+        }
+      })(),
+    ]);
+
+    allCarPartEntities.push(entitiesForCar);
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -103,33 +194,55 @@ const carEngineCapacity = document.getElementById("engine-capacity-number");
 const startingPrice = document.getElementById("starting-price");
 const startingPriceMobile = document.getElementById("starting-price-mobile");
 
-//--------------------------------------------------------------------------------------------------
-async function removeExistingCar() {
-  const children = await SDK3DVerse.engineAPI.getEntityChildren(gCarAttachment);
-  await SDK3DVerse.engineAPI.deleteEntities(children);
-
-  carParts.body = null;
-  carParts.frontBumper = null;
-  carParts.rearBumper = null;
-  carParts.spoiler = null;
+/**
+ * @param {object[]} entities
+ * @param {object} parentEntity
+ */
+async function reparentEntities(entities, parentEntity) {
+  const shouldKeepGlobalTransform = false;
+  const shouldCommit = false;
+  await SDK3DVerse.engineAPI.reparentEntities(
+    entities.map((entity) => entity.getID()),
+    parentEntity.getID(),
+    shouldKeepGlobalTransform,
+    shouldCommit,
+  );
 }
 
-//--------------------------------------------------------------------------------------------------
-async function changePart(part, name, partUUID) {
-  if (part !== null) {
-    await SDK3DVerse.engineAPI.deleteEntities([part]);
+async function removeExistingCar() {
+  const attachedParts = Object.values(selectedCarPartEntities).filter(Boolean);
+  if (!attachedParts.length || !gHiddenCarParts) {
+    return;
+  }
+  await reparentEntities(attachedParts, gHiddenCarParts);
+
+  selectedCarPartEntities.body = null;
+  selectedCarPartEntities.frontBumpers = null;
+  selectedCarPartEntities.rearBumpers = null;
+  selectedCarPartEntities.spoilers = null;
+}
+
+/**
+ * @param {object | undefined} partEntity
+ * @param {string} [category]
+ */
+async function changePart(partEntity, category) {
+  // make chosen part visible
+  if (partEntity) {
+    await reparentEntities([partEntity], gVisibleCarParts);
   }
 
-  return await selectPart(name, partUUID);
-}
+  // hide previous part for category
+  if (category && selectedCarPartEntities[category]) {
+    await reparentEntities(
+      [selectedCarPartEntities[category]],
+      gHiddenCarParts,
+    );
+  }
 
-//--------------------------------------------------------------------------------------------------
-async function selectPart(partName, partSceneUUID) {
-  const part = { debug_name: { value: partName } };
-  SDK3DVerse.utils.resolveComponentDependencies(part, "scene_ref");
-
-  part.scene_ref.value = partSceneUUID;
-  return await SDK3DVerse.engineAPI.spawnEntity(gCarAttachment, part);
+  if (category) {
+    selectedCarPartEntities[category] = partEntity;
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -389,13 +502,11 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   async applySelectedPart() {
     const { selectedPartCategory, selectedParts } = this.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
-    carParts[selectedPartCategory] = await changePart(
-      carParts[selectedPartCategory],
-      `${gSelectedCar.name} ${PARTS_CATEGORY_MAPPING[
+    const partEntity =
+      allCarPartEntities[CarConfiguratorController.selectedCarIndex][
         selectedPartCategory
-      ].toUpperCase()} ${selectedPartIndex}`,
-      gSelectedCar[selectedPartCategory][selectedPartIndex],
-    );
+      ][selectedPartIndex];
+    await changePart(partEntity, selectedPartCategory);
   }
 
   /**
@@ -588,11 +699,7 @@ const CarConfiguratorController = new (class CarConfiguratorController {
   // PRIVATE METHODS
 
   async applySelectedCar() {
-    carParts.body = await changePart(
-      carParts.body,
-      gSelectedCar.name,
-      gSelectedCar.sceneUUID,
-    );
+    await changePart(allCarPartEntities[this.selectedCarIndex].body);
     // TODO: integrate into store
     CarConfiguratorStore.changeSelectedPartCategory("frontBumpers");
     CarConfiguratorStore.changeSelectedPart(0);
