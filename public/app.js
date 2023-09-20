@@ -436,36 +436,34 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {Partial<typeof this.selectedCarPartEntities>} parts
    */
   async changeParts(parts) {
-    // we will move multiple entities and we want this to
-    // happen all at once in the renderer.
-    SDK3DVerse.engineAPI.editorAPI.prepareSequence();
-
-    let reparentingPromises = [];
-
     const partsEntries = Object.entries(parts);
 
-    for (const [category, newPartEntity] of partsEntries) {
-      // hide previous part for category
-      if (this.selectedCarPartEntities[category]) {
-        reparentingPromises.push(
-          reparentEntities(
-            [this.selectedCarPartEntities[category]],
-            gHiddenCarParts,
-          ),
-        );
-      }
-
-      // make chosen part visible
-      if (newPartEntity) {
-        reparentingPromises.push(
-          reparentEntities([newPartEntity], gVisibleCarParts),
-        );
-      }
-    }
-
-    SDK3DVerse.engineAPI.editorAPI.commitSequence("swap-entities");
-
-    await Promise.all(reparentingPromises);
+    // we will move multiple entities and we want this to
+    // happen all at once in the renderer.
+    await SDK3DVerse.engineAPI.batchOperations(
+      "swap-entities",
+      partsEntries
+        .map(([category, newPartEntity]) => {
+          return [
+            async () => {
+              // hide previous part for category
+              if (this.selectedCarPartEntities[category]) {
+                await reparentEntities(
+                  [this.selectedCarPartEntities[category]],
+                  gHiddenCarParts,
+                );
+              }
+            },
+            async () => {
+              // make chosen part visible
+              if (newPartEntity) {
+                await reparentEntities([newPartEntity], gVisibleCarParts);
+              }
+            },
+          ];
+        })
+        .flat(),
+    );
 
     for (const [category, newPartEntity] of partsEntries) {
       this.selectedCarPartEntities[category] = newPartEntity || null;
