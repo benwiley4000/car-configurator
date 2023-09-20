@@ -26,31 +26,8 @@ let gVisibleCarParts = null;
 // visible but it is moved far away from the camera
 // so we never see it.
 let gHiddenCarParts = null;
-let gSelectedCar = AppConfig.cars[0];
+
 let gIntensity = 0;
-/**
- * @type {{
- *   body: object;
- *   frontBumpers: object[];
- *   rearBumpers: object[];
- *   spoilers: object[];
- * }[]}
- */
-const allCarPartEntities = [];
-/**
- * @type {{
- *   body: object | null;
- *   frontBumpers: object | null;
- *   rearBumpers: object | null;
- *   spoilers: object | null;
- * }}
- */
-let selectedCarPartEntities = {
-  body: null,
-  frontBumpers: null,
-  rearBumpers: null,
-  spoilers: null,
-};
 
 //--------------------------------------------------------------------------------------------------
 async function initApp() {
@@ -98,8 +75,7 @@ async function initApp() {
 
   await CarConfiguratorView.toggleGradientPlatform();
   await CarConfiguratorView.changeCubemap(0);
-  await initCarAttachment();
-  await CarConfiguratorView.changeCar({ value: 0 });
+  await CarConfiguratorStore.fetchCarPartEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
   setInformation("Loading complete");
@@ -109,90 +85,6 @@ async function initApp() {
   }, 500);
   // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
 }
-
-//--------------------------------------------------------------------------------------------------
-async function initCarAttachment() {
-  [gVisibleCarParts, gHiddenCarParts] =
-    await SDK3DVerse.engineAPI.findEntitiesByNames(
-      "VISIBLE_CAR_PARTS",
-      "HIDDEN_CAR_PARTS",
-    );
-  /**
-   * @param {object} entity
-   */
-  const isEntityVisible = (entity) =>
-    entity.getParent().getID() === gVisibleCarParts.getID();
-  for (const { name, frontBumpers, rearBumpers, spoilers } of AppConfig.cars) {
-    const entitiesForCar = {
-      body: null,
-      frontBumpers: [],
-      rearBumpers: [],
-      spoilers: [],
-    };
-
-    await Promise.all([
-      (async () => {
-        const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
-        entitiesForCar.body = body;
-        if (isEntityVisible(entitiesForCar.body)) {
-          selectedCarPartEntities.body = entitiesForCar.body;
-        }
-      })(),
-      (async () => {
-        if (!frontBumpers.length) {
-          return;
-        }
-        entitiesForCar.frontBumpers =
-          await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
-        for (const frontBumper of entitiesForCar.frontBumpers) {
-          if (isEntityVisible(frontBumper)) {
-            selectedCarPartEntities.frontBumpers = frontBumper;
-            break;
-          }
-        }
-      })(),
-      (async () => {
-        if (!rearBumpers.length) {
-          return;
-        }
-        entitiesForCar.rearBumpers =
-          await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
-        for (const rearBumper of entitiesForCar.rearBumpers) {
-          if (isEntityVisible(rearBumper)) {
-            selectedCarPartEntities.rearBumpers = rearBumper;
-            break;
-          }
-        }
-      })(),
-      (async () => {
-        if (!spoilers.length) {
-          return;
-        }
-        entitiesForCar.spoilers =
-          await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
-        for (const spoiler of entitiesForCar.spoilers) {
-          if (isEntityVisible(spoiler)) {
-            selectedCarPartEntities.spoilers = spoiler;
-            break;
-          }
-        }
-      })(),
-    ]);
-
-    allCarPartEntities.push(entitiesForCar);
-  }
-}
-
-//--------------------------------------------------------------------------------------------------
-const carName = document.getElementById("car_name");
-const carDescription = document.getElementById("car_description");
-const carMaximumSpeed = document.getElementById("maximum-speed-number");
-const carAcceleration = document.getElementById("acceleration-number");
-const carMaximumPower = document.getElementById("maximum-power-number");
-const carMaximumTorque = document.getElementById("maximum-torque-number");
-const carEngineCapacity = document.getElementById("engine-capacity-number");
-const startingPrice = document.getElementById("starting-price");
-const startingPriceMobile = document.getElementById("starting-price-mobile");
 
 /**
  * @param {object[]} entities
@@ -207,51 +99,6 @@ async function reparentEntities(entities, parentEntity) {
     shouldKeepGlobalTransform,
     shouldCommit,
   );
-}
-
-async function removeExistingCar() {
-  const attachedParts = Object.values(selectedCarPartEntities).filter(Boolean);
-  if (!attachedParts.length || !gHiddenCarParts) {
-    return;
-  }
-  await reparentEntities(attachedParts, gHiddenCarParts);
-
-  selectedCarPartEntities.body = null;
-  selectedCarPartEntities.frontBumpers = null;
-  selectedCarPartEntities.rearBumpers = null;
-  selectedCarPartEntities.spoilers = null;
-}
-
-/**
- * @param {object | undefined} partEntity
- * @param {string} [category]
- */
-async function changePart(partEntity, category) {
-  // we will move multiple entities and we want this to
-  // happen all at once in the renderer.
-  SDK3DVerse.engineAPI.editorAPI.prepareSequence();
-
-  let reparentingPromises = [];
-
-  // hide previous part for category
-  if (category && selectedCarPartEntities[category]) {
-    reparentingPromises.push(
-      reparentEntities([selectedCarPartEntities[category]], gHiddenCarParts),
-    );
-  }
-
-  // make chosen part visible
-  if (partEntity) {
-    reparentingPromises.push(reparentEntities([partEntity], gVisibleCarParts));
-  }
-
-  SDK3DVerse.engineAPI.editorAPI.commitSequence("swap-entities");
-
-  await Promise.all(reparentingPromises);
-
-  if (category) {
-    selectedCarPartEntities[category] = partEntity;
-  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -317,20 +164,6 @@ async function getAssetDescription(assetType, assetUUID) {
     throw data;
   }
   return data;
-}
-
-//-----------------------------------------------------------------------------------
-function firstWordFromId(selectId, addClass) {
-  var jsIntro = document.getElementById(selectId);
-  var originalString = jsIntro.innerHTML;
-  var splitWords = originalString.split(" ");
-
-  jsIntro.innerHTML =
-    "<span class=" +
-    addClass +
-    ">".concat(splitWords[0], "</span>") +
-    "&#32;" +
-    originalString.substr(originalString.indexOf(" ") + 1);
 }
 
 //---------------------------------------------------------------------------
@@ -435,6 +268,7 @@ cubemaps.forEach((cubemap) => {
 const CarConfiguratorStore = new (class CarConfiguratorStore {
   /**
    * @typedef {{
+   *   selectedCarIndex: number;
    *   selectedPartCategory: keyof (typeof PARTS_CATEGORY_MAPPING);
    *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
    *   color: [Number, Number, number];
@@ -444,6 +278,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 
   /** @private @type {CarConfiguratorState} */
   internalState = {
+    selectedCarIndex: 0,
     selectedPartCategory: Object.keys(PARTS_CATEGORY_MAPPING)[0],
     selectedParts: {
       frontBumpers: 0,
@@ -453,8 +288,33 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     color: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
   };
-  /** @private */
+  /** @private @type {[string[], () => void][]} */
   subscribers = [];
+  /**
+   * @private
+   * @type {{
+   *   body: object;
+   *   frontBumpers: object[];
+   *   rearBumpers: object[];
+   *   spoilers: object[];
+   * }[]}
+   */
+  allCarPartEntities = [];
+  /**
+   * @private
+   * @type {{
+   *   body: object | null;
+   *   frontBumpers: object | null;
+   *   rearBumpers: object | null;
+   *   spoilers: object | null;
+   * }}
+   */
+  selectedCarPartEntities = {
+    body: null,
+    frontBumpers: null,
+    rearBumpers: null,
+    spoilers: null,
+  };
 
   constructor() {
     // TODO: find way to initialize scene graph based on default settings
@@ -494,6 +354,137 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     throw new Error("Cannot write state directly.");
   }
 
+  async fetchCarPartEntities() {
+    [gVisibleCarParts, gHiddenCarParts] =
+      await SDK3DVerse.engineAPI.findEntitiesByNames(
+        "VISIBLE_CAR_PARTS",
+        "HIDDEN_CAR_PARTS",
+      );
+    /**
+     * @param {object} entity
+     */
+    const isEntityVisible = (entity) =>
+      entity.getParent().getID() === gVisibleCarParts.getID();
+    for (const {
+      name,
+      frontBumpers,
+      rearBumpers,
+      spoilers,
+    } of AppConfig.cars) {
+      const entitiesForCar = {
+        body: null,
+        frontBumpers: [],
+        rearBumpers: [],
+        spoilers: [],
+      };
+
+      await Promise.all([
+        (async () => {
+          const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
+          entitiesForCar.body = body;
+          if (isEntityVisible(entitiesForCar.body)) {
+            this.selectedCarPartEntities.body = entitiesForCar.body;
+          }
+        })(),
+        (async () => {
+          if (!frontBumpers.length) {
+            return;
+          }
+          entitiesForCar.frontBumpers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
+          for (const frontBumper of entitiesForCar.frontBumpers) {
+            if (isEntityVisible(frontBumper)) {
+              this.selectedCarPartEntities.frontBumpers = frontBumper;
+              break;
+            }
+          }
+        })(),
+        (async () => {
+          if (!rearBumpers.length) {
+            return;
+          }
+          entitiesForCar.rearBumpers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
+          for (const rearBumper of entitiesForCar.rearBumpers) {
+            if (isEntityVisible(rearBumper)) {
+              this.selectedCarPartEntities.rearBumpers = rearBumper;
+              break;
+            }
+          }
+        })(),
+        (async () => {
+          if (!spoilers.length) {
+            return;
+          }
+          entitiesForCar.spoilers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
+          for (const spoiler of entitiesForCar.spoilers) {
+            if (isEntityVisible(spoiler)) {
+              this.selectedCarPartEntities.spoilers = spoiler;
+              break;
+            }
+          }
+        })(),
+      ]);
+
+      this.allCarPartEntities.push(entitiesForCar);
+    }
+  }
+
+  /**
+   * @private
+   * @param {Partial<typeof this.selectedCarPartEntities>} parts
+   */
+  async changeParts(parts) {
+    // we will move multiple entities and we want this to
+    // happen all at once in the renderer.
+    SDK3DVerse.engineAPI.editorAPI.prepareSequence();
+
+    let reparentingPromises = [];
+
+    const partsEntries = Object.entries(parts);
+
+    for (const [category, newPartEntity] of partsEntries) {
+      // hide previous part for category
+      if (this.selectedCarPartEntities[category]) {
+        reparentingPromises.push(
+          reparentEntities(
+            [this.selectedCarPartEntities[category]],
+            gHiddenCarParts,
+          ),
+        );
+      }
+
+      // make chosen part visible
+      if (newPartEntity) {
+        reparentingPromises.push(
+          reparentEntities([newPartEntity], gVisibleCarParts),
+        );
+      }
+    }
+
+    SDK3DVerse.engineAPI.editorAPI.commitSequence("swap-entities");
+
+    await Promise.all(reparentingPromises);
+
+    for (const [category, newPartEntity] of partsEntries) {
+      this.selectedCarPartEntities[category] = newPartEntity || null;
+    }
+  }
+
+  /** @private */
+  async applySelectedCar() {
+    const allPartsForSelectedCar =
+      this.allCarPartEntities[this.state.selectedCarIndex];
+
+    await this.changeParts({
+      body: allPartsForSelectedCar.body,
+      frontBumpers: allPartsForSelectedCar.frontBumpers[0] || null,
+      rearBumpers: allPartsForSelectedCar.rearBumpers[0] || null,
+      spoilers: allPartsForSelectedCar.spoilers[0] || null,
+    });
+  }
+
   /** @private */
   async applySelectedMaterial() {
     const desc = await getAssetDescription(
@@ -502,7 +493,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     );
     desc.dataJson.albedo = this.state.color;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      gSelectedCar.paintMaterialUUID,
+      AppConfig.cars[this.state.selectedCarIndex].paintMaterialUUID,
       desc,
     );
   }
@@ -512,10 +503,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     const { selectedPartCategory, selectedParts } = this.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
     const partEntity =
-      allCarPartEntities[CarConfiguratorView.selectedCarIndex][
+      this.allCarPartEntities[this.state.selectedCarIndex][
         selectedPartCategory
       ][selectedPartIndex];
-    await changePart(partEntity, selectedPartCategory);
+    await this.changeParts({ [selectedPartCategory]: partEntity });
   }
 
   /**
@@ -524,6 +515,18 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
   subscribe(watchedKeys, handler) {
     this.subscribers.push([watchedKeys, handler]);
+  }
+
+  /**
+   * @param {number} selectedCarIndex
+   */
+  changeCar(selectedCarIndex) {
+    this.setState({
+      selectedCarIndex,
+      selectedParts: { frontBumpers: 0, rearBumpers: 0, spoilers: 0 },
+      selectedPartCategory: "frontBumpers",
+    });
+    this.applySelectedCar();
   }
 
   /**
@@ -553,7 +556,12 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} partIndex
    */
   changeSelectedPart(partIndex) {
-    if (partIndex > gSelectedCar[this.state.selectedPartCategory].length) {
+    if (
+      partIndex >
+      AppConfig.cars[this.state.selectedCarIndex][
+        this.state.selectedPartCategory
+      ].length
+    ) {
       throw new Error("Invalid part index");
     }
     this.setState({
@@ -567,16 +575,69 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 })();
 
 /** @global */
-const CarSelectionView = new (class CarSelectionView {})();
+const CarSelectionView = new (class CarSelectionView {
+  constructor() {
+    requestAnimationFrame(this.render);
+    CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
+  }
+
+  render = () => {
+    const carName = document.getElementById("car_name");
+    const carDescription = document.getElementById("car_description");
+    const carMaximumSpeed = document.getElementById("maximum-speed-number");
+    const carAcceleration = document.getElementById("acceleration-number");
+    const carMaximumPower = document.getElementById("maximum-power-number");
+    const carMaximumTorque = document.getElementById("maximum-torque-number");
+    const carEngineCapacity = document.getElementById("engine-capacity-number");
+    const startingPrice = document.getElementById("starting-price");
+    const startingPriceMobile = document.getElementById(
+      "starting-price-mobile",
+    );
+
+    const selectedCar =
+      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
+    var [firstWord, ...otherWords] = selectedCar.name.split(" ");
+
+    carName.innerHTML =
+      "<span class=highlighted-word>".concat(firstWord, "</span>") +
+      "&#32;" +
+      otherWords.join(" ");
+    carDescription.innerHTML = selectedCar.description;
+    carMaximumSpeed.innerHTML = selectedCar.maxSpeed;
+    carAcceleration.innerHTML = selectedCar.acceleration;
+    carMaximumPower.innerHTML = selectedCar.maximumPower;
+    carMaximumTorque.innerHTML = selectedCar.maximumTorque;
+    carEngineCapacity.innerHTML = selectedCar.engineCapacity;
+    startingPrice.innerHTML = selectedCar.price;
+    startingPriceMobile.innerHTML = selectedCar.price;
+  };
+
+  // PUBLIC METHODS
+
+  nextCar() {
+    const { selectedCarIndex } = CarConfiguratorStore.state;
+    CarConfiguratorStore.changeCar(
+      (selectedCarIndex + 1) % AppConfig.cars.length,
+    );
+  }
+
+  previousCar() {
+    const { selectedCarIndex } = CarConfiguratorStore.state;
+    CarConfiguratorStore.changeCar(
+      selectedCarIndex === 0 ? AppConfig.cars.length - 1 : selectedCarIndex - 1,
+    );
+  }
+})();
 
 /** @global */
 const CarPartsView = new (class CarPartsView {
+  /** @private */
   template = Handlebars.compile(
     document.getElementById("car-parts-template").innerHTML,
   );
 
   constructor() {
-    this.render();
+    requestAnimationFrame(this.render);
     CarConfiguratorStore.subscribe(
       ["selectedPartCategory", "selectedParts"],
       this.render,
@@ -587,7 +648,8 @@ const CarPartsView = new (class CarPartsView {
   render = () => {
     const carPartsElement = document.querySelector(".car-parts");
 
-    const { selectedPartCategory, selectedParts } = CarConfiguratorStore.state;
+    const { selectedPartCategory, selectedParts, selectedCarIndex } =
+      CarConfiguratorStore.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
 
     carPartsElement.innerHTML = this.template({
@@ -596,7 +658,9 @@ const CarPartsView = new (class CarPartsView {
         displayName: PARTS_CATEGORY_MAPPING[name],
         isSelected: selectedPartCategory === name,
       })),
-      selectedCategoryData: gSelectedCar[selectedPartCategory].map((_, i) => ({
+      selectedCategoryData: AppConfig.cars[selectedCarIndex][
+        selectedPartCategory
+      ].map((_, i) => ({
         displayName: `${PARTS_CATEGORY_MAPPING[selectedPartCategory]} ${i + 1}`,
         isSelected: selectedPartIndex === i,
       })),
@@ -622,7 +686,7 @@ const CarPartsView = new (class CarPartsView {
 /** @global */
 const CarColorsView = new (class CarColorsView {
   constructor() {
-    this.render();
+    requestAnimationFrame(this.render);
     CarConfiguratorStore.subscribe(["color"], this.render);
   }
 
@@ -661,7 +725,7 @@ const CarColorsView = new (class CarColorsView {
 
 const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
-    this.render();
+    requestAnimationFrame(this.render);
     CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
   }
 
@@ -698,73 +762,6 @@ const CarOptionsBarView = new (class CarOptionsBarView {})();
 
 /** @global */
 const CarConfiguratorView = new (class CarConfiguratorView {
-  /** @private */
-  isCarSwitchEnabled = true;
-  /** @private */
-  carSwitchDelay = 3000; // delay to avoid car model switch spam
-  /** @private */
-  selectedCarIndex = 0;
-
-  // PRIVATE METHODS
-
-  async applySelectedCar() {
-    await changePart(allCarPartEntities[this.selectedCarIndex].body);
-    // TODO: integrate into store
-    CarConfiguratorStore.changeSelectedPartCategory("frontBumpers");
-    CarConfiguratorStore.changeSelectedPart(0);
-    CarConfiguratorStore.changeSelectedPartCategory("rearBumpers");
-    CarConfiguratorStore.changeSelectedPart(0);
-    CarConfiguratorStore.changeSelectedPartCategory("spoilers");
-    CarConfiguratorStore.changeSelectedPart(0);
-    CarConfiguratorStore.changeSelectedPartCategory("frontBumpers");
-  }
-
-  async changeCar({ value: selectedCarIndex }) {
-    gSelectedCar = AppConfig.cars[selectedCarIndex];
-    await removeExistingCar();
-    carName.innerHTML = gSelectedCar.name;
-    firstWordFromId("car_name", "highlighted-word");
-    carDescription.innerHTML = gSelectedCar.description;
-    carMaximumSpeed.innerHTML = gSelectedCar.maxSpeed;
-    carAcceleration.innerHTML = gSelectedCar.acceleration;
-    carMaximumPower.innerHTML = gSelectedCar.maximumPower;
-    carMaximumTorque.innerHTML = gSelectedCar.maximumTorque;
-    carEngineCapacity.innerHTML = gSelectedCar.engineCapacity;
-    startingPrice.innerHTML = gSelectedCar.price;
-    startingPriceMobile.innerHTML = gSelectedCar.price;
-    await this.applySelectedCar();
-    // TODO: replace with internal call once in model
-    CarConfiguratorStore.applySelectedMaterial();
-  }
-
-  // PUBLIC METHODS
-
-  async nextCar() {
-    if (this.isCarSwitchEnabled) {
-      this.isCarSwitchEnabled = false;
-      this.selectedCarIndex =
-        (this.selectedCarIndex + 1) % AppConfig.cars.length;
-      await this.changeCar({ value: this.selectedCarIndex });
-    }
-    setTimeout(function () {
-      this.isCarSwitchEnabled = true;
-    }, this.carSwitchDelay);
-  }
-
-  async previousCar() {
-    if (this.isCarSwitchEnabled) {
-      this.isCarSwitchEnabled = false;
-      this.selectedCarIndex =
-        this.selectedCarIndex === 0
-          ? AppConfig.cars.length - 1
-          : this.selectedCarIndex - 1;
-      await this.changeCar({ value: this.selectedCarIndex });
-    }
-    setTimeout(function () {
-      this.isCarSwitchEnabled = true;
-    }, this.carSwitchDelay);
-  }
-
   launchModelSelection() {
     firstSectionElements.forEach((element) => {
       element.classList.remove("hidden");
@@ -779,7 +776,9 @@ const CarConfiguratorView = new (class CarConfiguratorView {
       toolboxElement.style.display = "none";
     }
 
-    document.getElementById("starting-price").innerHTML = gSelectedCar.price;
+    const selectedCar =
+      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
+    document.getElementById("starting-price").innerHTML = selectedCar.price;
   }
 
   launchCustomization() {
@@ -802,7 +801,9 @@ const CarConfiguratorView = new (class CarConfiguratorView {
     const hiddenButtons = document.querySelectorAll(".hidden-button");
     hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
 
-    document.getElementById("final-price").innerHTML = gSelectedCar.price;
+    const selectedCar =
+      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
+    document.getElementById("final-price").innerHTML = selectedCar.price;
   }
 
   launchReview() {
@@ -838,23 +839,26 @@ const CarConfiguratorView = new (class CarConfiguratorView {
     lightOnIcon.classList.toggle("hidden");
     lightOffIcon.classList.toggle("hidden");
 
+    const selectedCar =
+      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
+
     const desc1 = await getAssetDescription(
       "materials",
-      gSelectedCar.headLightsMatUUID,
+      selectedCar.headLightsMatUUID,
     );
     desc1.dataJson.emissionIntensity = gIntensity;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      gSelectedCar.headLightsMatUUID,
+      selectedCar.headLightsMatUUID,
       desc1,
     );
 
     const desc2 = await getAssetDescription(
       "materials",
-      gSelectedCar.rearLightsMatUUID,
+      selectedCar.rearLightsMatUUID,
     );
     desc2.dataJson.emissionIntensity = gIntensity;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      gSelectedCar.rearLightsMatUUID,
+      selectedCar.rearLightsMatUUID,
       desc2,
     );
 
