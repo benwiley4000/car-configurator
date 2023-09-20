@@ -96,10 +96,10 @@ async function initApp() {
 
   const sessionCreated = await connect();
 
-  await CarConfiguratorController.toggleGradientPlatform();
-  await CarConfiguratorController.changeCubemap(0);
+  await CarConfiguratorView.toggleGradientPlatform();
+  await CarConfiguratorView.changeCubemap(0);
   await initCarAttachment();
-  await CarConfiguratorController.changeCar({ value: 0 });
+  await CarConfiguratorView.changeCar({ value: 0 });
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
   setInformation("Loading complete");
@@ -503,7 +503,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     const { selectedPartCategory, selectedParts } = this.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
     const partEntity =
-      allCarPartEntities[CarConfiguratorController.selectedCarIndex][
+      allCarPartEntities[CarConfiguratorView.selectedCarIndex][
         selectedPartCategory
       ][selectedPartIndex];
     await changePart(partEntity, selectedPartCategory);
@@ -558,10 +558,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 })();
 
 /** @global */
-const CarSelectionController = new (class CarSelectionController {})();
+const CarSelectionView = new (class CarSelectionView {})();
 
 /** @global */
-const CarPartsController = new (class CarPartsController {
+const CarPartsView = new (class CarPartsView {
   template = Handlebars.compile(
     document.getElementById("car-parts-template").innerHTML,
   );
@@ -611,7 +611,7 @@ const CarPartsController = new (class CarPartsController {
 })();
 
 /** @global */
-const CarColorsController = new (class CarColorsController {
+const CarColorsView = new (class CarColorsView {
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(["color"], this.render);
@@ -650,7 +650,7 @@ const CarColorsController = new (class CarColorsController {
   };
 })();
 
-const CarMaterialsController = new (class CarMaterialsController {
+const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
@@ -679,16 +679,16 @@ const CarMaterialsController = new (class CarMaterialsController {
 })();
 
 /** @global */
-const CarBackgroundController = new (class CarBackgroundController {})();
+const CarBackgroundView = new (class CarBackgroundView {})();
 
 /** @global */
-const CarConfigStepperController = new (class CarConfigStepperController {})();
+const CarConfigStepperView = new (class CarConfigStepperView {})();
 
 /** @global */
-const CarOptionsBarController = new (class CarOptionsBarController {})();
+const CarOptionsBarView = new (class CarOptionsBarView {})();
 
 /** @global */
-const CarConfiguratorController = new (class CarConfiguratorController {
+const CarConfiguratorView = new (class CarConfiguratorView {
   /** @private */
   isCarSwitchEnabled = true;
   /** @private */
@@ -893,12 +893,12 @@ const CarConfiguratorController = new (class CarConfiguratorController {
 })();
 
 Object.assign(window, {
-  CarSelectionController,
-  CarPartsController,
-  CarColorsController,
-  CarMaterialsController,
-  CarBackgroundController,
-  CarConfigStepperController,
-  CarOptionsBarController,
-  CarConfiguratorController,
+  CarSelectionView,
+  CarPartsView,
+  CarColorsView,
+  CarMaterialsView,
+  CarBackgroundView,
+  CarConfigStepperView,
+  CarOptionsBarView,
+  CarConfiguratorView,
 });

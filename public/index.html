@@ -43,7 +43,7 @@
       <div
         id="previous-model"
         class="model-left-button absolute left-[5vw] cursor-pointer h-[5vh] w-[3vw] first-section-element switch-model-button"
-        onclick="CarConfiguratorController.previousCar()"
+        onclick="CarConfiguratorView.previousCar()"
       >
         <svg
           width="100%"
@@ -64,7 +64,7 @@
       <div
         id="next-model"
         class="model-right-button absolute right-[5vw] cursor-pointer h-[5vh] w-[3vw] first-section-element switch-model-button"
-        onclick="CarConfiguratorController.nextCar()"
+        onclick="CarConfiguratorView.nextCar()"
       >
         <svg
           width="100%"
@@ -108,7 +108,7 @@
         <div id="settings-icons" class="options flex space-x-3 justify-end">
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
-            onclick="CarConfiguratorController.toggleLights()"
+            onclick="CarConfiguratorView.toggleLights()"
           >
             <svg
               id="light-on"
@@ -178,7 +178,7 @@
 
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
-            onclick="CarConfiguratorController.toggleRotation()"
+            onclick="CarConfiguratorView.toggleRotation()"
           >
             <svg
               id="rotate-on"
@@ -223,7 +223,7 @@
           </div>
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group"
-            onclick="CarConfiguratorController.toggleSettingsPanel()"
+            onclick="CarConfiguratorView.toggleSettingsPanel()"
           >
             <svg
               id="settings-off"
@@ -267,7 +267,7 @@
               <input
                 type="checkbox"
                 class="sr-only peer"
-                onclick="CarConfiguratorController.toggleGradientPlatform()"
+                onclick="CarConfiguratorView.toggleGradientPlatform()"
               />
               <div
                 class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"
@@ -357,31 +357,31 @@
         <div
           id="color1"
           data-color="0.467,0.51,0"
-          onclick="CarColorsController.handleColorSelection({ target: this })"
+          onclick="CarColorsView.handleColorSelection({ target: this })"
           class="color h-[36px] w-[36px] bg-yellow-300 rounded-full hover:cursor-pointer transition hover:scale-125"
         ></div>
         <div
           id="color2"
           data-color="0,0.369,0.302"
-          onclick="CarColorsController.handleColorSelection({ target: this })"
+          onclick="CarColorsView.handleColorSelection({ target: this })"
           class="color h-[36px] w-[36px] bg-blue-300 rounded-full hover:cursor-pointer transition hover:scale-125"
         ></div>
         <div
           id="color3"
           data-color="0,0.035,0.29"
-          onclick="CarColorsController.handleColorSelection({ target: this })"
+          onclick="CarColorsView.handleColorSelection({ target: this })"
           class="color h-[36px] w-[36px] bg-blue-700 rounded-full hover:cursor-pointer transition hover:scale-125"
         ></div>
         <div
           id="color4"
           data-color="0.58,0.141,0.506"
-          onclick="CarColorsController.handleColorSelection({ target: this })"
+          onclick="CarColorsView.handleColorSelection({ target: this })"
           class="color h-[36px] w-[36px] bg-pink-600 rounded-full hover:cursor-pointer transition hover:scale-125"
         ></div>
         <div
           id="color5"
           data-color="0.251,0,0"
-          onclick="CarColorsController.handleColorSelection({ target: this })"
+          onclick="CarColorsView.handleColorSelection({ target: this })"
           class="color h-[36px] w-[36px] bg-red-800 rounded-full hover:cursor-pointer transition hover:scale-125"
         ></div>
       </div>
@@ -394,7 +394,7 @@
         <div
           class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
           data-material-index="1"
-          onclick="CarMaterialsController.handleMaterialSelection({ target: this })"
+          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
         >
           <svg
             width="50%"
@@ -426,7 +426,7 @@
         <div
           class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
           data-material-index="0"
-          onclick="CarMaterialsController.handleMaterialSelection({ target: this })"
+          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
         >
           <svg
             width="50%"
@@ -466,7 +466,7 @@
         <div
           class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
           data-material-index="2"
-          onclick="CarMaterialsController.handleMaterialSelection({ target: this })"
+          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
         >
           <svg
             width="50%"
@@ -514,7 +514,7 @@
           <div class="flex">
             {{#each availableCategories as | category |}}
               <button
-                onclick="CarPartsController.switchCategory('{{category.name}}')"
+                onclick="CarPartsView.switchCategory('{{category.name}}')"
                 class="{{#if category.isSelected}} active-tab {{/if}} rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
               >
                 {{category.displayName}}
@@ -528,7 +528,7 @@
               {{#each selectedCategoryData as | part |}}
                 <div
                   class="{{#if part.isSelected}} active-part {{/if}} part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
-                  onclick="CarPartsController.switchPartIndex({{@index}})"
+                  onclick="CarPartsView.switchPartIndex({{@index}})"
                 >
                   <div>{{part.displayName}}</div>
                   <div
@@ -554,7 +554,7 @@
       >
         <div
           id="cubemap1"
-          onclick="CarConfiguratorController.changeCubemap(0);"
+          onclick="CarConfiguratorView.changeCubemap(0);"
           class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center active-cubemap"
         >
           <div
@@ -574,7 +574,7 @@
         </div>
         <div
           id="cubemap2"
-          onclick="CarConfiguratorController.changeCubemap(1);"
+          onclick="CarConfiguratorView.changeCubemap(1);"
           class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
         >
           <div
@@ -594,7 +594,7 @@
         </div>
         <div
           id="cubemap3"
-          onclick="CarConfiguratorController.changeCubemap(2);"
+          onclick="CarConfiguratorView.changeCubemap(2);"
           class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
         >
           <div
@@ -634,7 +634,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorController.launchCustomization()"
+          onclick="CarConfiguratorView.launchCustomization()"
         >
           <svg
             width="30%"
@@ -657,7 +657,7 @@
       <!-- First Screen Mobile Button -->
       <div
         class="mobile-select-model-button bg-[#EC6244] flex rounded-full px-10 py-6 absolute bottom-[3vh] justify-center items-center w-[90%] transition cursor-pointer md:hidden first-section-element"
-        onclick="CarConfiguratorController.launchCustomization()"
+        onclick="CarConfiguratorView.launchCustomization()"
       >
         <div class="text w-3/4">
           <h3
@@ -702,7 +702,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorController.launchReview(); CarConfiguratorController.toggleDisplayBackground()"
+          onclick="CarConfiguratorView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
         >
           <svg
             width="30%"
@@ -728,7 +728,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorController.launchModelSelection()"
+          onclick="CarConfiguratorView.launchModelSelection()"
         >
           <svg
             width="30%"
@@ -756,7 +756,7 @@
       >
         <div
           class="mobile-back-model-button bg-[#EC6244] flex rounded-full px-5 py-6 w-[25%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfiguratorController.launchModelSelection()"
+          onclick="CarConfiguratorView.launchModelSelection()"
         >
           <div class="arrow w-full flex justify-center items-center h-[3vh]">
             <svg
@@ -779,7 +779,7 @@
         </div>
         <div
           class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfiguratorController.launchReview(); CarConfiguratorController.toggleDisplayBackground()"
+          onclick="CarConfiguratorView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
         >
           <div class="text w-3/4">
             <h3 class="price text-[#141614] text-[3vh]">Review</h3>
@@ -811,7 +811,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorController.launchCustomization();CarConfiguratorController.toggleDisplayBackground();"
+          onclick="CarConfiguratorView.launchCustomization();CarConfiguratorView.toggleDisplayBackground();"
         >
           <svg
             width="30%"
@@ -838,7 +838,7 @@
       >
         <div
           class="bg-[#EC6244] flex rounded-full py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-          onclick="CarConfiguratorController.launchCustomization(); CarConfiguratorController.toggleDisplayBackground();"
+          onclick="CarConfiguratorView.launchCustomization(); CarConfiguratorView.toggleDisplayBackground();"
         >
           <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
             <svg
