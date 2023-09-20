@@ -902,3 +902,10 @@ Object.assign(window, {
   CarOptionsBarView,
   CarConfiguratorView,
 });
+
+SDK3DVerse.engineAPI.editorAPI.on("editor-error", (error) => {
+  if (error.httpCode === 429) {
+    // Tell user to stop spamming
+    alert(`3dverse says: ${error.message}\n${JSON.stringify(error, null, 2)}`);
+  }
+});
