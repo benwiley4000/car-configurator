@@ -275,7 +275,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    *   selectedCarIndex: number;
    *   selectedPartCategory: keyof (typeof PARTS_CATEGORY_MAPPING);
    *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
-   *   color: [Number, Number, number];
+   *   selectedColor: [Number, Number, number];
    *   selectedMaterial: (typeof AppConfig)['materials'][number];
    *   selectedCubemap: (typeof AppConfig)['cubemaps'][number]
    * }} CarConfiguratorState
@@ -293,7 +293,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       rearBumpers: 0,
       spoilers: 0,
     },
-    color: [0, 0, 0],
+    selectedColor: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],
   });
@@ -506,7 +506,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       "materials",
       this.state.selectedMaterial.matUUID,
     );
-    desc.dataJson.albedo = this.state.color;
+    desc.dataJson.albedo = this.state.selectedColor;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
       AppConfig.cars[this.state.selectedCarIndex].paintMaterialUUID,
       desc,
@@ -545,10 +545,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   }
 
   /**
-   * @param {[number, number, number]} color
+   * @param {[number, number, number]} selectedColor
    */
-  changeColor(color) {
-    this.setState({ color });
+  changeSelectedColor(selectedColor) {
+    this.setState({ selectedColor });
     this.applySelectedMaterial();
   }
 
@@ -712,7 +712,7 @@ const CarPartsView = new (class CarPartsView {
 const CarColorsView = new (class CarColorsView {
   constructor() {
     requestAnimationFrame(this.render);
-    CarConfiguratorStore.subscribe(["color"], this.render);
+    CarConfiguratorStore.subscribe(["selectedColor"], this.render);
   }
 
   /**
@@ -733,7 +733,7 @@ const CarColorsView = new (class CarColorsView {
     const colors = document.querySelectorAll(".color");
     colors.forEach((color) => {
       const rgb = this.getRgbForColorElement(color);
-      if (CarConfiguratorStore.state.color.every((v, i) => rgb[i] === v)) {
+      if (CarConfiguratorStore.state.selectedColor.every((v, i) => rgb[i] === v)) {
         color.classList.add("active-color");
       } else {
         color.classList.remove("active-color");
@@ -744,7 +744,7 @@ const CarColorsView = new (class CarColorsView {
   // UI EVENT HANDLERS:
 
   handleColorSelection(e) {
-    CarConfiguratorStore.changeColor(this.getRgbForColorElement(e.target));
+    CarConfiguratorStore.changeSelectedColor(this.getRgbForColorElement(e.target));
   }
 })();
 
