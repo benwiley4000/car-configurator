@@ -628,7 +628,7 @@ const CarSelectionView = new (class CarSelectionView {
     startingPriceMobile.innerHTML = selectedCar.price;
   };
 
-  // PUBLIC METHODS
+  // UI EVENT HANDLERS:
 
   nextCar() {
     const { selectedCarIndex } = CarConfiguratorStore.state;
@@ -682,6 +682,8 @@ const CarPartsView = new (class CarPartsView {
       })),
     });
   };
+
+  // UI EVENT HANDLERS:
 
   /**
    *
@@ -838,16 +840,15 @@ const CarConfiguratorView = new (class CarConfiguratorView {
   }
 
   async changeCubemap(cubemapIndex) {
-    const cubemap = AppConfig.cubemaps[cubemapIndex];
-    const environmentEntities = await SDK3DVerse.engineAPI.findEntitiesByNames(
+    const { skyboxUUID, radianceUUID, irradianceUUID } = AppConfig.cubemaps[cubemapIndex];
+    const [environmentEntity] = await SDK3DVerse.engineAPI.findEntitiesByNames(
       "Env",
     );
-    const environmentEntity = environmentEntities[0];
-    let envComponent = await environmentEntity.getComponent("environment");
-    envComponent.skyboxUUID = cubemap.skyboxUUID;
-    envComponent.radianceUUID = cubemap.radianceUUID;
-    envComponent.irradianceUUID = cubemap.irradianceUUID;
-    await environmentEntity.setComponent("environment", envComponent);
+    environmentEntity.setComponent("environment", {
+      skyboxUUID,
+      radianceUUID,
+      irradianceUUID,
+    });
     SDK3DVerse.engineAPI.propagateChanges();
   }
 
