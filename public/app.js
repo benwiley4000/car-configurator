@@ -75,12 +75,6 @@ async function initApp() {
 
   await CarConfiguratorStore.fetchSceneEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
-
-  setInformation("Loading complete");
-  document.getElementById("loader").classList.add("opacity-0");
-  setTimeout(function () {
-    document.getElementById("loader").classList.add("hidden");
-  }, 500);
   // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
 }
 
@@ -114,13 +108,6 @@ function setCameraSettings(settings) {
 }
 
 //--------------------------------------------------------------------------------------------------
-function setInformation(str) {
-  const infoSpan = document.getElementById("info_span");
-  infoSpan.innerHTML = str;
-  console.debug(str);
-}
-
-//--------------------------------------------------------------------------------------------------
 function setResolution(showInfo = true) {
   const container = document.getElementById("container");
   const canvasSize = container.getBoundingClientRect();
@@ -143,13 +130,15 @@ function setResolution(showInfo = true) {
   SDK3DVerse.setResolution(w, h, scale);
 
   if (showInfo) {
-    setInformation(`Setting resolution to ${w} x ${h} (scale=${scale})`);
+    CarConfiguratorStore.setSceneLoadingState(
+      `Setting resolution to ${w} x ${h} (scale=${scale})`,
+    );
   }
 }
 
 //--------------------------------------------------------------------------------------------------
 async function connect() {
-  setInformation("Connecting to 3dverse...");
+  CarConfiguratorStore.setSceneLoadingState("Connecting to 3dverse...");
 
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID,
@@ -158,7 +147,9 @@ async function connect() {
   SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
   SDK3DVerse.startStreamer(connectionInfo);
   await SDK3DVerse.connectToEditor();
-  setInformation("Connection to 3dverse established...");
+  CarConfiguratorStore.setSceneLoadingState(
+    "Connection to 3dverse established...",
+  );
   return true; //connectionInfo.sessionCreated;
 }
 
@@ -230,7 +221,7 @@ async function changeCameraPosition(
  * @returns {T}
  */
 function deepFreezeObject(obj) {
-  if (typeof obj === "object") {
+  if (obj && typeof obj === "object") {
     for (const key of Reflect.ownKeys(obj)) {
       deepFreezeObject(obj[key]);
     }
@@ -252,6 +243,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    *   rgbGradientOn: boolean;
    *   userCameraLuminosity: number;
    *   currentStep: 'modelSelection' | 'customization' | 'review';
+   *   sceneLoadingState: string | null;
    * }} CarConfiguratorState
    */
 
@@ -275,6 +267,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     rgbGradientOn: false,
     userCameraLuminosity: 1.5,
     currentStep: "modelSelection",
+    sceneLoadingState: "Loading...",
   });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
@@ -536,6 +529,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       .then(([entity]) => entity);
 
     // TODO: after fetching I need to initialize state from entities
+
+    this.setSceneLoadingState("Loading complete");
+    setTimeout(() => this.setSceneLoadingState(null), 500);
   }
 
   /**
@@ -645,6 +641,13 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       displayBackground: this.state.currentStep === "review",
     });
   }
+
+  /**
+   * @param {string | null} sceneLoadingState
+   */
+  setSceneLoadingState(sceneLoadingState) {
+    this.setState({ sceneLoadingState });
+  }
 })();
 
 /** @global */
@@ -739,9 +742,9 @@ const CarPartsView = new (class CarPartsView {
     if (currentStep !== "customization") {
       carPartsElement.classList.add("hidden");
       return;
-    } else {
-      carPartsElement.classList.remove("hidden");
     }
+
+    carPartsElement.classList.remove("hidden");
 
     const selectedPartIndex = selectedParts[selectedPartCategory];
 
@@ -1029,12 +1032,41 @@ const CarOptionsBarView = new (class CarOptionsBarView {
   }
 
   /**
-   * @param {{ target: HTMLInputElement }} e 
+   * @param {{ target: HTMLInputElement }} e
    */
   handleLuminosityChange(e) {
     const luminosity = Number(e.target.value);
     CarConfiguratorStore.changeUserCameraLuminosity(luminosity);
   }
+})();
+
+/** @global */
+const CarSceneLoadingView = new (class CarSceneLoadingView {
+  constructor() {
+    this.render();
+    CarConfiguratorStore.subscribe(["sceneLoadingState"], this.render);
+  }
+
+  /** @private */
+  render = () => {
+    const loader = document.getElementById("loader");
+    const infoSpan = document.getElementById("info_span");
+
+    const { sceneLoadingState } = CarConfiguratorStore.state;
+    if (!sceneLoadingState) {
+      loader.classList.add("hidden");
+      return;
+    }
+    loader.classList.remove("hidden");
+
+    if (sceneLoadingState === "Loading complete") {
+      loader.classList.add("opacity-0");
+    } else {
+      loader.classList.remove("opacity-0");
+    }
+
+    infoSpan.innerHTML = sceneLoadingState;
+  };
 })();
 
 Object.assign(window, {
@@ -1045,6 +1077,7 @@ Object.assign(window, {
   CarBackgroundView,
   CarConfigStepperView,
   CarOptionsBarView,
+  CarSceneLoadingView,
 });
 
 SDK3DVerse.engineAPI.editorAPI.on("editor-error", (error) => {
