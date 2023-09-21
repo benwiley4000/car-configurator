@@ -74,8 +74,7 @@ async function initApp() {
   const sessionCreated = await connect();
 
   await CarConfiguratorView.toggleGradientPlatform();
-  await CarConfiguratorView.changeCubemap(0);
-  await CarConfiguratorStore.fetchCarPartEntities();
+  await CarConfiguratorStore.fetchSceneEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
   setInformation("Loading complete");
@@ -255,16 +254,6 @@ const settingsOnIcon = document.getElementById("settings-on");
 const settingsOffIcon = document.getElementById("settings-off");
 const settingsPanel = document.getElementById("settings-panel");
 
-// this currently sets up cubemap state independent of the state
-// in code. we might want to change that.
-const cubemaps = document.querySelectorAll(".cubemap");
-cubemaps.forEach((cubemap) => {
-  cubemap.addEventListener("click", () => {
-    cubemaps.forEach((cubemap) => cubemap.classList.remove("active-cubemap"));
-    cubemap.classList.add("active-cubemap");
-  });
-});
-
 /**
  * https://stackoverflow.com/q/41343535
  * @template T
@@ -288,6 +277,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
    *   color: [Number, Number, number];
    *   selectedMaterial: (typeof AppConfig)['materials'][number];
+   *   selectedCubemap: (typeof AppConfig)['cubemaps'][number]
    * }} CarConfiguratorState
    */
 
@@ -305,6 +295,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     },
     color: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
+    selectedCubemap: AppConfig.cubemaps[0],
   });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
@@ -333,6 +324,8 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     rearBumpers: null,
     spoilers: null,
   };
+  /** @private @type {object | null} */
+  environmentEntity = null;
 
   constructor() {
     // TODO: find way to initialize scene graph based on default settings
@@ -372,7 +365,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     throw new Error("Cannot write state directly.");
   }
 
-  async fetchCarPartEntities() {
+  async fetchSceneEntities() {
     [gVisibleCarParts, gHiddenCarParts] =
       await SDK3DVerse.engineAPI.findEntitiesByNames(
         "VISIBLE_CAR_PARTS",
@@ -447,6 +440,12 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 
       this.allCarPartEntities.push(entitiesForCar);
     }
+
+    this.environmentEntity = await SDK3DVerse.engineAPI
+      .findEntitiesByNames("Env")
+      .then(([entity]) => entity);
+
+    // TODO: after fetching I need to initialize state from entities
   }
 
   /**
@@ -572,14 +571,6 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} partIndex
    */
   changeSelectedPart(partIndex) {
-    if (
-      partIndex >
-      AppConfig.cars[this.state.selectedCarIndex][
-        this.state.selectedPartCategory
-      ].length
-    ) {
-      throw new Error("Invalid part index");
-    }
     this.setState({
       selectedParts: {
         ...this.state.selectedParts,
@@ -587,6 +578,21 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       },
     });
     this.applySelectedPart();
+  }
+
+  /**
+   * @param {number} cubemapIndex
+   */
+  changeCubemap(cubemapIndex) {
+    this.setState({ selectedCubemap: AppConfig.cubemaps[cubemapIndex] });
+    const { skyboxUUID, radianceUUID, irradianceUUID } =
+      this.state.selectedCubemap;
+    this.environmentEntity.setComponent("environment", {
+      skyboxUUID,
+      radianceUUID,
+      irradianceUUID,
+    });
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 })();
 
@@ -597,6 +603,7 @@ const CarSelectionView = new (class CarSelectionView {
     CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
   }
 
+  /** @private */
   render = () => {
     const carName = document.getElementById("car_name");
     const carDescription = document.getElementById("car_description");
@@ -736,9 +743,9 @@ const CarColorsView = new (class CarColorsView {
 
   // UI EVENT HANDLERS:
 
-  handleColorSelection = (e) => {
+  handleColorSelection(e) {
     CarConfiguratorStore.changeColor(this.getRgbForColorElement(e.target));
-  };
+  }
 })();
 
 const CarMaterialsView = new (class CarMaterialsView {
@@ -763,14 +770,45 @@ const CarMaterialsView = new (class CarMaterialsView {
 
   // UI EVENT HANDLERS:
 
-  handleMaterialSelection = (e) => {
+  handleMaterialSelection(e) {
     const materialIndex = Number(e.target.getAttribute("data-material-index"));
     CarConfiguratorStore.changeSelectedMaterial(materialIndex);
-  };
+  }
 })();
 
 /** @global */
-const CarBackgroundView = new (class CarBackgroundView {})();
+const CarBackgroundView = new (class CarBackgroundView {
+  constructor() {
+    requestAnimationFrame(this.render);
+    CarConfiguratorStore.subscribe(["selectedCubemap"], this.render);
+  }
+
+  /** @private */
+  render = () => {
+    // this currently sets up cubemap state independent of the state
+    // in code. we might want to change that.
+    /** @type {NodeListOf<HTMLElement>} */
+    const cubemaps = document.querySelectorAll(".cubemap");
+    cubemaps.forEach((cubemap, i) => {
+      cubemap.onclick = () => {
+        this.switchCubemap(i);
+        cubemaps.forEach((cubemap) =>
+          cubemap.classList.remove("active-cubemap"),
+        );
+        cubemap.classList.add("active-cubemap");
+      };
+    });
+  };
+
+  // UI EVENT HANDLERS:
+
+  /**
+   * @param {number} cubemapIndex
+   */
+  switchCubemap(cubemapIndex) {
+    CarConfiguratorStore.changeCubemap(cubemapIndex);
+  }
+})();
 
 /** @global */
 const CarConfigStepperView = new (class CarConfigStepperView {})();
@@ -837,19 +875,6 @@ const CarConfiguratorView = new (class CarConfiguratorView {
     if (toolboxElement) {
       toolboxElement.style.display = "none";
     }
-  }
-
-  async changeCubemap(cubemapIndex) {
-    const { skyboxUUID, radianceUUID, irradianceUUID } = AppConfig.cubemaps[cubemapIndex];
-    const [environmentEntity] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-      "Env",
-    );
-    environmentEntity.setComponent("environment", {
-      skyboxUUID,
-      radianceUUID,
-      irradianceUUID,
-    });
-    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   async toggleLights() {
