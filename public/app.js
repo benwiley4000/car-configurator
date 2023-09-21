@@ -586,6 +586,16 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
   changeCurrentStep(currentStep) {
     this.setState({ currentStep });
+
+    const { cameraAPI } = SDK3DVerse.engineAPI;
+    const viewport =
+      cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+    const camera = viewport.getCamera();
+    const cameraComponent = camera.getComponent("camera");
+    cameraComponent.dataJSON.displayBackground =
+      this.state.currentStep === "review";
+    camera.setComponent("camera", cameraComponent);
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 })();
 
@@ -934,18 +944,6 @@ const CarConfiguratorView = new (class CarConfiguratorView {
     } else {
       await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
     }
-  }
-
-  toggleDisplayBackground() {
-    const { cameraAPI } = SDK3DVerse.engineAPI;
-    const viewport =
-      cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-    const camera = viewport.getCamera();
-    const cameraComponent = camera.getComponent("camera");
-    cameraComponent.dataJSON.displayBackground =
-      !cameraComponent.dataJSON.displayBackground;
-    camera.setComponent("camera", cameraComponent);
-    SDK3DVerse.engineAPI.propagateChanges();
   }
 })();
 
