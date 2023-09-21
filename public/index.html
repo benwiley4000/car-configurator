@@ -634,7 +634,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorView.launchCustomization()"
+          onclick="CarConfigStepperView.launchCustomization()"
         >
           <svg
             width="30%"
@@ -657,7 +657,7 @@
       <!-- First Screen Mobile Button -->
       <div
         class="mobile-select-model-button bg-[#EC6244] flex rounded-full px-10 py-6 absolute bottom-[3vh] justify-center items-center w-[90%] transition cursor-pointer md:hidden first-section-element"
-        onclick="CarConfiguratorView.launchCustomization()"
+        onclick="CarConfigStepperView.launchCustomization()"
       >
         <div class="text w-3/4">
           <h3
@@ -702,7 +702,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
+          onclick="CarConfigStepperView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
         >
           <svg
             width="30%"
@@ -728,7 +728,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorView.launchModelSelection()"
+          onclick="CarConfigStepperView.launchModelSelection()"
         >
           <svg
             width="30%"
@@ -752,11 +752,11 @@
       <!-- Second Screen Mobile Buttons -->
 
       <div
-        class="second-screen-mobile-button absolute flex space-x-[5%] bottom-[3vh] md:hidden w-[90%] second-section-element hidden-button"
+        class="second-screen-mobile-button absolute flex space-x-[5%] bottom-[3vh] md:hidden w-[90%] second-section-element hidden"
       >
         <div
           class="mobile-back-model-button bg-[#EC6244] flex rounded-full px-5 py-6 w-[25%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfiguratorView.launchModelSelection()"
+          onclick="CarConfigStepperView.launchModelSelection()"
         >
           <div class="arrow w-full flex justify-center items-center h-[3vh]">
             <svg
@@ -779,7 +779,7 @@
         </div>
         <div
           class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfiguratorView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
+          onclick="CarConfigStepperView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
         >
           <div class="text w-3/4">
             <h3 class="price text-[#141614] text-[3vh]">Review</h3>
@@ -811,7 +811,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfiguratorView.launchCustomization();CarConfiguratorView.toggleDisplayBackground();"
+          onclick="CarConfigStepperView.launchCustomization();CarConfiguratorView.toggleDisplayBackground();"
         >
           <svg
             width="30%"
@@ -834,11 +834,11 @@
 
       <!-- Third Screen Mobile Button -->
       <div
-        class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] hidden-button"
+        class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] third-section-element hidden"
       >
         <div
           class="bg-[#EC6244] flex rounded-full py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-          onclick="CarConfiguratorView.launchCustomization(); CarConfiguratorView.toggleDisplayBackground();"
+          onclick="CarConfigStepperView.launchCustomization(); CarConfiguratorView.toggleDisplayBackground();"
         >
           <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
             <svg

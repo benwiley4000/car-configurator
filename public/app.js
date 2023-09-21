@@ -52,12 +52,6 @@ async function initApp() {
     },
   ];
 
-  /** @type {HTMLElement} */
-  const toolboxElement = document.querySelector(".car-parts");
-  if (toolboxElement) {
-    toolboxElement.style.display = "none";
-  }
-
   SDK3DVerse.setViewports(viewports);
   setResolution();
   let debounceResizeTimeout = null;
@@ -233,16 +227,6 @@ async function changeCameraPosition(
   );
 }
 
-const firstSectionElements = document.querySelectorAll(
-  ".first-section-element",
-);
-const secondSectionElements = document.querySelectorAll(
-  ".second-section-element",
-);
-const thirdSectionElements = document.querySelectorAll(
-  ".third-section-element",
-);
-
 const lightOnIcon = document.getElementById("light-on");
 const lightOffIcon = document.getElementById("light-off");
 
@@ -277,7 +261,8 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
    *   selectedColor: [Number, Number, number];
    *   selectedMaterial: (typeof AppConfig)['materials'][number];
-   *   selectedCubemap: (typeof AppConfig)['cubemaps'][number]
+   *   selectedCubemap: (typeof AppConfig)['cubemaps'][number];
+   *   currentStep: 'modelSelection' | 'customization' | 'review';
    * }} CarConfiguratorState
    */
 
@@ -296,6 +281,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     selectedColor: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],
+    currentStep: "modelSelection",
   });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
@@ -594,6 +580,13 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     });
     SDK3DVerse.engineAPI.propagateChanges();
   }
+
+  /**
+   * @param {CarConfiguratorState['currentStep']} currentStep
+   */
+  changeCurrentStep(currentStep) {
+    this.setState({ currentStep });
+  }
 })();
 
 /** @global */
@@ -616,6 +609,7 @@ const CarSelectionView = new (class CarSelectionView {
     const startingPriceMobile = document.getElementById(
       "starting-price-mobile",
     );
+    const finalPrice = document.getElementById("final-price");
 
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
@@ -633,6 +627,7 @@ const CarSelectionView = new (class CarSelectionView {
     carEngineCapacity.innerHTML = selectedCar.engineCapacity;
     startingPrice.innerHTML = selectedCar.price;
     startingPriceMobile.innerHTML = selectedCar.price;
+    finalPrice.innerHTML = selectedCar.price;
   };
 
   // UI EVENT HANDLERS:
@@ -662,7 +657,12 @@ const CarPartsView = new (class CarPartsView {
   constructor() {
     requestAnimationFrame(this.render);
     CarConfiguratorStore.subscribe(
-      ["selectedPartCategory", "selectedParts"],
+      [
+        "selectedPartCategory",
+        "selectedParts",
+        "selectedCarIndex",
+        "currentStep",
+      ],
       this.render,
     );
   }
@@ -671,16 +671,30 @@ const CarPartsView = new (class CarPartsView {
   render = () => {
     const carPartsElement = document.querySelector(".car-parts");
 
-    const { selectedPartCategory, selectedParts, selectedCarIndex } =
-      CarConfiguratorStore.state;
+    const {
+      selectedPartCategory,
+      selectedParts,
+      selectedCarIndex,
+      currentStep,
+    } = CarConfiguratorStore.state;
+
+    if (currentStep !== "customization") {
+      carPartsElement.classList.add("hidden");
+      return;
+    } else {
+      carPartsElement.classList.remove("hidden");
+    }
+
     const selectedPartIndex = selectedParts[selectedPartCategory];
 
     carPartsElement.innerHTML = this.template({
-      availableCategories: Object.keys(PARTS_CATEGORY_MAPPING).map((name) => ({
-        name,
-        displayName: PARTS_CATEGORY_MAPPING[name],
-        isSelected: selectedPartCategory === name,
-      })),
+      availableCategories: Object.keys(PARTS_CATEGORY_MAPPING)
+        .filter((category) => AppConfig.cars[selectedCarIndex][category].length)
+        .map((name) => ({
+          name,
+          displayName: PARTS_CATEGORY_MAPPING[name],
+          isSelected: selectedPartCategory === name,
+        })),
       selectedCategoryData: AppConfig.cars[selectedCarIndex][
         selectedPartCategory
       ].map((_, i) => ({
@@ -733,7 +747,9 @@ const CarColorsView = new (class CarColorsView {
     const colors = document.querySelectorAll(".color");
     colors.forEach((color) => {
       const rgb = this.getRgbForColorElement(color);
-      if (CarConfiguratorStore.state.selectedColor.every((v, i) => rgb[i] === v)) {
+      if (
+        CarConfiguratorStore.state.selectedColor.every((v, i) => rgb[i] === v)
+      ) {
         color.classList.add("active-color");
       } else {
         color.classList.remove("active-color");
@@ -744,7 +760,9 @@ const CarColorsView = new (class CarColorsView {
   // UI EVENT HANDLERS:
 
   handleColorSelection(e) {
-    CarConfiguratorStore.changeSelectedColor(this.getRgbForColorElement(e.target));
+    CarConfiguratorStore.changeSelectedColor(
+      this.getRgbForColorElement(e.target),
+    );
   }
 })();
 
@@ -811,72 +829,56 @@ const CarBackgroundView = new (class CarBackgroundView {
 })();
 
 /** @global */
-const CarConfigStepperView = new (class CarConfigStepperView {})();
+const CarConfigStepperView = new (class CarConfigStepperView {
+  constructor() {
+    requestAnimationFrame(this.render);
+    CarConfiguratorStore.subscribe(["currentStep"], this.render);
+  }
+
+  /** @private */
+  render = () => {
+    const { currentStep } = CarConfiguratorStore.state;
+    document.querySelectorAll(".first-section-element").forEach((element) => {
+      if (currentStep === "modelSelection") {
+        element.classList.remove("hidden");
+      } else {
+        element.classList.add("hidden");
+      }
+    });
+    document.querySelectorAll(".second-section-element").forEach((element) => {
+      if (currentStep === "customization") {
+        element.classList.remove("hidden");
+      } else {
+        element.classList.add("hidden");
+      }
+    });
+    document.querySelectorAll(".third-section-element").forEach((element) => {
+      if (currentStep === "review") {
+        element.classList.remove("hidden");
+      } else {
+        element.classList.add("hidden");
+      }
+    });
+  };
+
+  launchModelSelection() {
+    CarConfiguratorStore.changeCurrentStep("modelSelection");
+  }
+
+  launchCustomization() {
+    CarConfiguratorStore.changeCurrentStep("customization");
+  }
+
+  launchReview() {
+    CarConfiguratorStore.changeCurrentStep("review");
+  }
+})();
 
 /** @global */
 const CarOptionsBarView = new (class CarOptionsBarView {})();
 
 /** @global */
 const CarConfiguratorView = new (class CarConfiguratorView {
-  launchModelSelection() {
-    firstSectionElements.forEach((element) => {
-      element.classList.remove("hidden");
-    });
-    secondSectionElements.forEach((element) => {
-      element.classList.add("hidden");
-    });
-
-    /** @type {HTMLElement} */
-    const toolboxElement = document.querySelector(".car-parts");
-    if (toolboxElement) {
-      toolboxElement.style.display = "none";
-    }
-
-    const selectedCar =
-      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
-    document.getElementById("starting-price").innerHTML = selectedCar.price;
-  }
-
-  launchCustomization() {
-    firstSectionElements.forEach((element) => {
-      element.classList.add("hidden");
-    });
-    secondSectionElements.forEach((element) => {
-      element.classList.remove("hidden");
-    });
-    thirdSectionElements.forEach((element) => {
-      element.classList.add("hidden");
-    });
-
-    /** @type {HTMLElement} */
-    const toolboxElement = document.querySelector(".car-parts");
-    if (toolboxElement) {
-      toolboxElement.style.display = "block";
-    }
-
-    const hiddenButtons = document.querySelectorAll(".hidden-button");
-    hiddenButtons.forEach((button) => button.classList.remove("hidden-button"));
-
-    const selectedCar =
-      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
-    document.getElementById("final-price").innerHTML = selectedCar.price;
-  }
-
-  launchReview() {
-    secondSectionElements.forEach((element) => {
-      element.classList.add("hidden");
-    });
-    thirdSectionElements.forEach((element) => {
-      element.classList.remove("hidden");
-    });
-
-    /** @type {HTMLElement} */
-    const toolboxElement = document.querySelector(".car-parts");
-    if (toolboxElement) {
-      toolboxElement.style.display = "none";
-    }
-  }
-
   async toggleLights() {
     lightOnIcon.classList.toggle("hidden");
     lightOffIcon.classList.toggle("hidden");
