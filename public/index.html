@@ -108,7 +108,7 @@
         <div id="settings-icons" class="options flex space-x-3 justify-end">
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
-            onclick="CarConfiguratorView.toggleLights()"
+            onclick="CarOptionsBarView.toggleLights()"
           >
             <svg
               id="light-on"
@@ -178,30 +178,10 @@
 
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
-            onclick="CarConfiguratorView.toggleRotation()"
+            onclick="CarOptionsBarView.toggleRotation()"
           >
             <svg
               id="rotate-on"
-              fill="#696969"
-              height="55%"
-              width="55%"
-              version="1.1"
-              id="Capa_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              class="group-hover:opacity-50"
-              viewBox="0 0 214.367 214.367"
-              xml:space="preserve"
-            >
-              <path
-                d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
-              c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
-              c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
-              S202.403,42.716,202.403,95.22z"
-              />
-            </svg>
-            <svg
-              id="rotate-off"
               fill="#EC6244"
               height="55%"
               width="55%"
@@ -220,10 +200,30 @@
               S202.403,42.716,202.403,95.22z"
               />
             </svg>
+            <svg
+              id="rotate-off"
+              fill="#696969"
+              height="55%"
+              width="55%"
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="group-hover:opacity-50"
+              viewBox="0 0 214.367 214.367"
+              xml:space="preserve"
+            >
+              <path
+                d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
+              c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
+              c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
+              S202.403,42.716,202.403,95.22z"
+              />
+            </svg>
           </div>
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group"
-            onclick="CarConfiguratorView.toggleSettingsPanel()"
+            onclick="CarOptionsBarView.toggleSettingsPanel()"
           >
             <svg
               id="settings-off"
@@ -265,9 +265,10 @@
             <h4 class="align-middle">RGB Gradient</h4>
             <label class="relative inline-flex items-center cursor-pointer">
               <input
+                id="rgb-gradient"
                 type="checkbox"
                 class="sr-only peer"
-                onclick="CarConfiguratorView.toggleGradientPlatform()"
+                onclick="CarOptionsBarView.toggleGradientPlatform()"
               />
               <div
                 class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"
@@ -702,7 +703,7 @@
         </div>
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
+          onclick="CarConfigStepperView.launchReview()"
         >
           <svg
             width="30%"
@@ -779,7 +780,7 @@
         </div>
         <div
           class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfigStepperView.launchReview(); CarConfiguratorView.toggleDisplayBackground()"
+          onclick="CarConfigStepperView.launchReview()"
         >
           <div class="text w-3/4">
             <h3 class="price text-[#141614] text-[3vh]">Review</h3>
@@ -811,7 +812,7 @@
       >
         <div
           class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.launchCustomization();CarConfiguratorView.toggleDisplayBackground();"
+          onclick="CarConfigStepperView.launchCustomization()"
         >
           <svg
             width="30%"
@@ -838,7 +839,7 @@
       >
         <div
           class="bg-[#EC6244] flex rounded-full py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-          onclick="CarConfigStepperView.launchCustomization(); CarConfiguratorView.toggleDisplayBackground();"
+          onclick="CarConfigStepperView.launchCustomization()"
         >
           <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
             <svg

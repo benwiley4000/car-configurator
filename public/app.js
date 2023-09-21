@@ -27,8 +27,6 @@ let gVisibleCarParts = null;
 // so we never see it.
 let gHiddenCarParts = null;
 
-let gIntensity = 0;
-
 //--------------------------------------------------------------------------------------------------
 async function initApp() {
   SDK3DVerse.setApiVersion("v1");
@@ -181,18 +179,6 @@ async function getAssetDescription(assetType, assetUUID) {
 }
 
 //---------------------------------------------------------------------------
-const luminositySlider = document.getElementById("luminosity-slider");
-const luminosityValue = document.getElementById("luminosity-value");
-luminosityValue.innerHTML = luminositySlider.value;
-
-luminositySlider.oninput = function () {
-  luminosityValue.innerHTML = this.value;
-  setCameraSettings({
-    brightness: Number(this.value),
-  });
-};
-
-//---------------------------------------------------------------------------
 function onMediaQueryChange(e) {
   if (e.matches) {
     console.log("< 768px");
@@ -237,17 +223,6 @@ async function changeCameraPosition(
   );
 }
 
-const lightOnIcon = document.getElementById("light-on");
-const lightOffIcon = document.getElementById("light-off");
-
-let rotationState = false;
-const rotateOnIcon = document.getElementById("rotate-on");
-const rotateOffIcon = document.getElementById("rotate-off");
-
-const settingsOnIcon = document.getElementById("settings-on");
-const settingsOffIcon = document.getElementById("settings-off");
-const settingsPanel = document.getElementById("settings-panel");
-
 /**
  * https://stackoverflow.com/q/41343535
  * @template T
@@ -272,6 +247,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    *   selectedColor: [Number, Number, number];
    *   selectedMaterial: (typeof AppConfig)['materials'][number];
    *   selectedCubemap: (typeof AppConfig)['cubemaps'][number];
+   *   lightsOn: boolean;
+   *   rotationOn: boolean;
+   *   rgbGradientOn: boolean;
+   *   userCameraLuminosity: number;
    *   currentStep: 'modelSelection' | 'customization' | 'review';
    * }} CarConfiguratorState
    */
@@ -291,6 +270,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     selectedColor: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],
+    lightsOn: true,
+    rotationOn: false,
+    rgbGradientOn: false,
+    userCameraLuminosity: 1.5,
     currentStep: "modelSelection",
   });
   /** @private @type {[string[], () => void][]} */
@@ -435,6 +418,33 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
         selectedPartCategory
       ][selectedPartIndex];
     await this.changeParts({ [selectedPartCategory]: partEntity });
+  }
+
+  /** @private */
+  async applyLightsSetting() {
+    const selectedCar = AppConfig.cars[this.state.selectedCarIndex];
+
+    const intensity = this.state.lightsOn ? 100 : 0;
+
+    const desc1 = await getAssetDescription(
+      "materials",
+      selectedCar.headLightsMatUUID,
+    );
+    desc1.dataJson.emissionIntensity = intensity;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      selectedCar.headLightsMatUUID,
+      desc1,
+    );
+
+    const desc2 = await getAssetDescription(
+      "materials",
+      selectedCar.rearLightsMatUUID,
+    );
+    desc2.dataJson.emissionIntensity = intensity;
+    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
+      selectedCar.rearLightsMatUUID,
+      desc2,
+    );
   }
 
   /**
@@ -589,6 +599,41 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       irradianceUUID,
     });
     SDK3DVerse.engineAPI.propagateChanges();
+  }
+
+  toggleLightsOn() {
+    this.setState({ lightsOn: !this.state.lightsOn });
+    this.applyLightsSetting();
+  }
+
+  toggleRotationOn() {
+    this.setState({ rotationOn: !this.state.rotationOn });
+    const event = this.state.rotationOn
+      ? "start_simulation"
+      : "pause_simulation";
+    SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+  }
+
+  async toggleRgbGradientOn() {
+    this.setState({ rgbGradientOn: !this.state.rgbGradientOn });
+    const [gradientPlatform] = await SDK3DVerse.engineAPI.findEntitiesByNames(
+      "SM_StaticPlatform",
+    );
+    if (this.state.rgbGradientOn) {
+      await reparentEntities([gradientPlatform], gVisibleCarParts);
+    } else {
+      await reparentEntities([gradientPlatform], gHiddenCarParts);
+    }
+  }
+
+  /**
+   * @param {number} userCameraLuminosity
+   */
+  changeUserCameraLuminosity(userCameraLuminosity) {
+    this.setState({ userCameraLuminosity });
+    setCameraSettings({
+      brightness: this.state.userCameraLuminosity,
+    });
   }
 
   /**
@@ -888,65 +933,107 @@ const CarConfigStepperView = new (class CarConfigStepperView {
 })();
 
 /** @global */
-const CarOptionsBarView = new (class CarOptionsBarView {})();
+const CarOptionsBarView = new (class CarOptionsBarView {
+  isSettingsPanelOpen = false;
 
-/** @global */
-const CarConfiguratorView = new (class CarConfiguratorView {
-  async toggleLights() {
-    lightOnIcon.classList.toggle("hidden");
-    lightOffIcon.classList.toggle("hidden");
-
-    const selectedCar =
-      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
-
-    const desc1 = await getAssetDescription(
-      "materials",
-      selectedCar.headLightsMatUUID,
+  constructor() {
+    this.render();
+    CarConfiguratorStore.subscribe(
+      ["lightsOn", "rotationOn", "rgbGradientOn", "userCameraLuminosity"],
+      this.render,
     );
-    desc1.dataJson.emissionIntensity = gIntensity;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      selectedCar.headLightsMatUUID,
-      desc1,
+    window.addEventListener(
+      "click",
+      (e) => {
+        const settingsOnIcon = document.getElementById("settings-on");
+        const settingsOffIcon = document.getElementById("settings-off");
+        const settingsPanel = document.getElementById("settings-panel");
+        if (
+          !settingsOnIcon.contains(/** @type {Node} */ (e.target)) &&
+          !settingsOffIcon.contains(/** @type {Node} */ (e.target)) &&
+          !settingsPanel.contains(/** @type {Node} */ (e.target))
+        ) {
+          this.isSettingsPanelOpen = false;
+          this.render();
+        }
+        // listen on capture to use .contains() before elements are re-rendered
+      },
+      { capture: true },
     );
+  }
 
-    const desc2 = await getAssetDescription(
-      "materials",
-      selectedCar.rearLightsMatUUID,
-    );
-    desc2.dataJson.emissionIntensity = gIntensity;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      selectedCar.rearLightsMatUUID,
-      desc2,
-    );
+  /** @private */
+  render = () => {
+    const lightOnIcon = document.getElementById("light-on");
+    const lightOffIcon = document.getElementById("light-off");
+    if (CarConfiguratorStore.state.lightsOn) {
+      lightOnIcon.classList.remove("hidden");
+      lightOffIcon.classList.add("hidden");
+    } else {
+      lightOnIcon.classList.add("hidden");
+      lightOffIcon.classList.remove("hidden");
+    }
 
-    gIntensity = gIntensity === 0 ? 100 : 0;
+    const rotateOnIcon = document.getElementById("rotate-on");
+    const rotateOffIcon = document.getElementById("rotate-off");
+    if (CarConfiguratorStore.state.rotationOn) {
+      rotateOnIcon.classList.remove("hidden");
+      rotateOffIcon.classList.add("hidden");
+    } else {
+      rotateOnIcon.classList.add("hidden");
+      rotateOffIcon.classList.remove("hidden");
+    }
+
+    const settingsOnIcon = document.getElementById("settings-on");
+    const settingsOffIcon = document.getElementById("settings-off");
+    const settingsPanel = document.getElementById("settings-panel");
+    if (this.isSettingsPanelOpen) {
+      settingsOnIcon.classList.remove("hidden");
+      settingsOffIcon.classList.add("hidden");
+      settingsPanel.classList.remove("hidden");
+    } else {
+      settingsOnIcon.classList.add("hidden");
+      settingsOffIcon.classList.remove("hidden");
+      settingsPanel.classList.add("hidden");
+    }
+
+    const rgbGradientCheckbox = /** @type {HTMLInputElement} */ (
+      document.getElementById("rgb-gradient")
+    );
+    rgbGradientCheckbox.checked = CarConfiguratorStore.state.rgbGradientOn;
+
+    const luminositySlider = document.getElementById("luminosity-slider");
+    luminositySlider.oninput = (e) => this.handleLuminosityChange(e);
+    const luminosityValue = document.getElementById("luminosity-value");
+    luminosityValue.innerHTML =
+      CarConfiguratorStore.state.userCameraLuminosity.toString();
+  };
+
+  // UI EVENT HANDLERS:
+
+  toggleSettingsPanel() {
+    this.isSettingsPanelOpen = !this.isSettingsPanelOpen;
+    this.render();
+  }
+
+  toggleLights() {
+    CarConfiguratorStore.toggleLightsOn();
   }
 
   toggleRotation() {
-    const event = rotationState ? "pause_simulation" : "start_simulation";
-    rotationState = !rotationState;
-
-    SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
-
-    rotateOnIcon.classList.toggle("hidden");
-    rotateOffIcon.classList.toggle("hidden");
-  }
-
-  toggleSettingsPanel() {
-    settingsOnIcon.classList.toggle("hidden");
-    settingsOffIcon.classList.toggle("hidden");
-    settingsPanel.classList.toggle("hidden");
+    CarConfiguratorStore.toggleRotationOn();
   }
 
   async toggleGradientPlatform() {
-    const [gradientPlatform] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-      "SM_StaticPlatform",
-    );
-    if (gradientPlatform.isVisible()) {
-      await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, false);
-    } else {
-      await SDK3DVerse.engineAPI.setEntityVisibility(gradientPlatform, true);
-    }
+    CarConfiguratorStore.toggleRgbGradientOn();
+  }
+
+  /**
+   * @param {{ target: HTMLInputElement }} e 
+   */
+  handleLuminosityChange(e) {
+    const luminosity = Number(e.target.value);
+    CarConfiguratorStore.changeUserCameraLuminosity(luminosity);
   }
 })();
 
@@ -958,7 +1045,6 @@ Object.assign(window, {
   CarBackgroundView,
   CarConfigStepperView,
   CarOptionsBarView,
-  CarConfiguratorView,
 });
 
 SDK3DVerse.engineAPI.editorAPI.on("editor-error", (error) => {
