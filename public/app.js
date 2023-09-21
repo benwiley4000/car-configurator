@@ -67,7 +67,14 @@ async function initApp() {
 
   const sessionCreated = await connect();
 
-  await CarConfiguratorView.toggleGradientPlatform();
+  // these are the right bloom settings to emphasize
+  // the emission of the car headlights
+  setCameraSettings({
+    bloom: true,
+    bloomStrength: 1,
+    bloomThreshold: 50,
+  });
+
   await CarConfiguratorStore.fetchSceneEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
 
@@ -92,6 +99,20 @@ async function reparentEntities(entities, parentEntity) {
     shouldKeepGlobalTransform,
     shouldCommit,
   );
+}
+
+/**
+ * @param {Record<string, any>} settings
+ */
+function setCameraSettings(settings) {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const camera = viewport.getCamera();
+  let cameraComponent = camera.getComponent("camera");
+  Object.assign(cameraComponent.dataJSON, settings);
+  camera.setComponent("camera", cameraComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -160,26 +181,15 @@ async function getAssetDescription(assetType, assetUUID) {
 }
 
 //---------------------------------------------------------------------------
-async function changeLightIntensity(newIntensity) {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-  const camera = viewport.getCamera();
-  let cameraComponent = await camera.getComponent("camera");
-  // cameraComponent = SDK3DVerse.utils.clone(cameraComponent); //clone du component camera
-  cameraComponent.dataJSON.brightness = newIntensity;
-  await camera.setComponent("camera", cameraComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
-}
-
-//---------------------------------------------------------------------------
 const luminositySlider = document.getElementById("luminosity-slider");
 const luminosityValue = document.getElementById("luminosity-value");
 luminosityValue.innerHTML = luminositySlider.value;
 
 luminositySlider.oninput = function () {
   luminosityValue.innerHTML = this.value;
-  changeLightIntensity(Number(this.value));
+  setCameraSettings({
+    brightness: Number(this.value),
+  });
 };
 
 //---------------------------------------------------------------------------
@@ -586,16 +596,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
   changeCurrentStep(currentStep) {
     this.setState({ currentStep });
-
-    const { cameraAPI } = SDK3DVerse.engineAPI;
-    const viewport =
-      cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-    const camera = viewport.getCamera();
-    const cameraComponent = camera.getComponent("camera");
-    cameraComponent.dataJSON.displayBackground =
-      this.state.currentStep === "review";
-    camera.setComponent("camera", cameraComponent);
-    SDK3DVerse.engineAPI.propagateChanges();
+    setCameraSettings({
+      displayBackground: this.state.currentStep === "review",
+    });
   }
 })();
 
