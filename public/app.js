@@ -592,7 +592,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 /** @global */
 const CarSelectionView = new (class CarSelectionView {
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
   }
 
@@ -655,7 +655,7 @@ const CarPartsView = new (class CarPartsView {
   );
 
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(
       [
         "selectedPartCategory",
@@ -725,7 +725,7 @@ const CarPartsView = new (class CarPartsView {
 /** @global */
 const CarColorsView = new (class CarColorsView {
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(["selectedColor"], this.render);
   }
 
@@ -768,7 +768,7 @@ const CarColorsView = new (class CarColorsView {
 
 const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
   }
 
@@ -797,7 +797,7 @@ const CarMaterialsView = new (class CarMaterialsView {
 /** @global */
 const CarBackgroundView = new (class CarBackgroundView {
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(["selectedCubemap"], this.render);
   }
 
@@ -831,7 +831,7 @@ const CarBackgroundView = new (class CarBackgroundView {
 /** @global */
 const CarConfigStepperView = new (class CarConfigStepperView {
   constructor() {
-    requestAnimationFrame(this.render);
+    this.render();
     CarConfiguratorStore.subscribe(["currentStep"], this.render);
   }
 
