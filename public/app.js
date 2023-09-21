@@ -351,89 +351,6 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     throw new Error("Cannot write state directly.");
   }
 
-  async fetchSceneEntities() {
-    [gVisibleCarParts, gHiddenCarParts] =
-      await SDK3DVerse.engineAPI.findEntitiesByNames(
-        "VISIBLE_CAR_PARTS",
-        "HIDDEN_CAR_PARTS",
-      );
-    /**
-     * @param {object} entity
-     */
-    const isEntityVisible = (entity) =>
-      entity.getParent().getID() === gVisibleCarParts.getID();
-    for (const {
-      name,
-      frontBumpers,
-      rearBumpers,
-      spoilers,
-    } of AppConfig.cars) {
-      const entitiesForCar = {
-        body: null,
-        frontBumpers: [],
-        rearBumpers: [],
-        spoilers: [],
-      };
-
-      await Promise.all([
-        (async () => {
-          const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
-          entitiesForCar.body = body;
-          if (isEntityVisible(entitiesForCar.body)) {
-            this.selectedCarPartEntities.body = entitiesForCar.body;
-          }
-        })(),
-        (async () => {
-          if (!frontBumpers.length) {
-            return;
-          }
-          entitiesForCar.frontBumpers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
-          for (const frontBumper of entitiesForCar.frontBumpers) {
-            if (isEntityVisible(frontBumper)) {
-              this.selectedCarPartEntities.frontBumpers = frontBumper;
-              break;
-            }
-          }
-        })(),
-        (async () => {
-          if (!rearBumpers.length) {
-            return;
-          }
-          entitiesForCar.rearBumpers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
-          for (const rearBumper of entitiesForCar.rearBumpers) {
-            if (isEntityVisible(rearBumper)) {
-              this.selectedCarPartEntities.rearBumpers = rearBumper;
-              break;
-            }
-          }
-        })(),
-        (async () => {
-          if (!spoilers.length) {
-            return;
-          }
-          entitiesForCar.spoilers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
-          for (const spoiler of entitiesForCar.spoilers) {
-            if (isEntityVisible(spoiler)) {
-              this.selectedCarPartEntities.spoilers = spoiler;
-              break;
-            }
-          }
-        })(),
-      ]);
-
-      this.allCarPartEntities.push(entitiesForCar);
-    }
-
-    this.environmentEntity = await SDK3DVerse.engineAPI
-      .findEntitiesByNames("Env")
-      .then(([entity]) => entity);
-
-    // TODO: after fetching I need to initialize state from entities
-  }
-
   /**
    * @private
    * @param {Partial<typeof this.selectedCarPartEntities>} parts
@@ -516,6 +433,89 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
   subscribe(watchedKeys, handler) {
     this.subscribers.push([watchedKeys, handler]);
+  }
+
+  async fetchSceneEntities() {
+    [gVisibleCarParts, gHiddenCarParts] =
+      await SDK3DVerse.engineAPI.findEntitiesByNames(
+        "VISIBLE_CAR_PARTS",
+        "HIDDEN_CAR_PARTS",
+      );
+    /**
+     * @param {object} entity
+     */
+    const isEntityVisible = (entity) =>
+      entity.getParent().getID() === gVisibleCarParts.getID();
+    for (const {
+      name,
+      frontBumpers,
+      rearBumpers,
+      spoilers,
+    } of AppConfig.cars) {
+      const entitiesForCar = {
+        body: null,
+        frontBumpers: [],
+        rearBumpers: [],
+        spoilers: [],
+      };
+
+      await Promise.all([
+        (async () => {
+          const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
+          entitiesForCar.body = body;
+          if (isEntityVisible(entitiesForCar.body)) {
+            this.selectedCarPartEntities.body = entitiesForCar.body;
+          }
+        })(),
+        (async () => {
+          if (!frontBumpers.length) {
+            return;
+          }
+          entitiesForCar.frontBumpers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
+          for (const frontBumper of entitiesForCar.frontBumpers) {
+            if (isEntityVisible(frontBumper)) {
+              this.selectedCarPartEntities.frontBumpers = frontBumper;
+              break;
+            }
+          }
+        })(),
+        (async () => {
+          if (!rearBumpers.length) {
+            return;
+          }
+          entitiesForCar.rearBumpers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
+          for (const rearBumper of entitiesForCar.rearBumpers) {
+            if (isEntityVisible(rearBumper)) {
+              this.selectedCarPartEntities.rearBumpers = rearBumper;
+              break;
+            }
+          }
+        })(),
+        (async () => {
+          if (!spoilers.length) {
+            return;
+          }
+          entitiesForCar.spoilers =
+            await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
+          for (const spoiler of entitiesForCar.spoilers) {
+            if (isEntityVisible(spoiler)) {
+              this.selectedCarPartEntities.spoilers = spoiler;
+              break;
+            }
+          }
+        })(),
+      ]);
+
+      this.allCarPartEntities.push(entitiesForCar);
+    }
+
+    this.environmentEntity = await SDK3DVerse.engineAPI
+      .findEntitiesByNames("Env")
+      .then(([entity]) => entity);
+
+    // TODO: after fetching I need to initialize state from entities
   }
 
   /**
