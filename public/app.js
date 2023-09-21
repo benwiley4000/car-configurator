@@ -265,6 +265,21 @@ cubemaps.forEach((cubemap) => {
   });
 });
 
+/**
+ * https://stackoverflow.com/q/41343535
+ * @template T
+ * @param {T} obj
+ * @returns {T}
+ */
+function deepFreezeObject(obj) {
+  if (typeof obj === "object") {
+    for (const key of Reflect.ownKeys(obj)) {
+      deepFreezeObject(obj[key]);
+    }
+  }
+  return Object.freeze(obj);
+}
+
 const CarConfiguratorStore = new (class CarConfiguratorStore {
   /**
    * @typedef {{
@@ -277,9 +292,12 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
 
   /** @private @type {CarConfiguratorState} */
-  internalState = {
+  internalState = deepFreezeObject({
     selectedCarIndex: 0,
-    selectedPartCategory: Object.keys(PARTS_CATEGORY_MAPPING)[0],
+    selectedPartCategory:
+      /** @type {CarConfiguratorState['selectedPartCategory']} */ (
+        Object.keys(PARTS_CATEGORY_MAPPING)[0]
+      ),
     selectedParts: {
       frontBumpers: 0,
       rearBumpers: 0,
@@ -287,7 +305,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     },
     color: [0, 0, 0],
     selectedMaterial: AppConfig.materials[0],
-  };
+  });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
   /**
@@ -330,10 +348,10 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    */
   setState(value) {
     const oldState = this.internalState;
-    this.internalState = {
+    this.internalState = deepFreezeObject({
       ...oldState,
       ...value,
-    };
+    });
     const changedKeys = Object.keys(this.internalState).filter(
       (key) => this.internalState[key] !== oldState[key],
     );
