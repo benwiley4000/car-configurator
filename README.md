@@ -4,11 +4,10 @@ A sample car configurator using 3dverse labs microverse
 
 
 IMMEDIATE TODO
-2. loader as separate view
-2.5. uniformize view action handlers
+1. separate SDK side effects into new CarConfiguratorActions class
+2. uniformize view action handlers and store action handlers
 3. Use handlebars for existing views and get rid of "first-section-element" etc concept
-4. separate SDK side effects into new CarConfiguratorActions class
-5. Put in the button baptiste wanted
+4. Put in the button baptiste wanted
 
 ## Code style stuff
 1. Global variables need to be more explicitly/clearly declared and accessed. Maybe all on a class.
