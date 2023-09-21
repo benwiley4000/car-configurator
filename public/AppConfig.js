@@ -1,5 +1,5 @@
 export default {
-  sceneUUID: "060594e9-3255-4329-805a-b448bc8605c0",
+  sceneUUID: "da5e1a59-4213-4015-b6c6-faa838c7367a",
   cubemaps: [
     {
       name: "Pure Sky",
