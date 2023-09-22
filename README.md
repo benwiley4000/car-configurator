@@ -6,7 +6,7 @@ A sample car configurator using 3dverse labs microverse
 IMMEDIATE TODO
 1. separate SDK side effects into new CarConfiguratorActions class
 2. uniformize view action handlers and store action handlers
-3. Use handlebars for existing views and get rid of "first-section-element" etc concept
+3. Use handlebars for existing views and get rid of "first-section-element" etc concept. we might need to partially or just not use handlebars for the options bar, but that's not dynamically generated so it's ok. we just need to figure out how to manipulate the UI with the minimum of data-attribute inputs or classnames instead of showing and hiding stuff constantly. We can do the same for the scene loading thing since it needs to be visible on page load.
 4. Put in the button baptiste wanted
 
 ## Code style stuff
