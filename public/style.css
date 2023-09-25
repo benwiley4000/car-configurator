@@ -90,6 +90,19 @@ canvas {
   justify-content: space-between;
 }
 
+.toggle-button-fill {
+  fill: #696969;
+}
+svg.active .toggle-button-fill, svg.active.toggle-button-fill {
+  fill: #EC6244;
+}
+.toggle-button-stroke {
+  stroke: #696969;
+}
+svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
+  stroke: #EC6244;
+}
+
 /* PART SELECTION MENU */
 
 .active-tab {

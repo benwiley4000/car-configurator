@@ -978,73 +978,37 @@ const CarOptionsBarView = new (class CarOptionsBarView {
       ["lightsOn", "rotationOn", "rgbGradientOn", "userCameraLuminosity"],
       this.render,
     );
-    window.addEventListener(
-      "click",
-      (e) => {
-        const settingsOnIcon = document.getElementById("settings-on");
-        const settingsOffIcon = document.getElementById("settings-off");
-        const settingsPanel = document.getElementById("settings-panel");
-        if (
-          !settingsOnIcon.contains(/** @type {Node} */ (e.target)) &&
-          !settingsOffIcon.contains(/** @type {Node} */ (e.target)) &&
-          !settingsPanel.contains(/** @type {Node} */ (e.target))
-        ) {
-          this.isSettingsPanelOpen = false;
-          this.render();
-        }
-        // listen on capture to use .contains() before elements are re-rendered
-      },
-      { capture: true },
-    );
+    window.addEventListener("click", (e) => {
+      const settingsToggle = document.getElementById("settings-toggle");
+      const settingsPanel = document.getElementById("settings-panel");
+      if (
+        !settingsToggle.contains(/** @type {Node} */ (e.target)) &&
+        !settingsPanel.contains(/** @type {Node} */ (e.target))
+      ) {
+        this.isSettingsPanelOpen = false;
+        this.render();
+      }
+    });
   }
 
   /** @private */
   render = () => {
-    const lightOnIcon = document.getElementById("light-on");
-    const lightOffIcon = document.getElementById("light-off");
-    if (CarConfiguratorStore.state.lightsOn) {
-      lightOnIcon.classList.remove("hidden");
-      lightOffIcon.classList.add("hidden");
-    } else {
-      lightOnIcon.classList.add("hidden");
-      lightOffIcon.classList.remove("hidden");
-    }
-
-    const rotateOnIcon = document.getElementById("rotate-on");
-    const rotateOffIcon = document.getElementById("rotate-off");
-    if (CarConfiguratorStore.state.rotationOn) {
-      rotateOnIcon.classList.remove("hidden");
-      rotateOffIcon.classList.add("hidden");
-    } else {
-      rotateOnIcon.classList.add("hidden");
-      rotateOffIcon.classList.remove("hidden");
-    }
-
-    const settingsOnIcon = document.getElementById("settings-on");
-    const settingsOffIcon = document.getElementById("settings-off");
-    const settingsPanel = document.getElementById("settings-panel");
-    if (this.isSettingsPanelOpen) {
-      settingsOnIcon.classList.remove("hidden");
-      settingsOffIcon.classList.add("hidden");
-      settingsPanel.classList.remove("hidden");
-    } else {
-      settingsOnIcon.classList.add("hidden");
-      settingsOffIcon.classList.remove("hidden");
-      settingsPanel.classList.add("hidden");
-    }
-
-    const rgbGradientCheckbox = /** @type {HTMLInputElement} */ (
+    document
+      .getElementById("light-toggle")
+      .classList.toggle("active", CarConfiguratorStore.state.lightsOn);
+    document
+      .getElementById("rotate-toggle")
+      .classList.toggle("active", CarConfiguratorStore.state.rotationOn);
+    document
+      .getElementById("settings-toggle")
+      .classList.toggle("active", this.isSettingsPanelOpen);
+    document
+      .getElementById("settings-panel")
+      .classList.toggle("hidden", !this.isSettingsPanelOpen);
+    /** @type {HTMLInputElement} */ (
       document.getElementById("rgb-gradient")
-    );
-    rgbGradientCheckbox.checked = CarConfiguratorStore.state.rgbGradientOn;
-
-    const luminositySlider = document.getElementById("luminosity-slider");
-    luminositySlider.oninput = (e) =>
-      this.handleChangeUserCameraLuminosity(
-        /** @type {Event & { target: HTMLInputElement }} */ (e),
-      );
-    const luminosityValue = document.getElementById("luminosity-value");
-    luminosityValue.innerHTML =
+    ).checked = CarConfiguratorStore.state.rgbGradientOn;
+    document.getElementById("luminosity-value").innerHTML =
       CarConfiguratorStore.state.userCameraLuminosity.toString();
   };
 
