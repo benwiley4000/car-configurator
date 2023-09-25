@@ -690,6 +690,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
 /** @global */
 const CarSelectionView = new (class CarSelectionView {
+  template = Handlebars.compile(
+    document.getElementById("model-selection-template").innerHTML,
+  );
+
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
@@ -697,36 +701,19 @@ const CarSelectionView = new (class CarSelectionView {
 
   /** @private */
   render = () => {
-    const carName = document.getElementById("car_name");
-    const carDescription = document.getElementById("car_description");
-    const carMaximumSpeed = document.getElementById("maximum-speed-number");
-    const carAcceleration = document.getElementById("acceleration-number");
-    const carMaximumPower = document.getElementById("maximum-power-number");
-    const carMaximumTorque = document.getElementById("maximum-torque-number");
-    const carEngineCapacity = document.getElementById("engine-capacity-number");
-    const startingPrice = document.getElementById("starting-price");
-    const startingPriceMobile = document.getElementById(
-      "starting-price-mobile",
-    );
-    const finalPrice = document.getElementById("final-price");
-
+    const modelSelection = document.querySelector(".model-selection");
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
-
-    carName.innerHTML =
-      "<span class=highlighted-word>".concat(firstWord, "</span>") +
-      "&#32;" +
-      otherWords.join(" ");
-    carDescription.innerHTML = selectedCar.description;
-    carMaximumSpeed.innerHTML = selectedCar.maxSpeed;
-    carAcceleration.innerHTML = selectedCar.acceleration;
-    carMaximumPower.innerHTML = selectedCar.maximumPower;
-    carMaximumTorque.innerHTML = selectedCar.maximumTorque;
-    carEngineCapacity.innerHTML = selectedCar.engineCapacity;
-    startingPrice.innerHTML = selectedCar.price;
-    startingPriceMobile.innerHTML = selectedCar.price;
-    finalPrice.innerHTML = selectedCar.price;
+    modelSelection.innerHTML = this.template({
+      arrows: [
+        { direction: "left", path: "M25 2L4 23.5L25 45" },
+        { direction: "right", path: "M2 2L23 23.5L2 45" },
+      ],
+      selectedCar,
+      firstWord,
+      afterFirstWord: otherWords.join(" "),
+    });
   };
 
   // UI EVENT HANDLERS:
@@ -931,12 +918,15 @@ const CarBackgroundView = new (class CarBackgroundView {
 const CarConfigStepperView = new (class CarConfigStepperView {
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["currentStep"], this.render);
+    CarConfiguratorStore.subscribe(
+      ["currentStep", "selectedCarIndex"],
+      this.render,
+    );
   }
 
   /** @private */
   render = () => {
-    const { currentStep } = CarConfiguratorStore.state;
+    const { currentStep, selectedCarIndex } = CarConfiguratorStore.state;
     document.querySelectorAll(".first-section-element").forEach((element) => {
       if (currentStep === "modelSelection") {
         element.classList.remove("hidden");
@@ -958,6 +948,18 @@ const CarConfigStepperView = new (class CarConfigStepperView {
         element.classList.add("hidden");
       }
     });
+
+    const selectedCar = AppConfig.cars[selectedCarIndex];
+
+    const startingPrice = document.getElementById("starting-price");
+    const startingPriceMobile = document.getElementById(
+      "starting-price-mobile",
+    );
+    const finalPrice = document.getElementById("final-price");
+
+    startingPrice.innerHTML = selectedCar.price;
+    startingPriceMobile.innerHTML = selectedCar.price;
+    finalPrice.innerHTML = selectedCar.price;
   };
 
   /**
@@ -1049,23 +1051,16 @@ const CarSceneLoadingView = new (class CarSceneLoadingView {
 
   /** @private */
   render = () => {
-    const loader = document.getElementById("loader");
-    const infoSpan = document.getElementById("info_span");
-
     const { sceneLoadingState } = CarConfiguratorStore.state;
-    if (!sceneLoadingState) {
-      loader.classList.add("hidden");
-      return;
-    }
-    loader.classList.remove("hidden");
 
-    if (sceneLoadingState === "Loading complete") {
-      loader.classList.add("opacity-0");
-    } else {
-      loader.classList.remove("opacity-0");
-    }
+    const loader = document.getElementById("loader");
+    loader.classList.toggle("hidden", !sceneLoadingState);
+    loader.classList.toggle(
+      "opacity-0",
+      sceneLoadingState === "Loading complete",
+    );
 
-    infoSpan.innerHTML = sceneLoadingState;
+    document.getElementById("info_span").innerHTML = sceneLoadingState || "";
   };
 })();
 
