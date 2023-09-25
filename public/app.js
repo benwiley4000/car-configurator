@@ -101,7 +101,7 @@ function setCameraSettings(settings) {
   const viewport =
     cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
   const camera = viewport.getCamera();
-  let cameraComponent = camera.getComponent("camera");
+  const cameraComponent = camera.getComponent("camera");
   Object.assign(cameraComponent.dataJSON, settings);
   camera.setComponent("camera", cameraComponent);
   SDK3DVerse.engineAPI.propagateChanges();
