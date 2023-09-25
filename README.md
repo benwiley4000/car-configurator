@@ -40,6 +40,7 @@ IMMEDIATE TODO
 - Find less shitty-looking skyboxes?
 - More obvious tab layout/hierarchy for toolbox part selection
 - and dont hide part selection on mobile
+- note in ui that luminosity is only for user
 
 ## 3dverse stuff
 1. In general I should do an audit to make sure all the used apis are public (e.g. FTL)
