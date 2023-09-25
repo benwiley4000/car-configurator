@@ -719,14 +719,14 @@ const CarSelectionView = new (class CarSelectionView {
 
   // UI EVENT HANDLERS:
 
-  nextCar() {
+  handleNextCar() {
     const { selectedCarIndex } = CarConfiguratorStore.state;
     CarConfiguratorActions.changeCar(
       (selectedCarIndex + 1) % AppConfig.cars.length,
     );
   }
 
-  previousCar() {
+  handlePreviousCar() {
     const { selectedCarIndex } = CarConfiguratorStore.state;
     CarConfiguratorActions.changeCar(
       selectedCarIndex === 0 ? AppConfig.cars.length - 1 : selectedCarIndex - 1,
@@ -797,14 +797,14 @@ const CarPartsView = new (class CarPartsView {
    *
    * @param {CarConfiguratorState['selectedPartCategory']} category
    */
-  switchCategory = (category) => {
+  handleChangeSelectedPartCategory = (category) => {
     CarConfiguratorActions.changeSelectedPartCategory(category);
   };
 
   /**
    * @param {number} index
    */
-  switchPartIndex = (index) => {
+  handleChangeSelectedPart = (index) => {
     CarConfiguratorActions.changeSelectedPart(index);
   };
 })();
@@ -846,7 +846,7 @@ const CarColorsView = new (class CarColorsView {
 
   // UI EVENT HANDLERS:
 
-  handleColorSelection(e) {
+  handleChangeSelectedColor(e) {
     CarConfiguratorActions.changeSelectedColor(
       this.getRgbForColorElement(e.target),
     );
@@ -875,7 +875,7 @@ const CarMaterialsView = new (class CarMaterialsView {
 
   // UI EVENT HANDLERS:
 
-  handleMaterialSelection(e) {
+  handleChangeSelectedMaterial(e) {
     const materialIndex = Number(e.target.getAttribute("data-material-index"));
     CarConfiguratorActions.changeSelectedMaterial(materialIndex);
   }
@@ -896,7 +896,7 @@ const CarBackgroundView = new (class CarBackgroundView {
     const cubemaps = document.querySelectorAll(".cubemap");
     cubemaps.forEach((cubemap, i) => {
       cubemap.onclick = () => {
-        this.switchCubemap(i);
+        this.handleChangeCubemap(i);
         cubemaps.forEach((cubemap) =>
           cubemap.classList.remove("active-cubemap"),
         );
@@ -910,7 +910,7 @@ const CarBackgroundView = new (class CarBackgroundView {
   /**
    * @param {number} cubemapIndex
    */
-  switchCubemap(cubemapIndex) {
+  handleChangeCubemap(cubemapIndex) {
     CarConfiguratorActions.changeCubemap(cubemapIndex);
   }
 })();
@@ -948,16 +948,11 @@ const CarConfigStepperView = new (class CarConfigStepperView {
     });
   };
 
-  launchModelSelection() {
-    CarConfiguratorActions.changeCurrentStep("modelSelection");
-  }
-
-  launchCustomization() {
-    CarConfiguratorActions.changeCurrentStep("customization");
-  }
-
-  launchReview() {
-    CarConfiguratorActions.changeCurrentStep("review");
+  /**
+   * @param {CarConfiguratorState['currentStep']} currentStep 
+   */
+  handleChangeCurrentStep(currentStep) {
+    CarConfiguratorActions.changeCurrentStep(currentStep);
   }
 })();
 
@@ -1033,7 +1028,7 @@ const CarOptionsBarView = new (class CarOptionsBarView {
 
     const luminositySlider = document.getElementById("luminosity-slider");
     luminositySlider.oninput = (e) =>
-      this.handleLuminosityChange(
+      this.handleChangeUserCameraLuminosity(
         /** @type {Event & { target: HTMLInputElement }} */ (e),
       );
     const luminosityValue = document.getElementById("luminosity-value");
@@ -1043,27 +1038,27 @@ const CarOptionsBarView = new (class CarOptionsBarView {
 
   // UI EVENT HANDLERS:
 
-  toggleSettingsPanel() {
+  handleToggleSettingsPanel() {
     this.isSettingsPanelOpen = !this.isSettingsPanelOpen;
     this.render();
   }
 
-  toggleLights() {
+  handleToggleLightsOn() {
     CarConfiguratorActions.toggleLightsOn();
   }
 
-  toggleRotation() {
+  handleToggleRotationOn() {
     CarConfiguratorActions.toggleRotationOn();
   }
 
-  async toggleGradientPlatform() {
+  handleToggleRgbGradientOn() {
     CarConfiguratorActions.toggleRgbGradientOn();
   }
 
   /**
    * @param {{ target: HTMLInputElement }} e
    */
-  handleLuminosityChange(e) {
+  handleChangeUserCameraLuminosity(e) {
     const luminosity = Number(e.target.value);
     CarConfiguratorActions.changeUserCameraLuminosity(luminosity);
   }
