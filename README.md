@@ -4,8 +4,6 @@ A sample car configurator using 3dverse labs microverse
 
 
 IMMEDIATE TODO
-1. separate SDK side effects into new CarConfiguratorActions class
-2. uniformize view action handlers and store action handlers
 3. Use handlebars for existing views and get rid of "first-section-element" etc concept. we might need to partially or just not use handlebars for the options bar, but that's not dynamically generated so it's ok. we just need to figure out how to manipulate the UI with the minimum of data-attribute inputs or classnames instead of showing and hiding stuff constantly. We can do the same for the scene loading thing since it needs to be visible on page load.
 4. Put in the button baptiste wanted
 
@@ -13,10 +11,10 @@ IMMEDIATE TODO
 1. Global variables need to be more explicitly/clearly declared and accessed. Maybe all on a class.
 3. camelCase instead of pascal
 6. We are duplicating HTML content between the AppConfig descriptions and the HTML content itself. We should probably remove it from the HTML.
-7. remove g_SelectedCar (replace by index)
 8. replace let by const when possible.
 9. MAYBE use web components?
 10. heavy use of jsdoc typescript so autocomplete works well
+11. Remove useless html after cleaning up css/tailwind usage
 
 ## We need the general update flow for every action to go:
 1. Update state variables (this all has to happen first)
