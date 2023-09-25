@@ -1,30 +1,24 @@
 # car-configurator
 A sample car configurator using 3dverse labs microverse
 
-
-
 IMMEDIATE TODO
-3. Use handlebars for existing views and get rid of "first-section-element" etc concept. we might need to partially or just not use handlebars for the options bar, but that's not dynamically generated so it's ok. we just need to figure out how to manipulate the UI with the minimum of data-attribute inputs or classnames instead of showing and hiding stuff constantly. We can do the same for the scene loading thing since it needs to be visible on page load.
+3. Use handlebars for existing views ( CarColorsView,
+  CarMaterialsView,
+  CarBackgroundView,
+  CarConfigStepperView,)
+4. remove "x-section-element" etc concept.
 4. Put in the button baptiste wanted
 
 ## Code style stuff
-1. Global variables need to be more explicitly/clearly declared and accessed. Maybe all on a class.
-3. camelCase instead of pascal
-6. We are duplicating HTML content between the AppConfig descriptions and the HTML content itself. We should probably remove it from the HTML.
-8. replace let by const when possible.
-9. MAYBE use web components?
 10. heavy use of jsdoc typescript so autocomplete works well
 11. Remove useless html after cleaning up css/tailwind usage
+12. Review all functions used for bootstrap and clean them up (initApp, setResolution, connect, getAssetDescription, onMediaQueryChange, changeCameraPosition)
 
 ## We need the general update flow for every action to go:
-1. Update state variables (this all has to happen first)
-2. Call 3dverse to do something if needed
-3. Trigger a render function that renders as a function of the state variables - no classList.toggle().
-4. Code also needs to be refactored so that any changes to app state on one client are reflected in the next client. In order to test this we need to use createOrJoinSession.
-NOTE, luminosity is a per-camera setting so other users won't be affected. maybe we should make a note to that affect next to the setting.
+4. We need to init state from 3dverse and then subscribe to 3dverse changes as well.
+5. Then enable createOrJoinSession and test.
 
 ## Bugs
-1. There's some thrashing back and forth with the presence of the spoiler, bumpers
 2. Colors are changed but not persisted (and other stuff I guess)
 3. audit rendering perf
 4. The arrows switching between cars seem sometimes non-responsive.
@@ -32,7 +26,6 @@ NOTE, luminosity is a per-camera setting so other users won't be affected. maybe
 6. There might be a bug with color selection state
 7. there's a bug with switching cars.. eventually you cannot do it anymore.
 8. Why did we stop waiting for connectionInfo.sessionCreated?
-9. Try to reduce time of no car when switching cars
 10. Replace tailwind (after making a bunch of templates)
 11. Fix app in Safari and maybe firefox
 
