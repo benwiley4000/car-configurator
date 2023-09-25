@@ -5,8 +5,8 @@ import { userToken } from "./secrets.js";
 /// <reference path="./vendor/handlebars.d.ts" />
 
 // TODO: get rid of this and use real types
-/** @type {any} */
-const SDK3DVerse = window.SDK3DVerse;
+const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
+  .SDK3DVerse;
 
 //--------------------------------------------------------------------------------------------------
 window.addEventListener("load", initApp);
@@ -73,7 +73,7 @@ async function initApp() {
     bloomThreshold: 50,
   });
 
-  await CarConfiguratorStore.fetchSceneEntities();
+  await CarConfiguratorActions.fetchSceneEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
   // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
 }
@@ -130,7 +130,7 @@ function setResolution(showInfo = true) {
   SDK3DVerse.setResolution(w, h, scale);
 
   if (showInfo) {
-    CarConfiguratorStore.setSceneLoadingState(
+    CarConfiguratorActions.setSceneLoadingState(
       `Setting resolution to ${w} x ${h} (scale=${scale})`,
     );
   }
@@ -138,7 +138,7 @@ function setResolution(showInfo = true) {
 
 //--------------------------------------------------------------------------------------------------
 async function connect() {
-  CarConfiguratorStore.setSceneLoadingState("Connecting to 3dverse...");
+  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
 
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID,
@@ -147,7 +147,7 @@ async function connect() {
   SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
   SDK3DVerse.startStreamer(connectionInfo);
   await SDK3DVerse.connectToEditor();
-  CarConfiguratorStore.setSceneLoadingState(
+  CarConfiguratorActions.setSceneLoadingState(
     "Connection to 3dverse established...",
   );
   return true; //connectionInfo.sessionCreated;
@@ -271,6 +271,55 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
+
+  constructor() {
+    // TODO: find way to initialize scene graph based on default settings
+    // (or just hardcode those default settings in scene graph). For example
+    // there is no color by default.
+    // TODO: asynchronously initialize state from current scene graph
+    // TODO: update state when receiving scene graph updates from 3dverse
+  }
+
+  /**
+   * Should only be called from CarConfiguratorActions, not any of the Views!
+   * @param {Partial<CarConfiguratorState>} value
+   */
+  setState(value) {
+    const oldState = this.internalState;
+    this.internalState = deepFreezeObject({
+      ...oldState,
+      ...value,
+    });
+    const changedKeys = Object.keys(this.internalState).filter(
+      (key) => this.internalState[key] !== oldState[key],
+    );
+
+    // notify subscribers
+    for (const [watchedKeys, handler] of this.subscribers) {
+      if (changedKeys.some((key) => watchedKeys.includes(key))) {
+        handler();
+      }
+    }
+  }
+
+  get state() {
+    return this.internalState;
+  }
+
+  set state(value) {
+    throw new Error("Cannot write state directly.");
+  }
+
+  /**
+   * @param {(keyof CarConfiguratorState)[]} watchedKeys
+   * @param {() => void} handler
+   */
+  subscribe(watchedKeys, handler) {
+    this.subscribers.push([watchedKeys, handler]);
+  }
+})();
+
+const CarConfiguratorActions = new (class CarConfiguratorActions {
   /**
    * @private
    * @type {{
@@ -305,36 +354,6 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
     // there is no color by default.
     // TODO: asynchronously initialize state from current scene graph
     // TODO: update state when receiving scene graph updates from 3dverse
-  }
-
-  /**
-   * @private
-   * @param {Partial<CarConfiguratorState>} value
-   */
-  setState(value) {
-    const oldState = this.internalState;
-    this.internalState = deepFreezeObject({
-      ...oldState,
-      ...value,
-    });
-    const changedKeys = Object.keys(this.internalState).filter(
-      (key) => this.internalState[key] !== oldState[key],
-    );
-
-    // notify subscribers
-    for (const [watchedKeys, handler] of this.subscribers) {
-      if (changedKeys.some((key) => watchedKeys.includes(key))) {
-        handler();
-      }
-    }
-  }
-
-  get state() {
-    return this.internalState;
-  }
-
-  set state(value) {
-    throw new Error("Cannot write state directly.");
   }
 
   /**
@@ -379,7 +398,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   /** @private */
   async applySelectedCar() {
     const allPartsForSelectedCar =
-      this.allCarPartEntities[this.state.selectedCarIndex];
+      this.allCarPartEntities[CarConfiguratorStore.state.selectedCarIndex];
 
     await this.changeParts({
       body: allPartsForSelectedCar.body,
@@ -391,33 +410,37 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 
   /** @private */
   async applySelectedMaterial() {
+    const { selectedMaterial, selectedColor, selectedCarIndex } =
+      CarConfiguratorStore.state;
     const desc = await getAssetDescription(
       "materials",
-      this.state.selectedMaterial.matUUID,
+      selectedMaterial.matUUID,
     );
-    desc.dataJson.albedo = this.state.selectedColor;
+    desc.dataJson.albedo = selectedColor;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      AppConfig.cars[this.state.selectedCarIndex].paintMaterialUUID,
+      AppConfig.cars[selectedCarIndex].paintMaterialUUID,
       desc,
     );
   }
 
   /** @private */
   async applySelectedPart() {
-    const { selectedPartCategory, selectedParts } = this.state;
+    const { selectedPartCategory, selectedParts, selectedCarIndex } =
+      CarConfiguratorStore.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
     const partEntity =
-      this.allCarPartEntities[this.state.selectedCarIndex][
-        selectedPartCategory
-      ][selectedPartIndex];
+      this.allCarPartEntities[selectedCarIndex][selectedPartCategory][
+        selectedPartIndex
+      ];
     await this.changeParts({ [selectedPartCategory]: partEntity });
   }
 
   /** @private */
   async applyLightsSetting() {
-    const selectedCar = AppConfig.cars[this.state.selectedCarIndex];
+    const { selectedCarIndex, lightsOn } = CarConfiguratorStore.state;
+    const selectedCar = AppConfig.cars[selectedCarIndex];
 
-    const intensity = this.state.lightsOn ? 100 : 0;
+    const intensity = lightsOn ? 100 : 0;
 
     const desc1 = await getAssetDescription(
       "materials",
@@ -438,14 +461,6 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       selectedCar.rearLightsMatUUID,
       desc2,
     );
-  }
-
-  /**
-   * @param {(keyof CarConfiguratorState)[]} watchedKeys
-   * @param {() => void} handler
-   */
-  subscribe(watchedKeys, handler) {
-    this.subscribers.push([watchedKeys, handler]);
   }
 
   async fetchSceneEntities() {
@@ -538,7 +553,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} selectedCarIndex
    */
   changeCar(selectedCarIndex) {
-    this.setState({
+    CarConfiguratorStore.setState({
       selectedCarIndex,
       selectedParts: { frontBumpers: 0, rearBumpers: 0, spoilers: 0 },
       selectedPartCategory: "frontBumpers",
@@ -550,7 +565,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {[number, number, number]} selectedColor
    */
   changeSelectedColor(selectedColor) {
-    this.setState({ selectedColor });
+    CarConfiguratorStore.setState({ selectedColor });
     this.applySelectedMaterial();
   }
 
@@ -558,7 +573,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} matIndex
    */
   changeSelectedMaterial(matIndex) {
-    this.setState({ selectedMaterial: AppConfig.materials[matIndex] });
+    CarConfiguratorStore.setState({
+      selectedMaterial: AppConfig.materials[matIndex],
+    });
     this.applySelectedMaterial();
   }
 
@@ -566,17 +583,18 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {CarConfiguratorState['selectedPartCategory']} selectedPartCategory
    */
   changeSelectedPartCategory(selectedPartCategory) {
-    this.setState({ selectedPartCategory });
+    CarConfiguratorStore.setState({ selectedPartCategory });
   }
 
   /**
    * @param {number} partIndex
    */
   changeSelectedPart(partIndex) {
-    this.setState({
+    const { selectedParts, selectedPartCategory } = CarConfiguratorStore.state;
+    CarConfiguratorStore.setState({
       selectedParts: {
-        ...this.state.selectedParts,
-        [this.state.selectedPartCategory]: partIndex,
+        ...selectedParts,
+        [selectedPartCategory]: partIndex,
       },
     });
     this.applySelectedPart();
@@ -586,9 +604,11 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} cubemapIndex
    */
   changeCubemap(cubemapIndex) {
-    this.setState({ selectedCubemap: AppConfig.cubemaps[cubemapIndex] });
+    CarConfiguratorStore.setState({
+      selectedCubemap: AppConfig.cubemaps[cubemapIndex],
+    });
     const { skyboxUUID, radianceUUID, irradianceUUID } =
-      this.state.selectedCubemap;
+      CarConfiguratorStore.state.selectedCubemap;
     this.environmentEntity.setComponent("environment", {
       skyboxUUID,
       radianceUUID,
@@ -598,24 +618,30 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   }
 
   toggleLightsOn() {
-    this.setState({ lightsOn: !this.state.lightsOn });
+    CarConfiguratorStore.setState({
+      lightsOn: !CarConfiguratorStore.state.lightsOn,
+    });
     this.applyLightsSetting();
   }
 
   toggleRotationOn() {
-    this.setState({ rotationOn: !this.state.rotationOn });
-    const event = this.state.rotationOn
+    CarConfiguratorStore.setState({
+      rotationOn: !CarConfiguratorStore.state.rotationOn,
+    });
+    const event = CarConfiguratorStore.state.rotationOn
       ? "start_simulation"
       : "pause_simulation";
     SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
   }
 
   async toggleRgbGradientOn() {
-    this.setState({ rgbGradientOn: !this.state.rgbGradientOn });
+    CarConfiguratorStore.setState({
+      rgbGradientOn: !CarConfiguratorStore.state.rgbGradientOn,
+    });
     const [gradientPlatform] = await SDK3DVerse.engineAPI.findEntitiesByNames(
       "SM_StaticPlatform",
     );
-    if (this.state.rgbGradientOn) {
+    if (CarConfiguratorStore.state.rgbGradientOn) {
       await reparentEntities([gradientPlatform], gVisibleCarParts);
     } else {
       await reparentEntities([gradientPlatform], gHiddenCarParts);
@@ -626,9 +652,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {number} userCameraLuminosity
    */
   changeUserCameraLuminosity(userCameraLuminosity) {
-    this.setState({ userCameraLuminosity });
+    CarConfiguratorStore.setState({ userCameraLuminosity });
     setCameraSettings({
-      brightness: this.state.userCameraLuminosity,
+      brightness: CarConfiguratorStore.state.userCameraLuminosity,
     });
   }
 
@@ -636,9 +662,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {CarConfiguratorState['currentStep']} currentStep
    */
   changeCurrentStep(currentStep) {
-    this.setState({ currentStep });
+    CarConfiguratorStore.setState({ currentStep });
     setCameraSettings({
-      displayBackground: this.state.currentStep === "review",
+      displayBackground: CarConfiguratorStore.state.currentStep === "review",
     });
   }
 
@@ -646,7 +672,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
    * @param {string | null} sceneLoadingState
    */
   setSceneLoadingState(sceneLoadingState) {
-    this.setState({ sceneLoadingState });
+    CarConfiguratorStore.setState({ sceneLoadingState });
   }
 })();
 
@@ -695,14 +721,14 @@ const CarSelectionView = new (class CarSelectionView {
 
   nextCar() {
     const { selectedCarIndex } = CarConfiguratorStore.state;
-    CarConfiguratorStore.changeCar(
+    CarConfiguratorActions.changeCar(
       (selectedCarIndex + 1) % AppConfig.cars.length,
     );
   }
 
   previousCar() {
     const { selectedCarIndex } = CarConfiguratorStore.state;
-    CarConfiguratorStore.changeCar(
+    CarConfiguratorActions.changeCar(
       selectedCarIndex === 0 ? AppConfig.cars.length - 1 : selectedCarIndex - 1,
     );
   }
@@ -772,14 +798,14 @@ const CarPartsView = new (class CarPartsView {
    * @param {CarConfiguratorState['selectedPartCategory']} category
    */
   switchCategory = (category) => {
-    CarConfiguratorStore.changeSelectedPartCategory(category);
+    CarConfiguratorActions.changeSelectedPartCategory(category);
   };
 
   /**
    * @param {number} index
    */
   switchPartIndex = (index) => {
-    CarConfiguratorStore.changeSelectedPart(index);
+    CarConfiguratorActions.changeSelectedPart(index);
   };
 })();
 
@@ -821,7 +847,7 @@ const CarColorsView = new (class CarColorsView {
   // UI EVENT HANDLERS:
 
   handleColorSelection(e) {
-    CarConfiguratorStore.changeSelectedColor(
+    CarConfiguratorActions.changeSelectedColor(
       this.getRgbForColorElement(e.target),
     );
   }
@@ -851,7 +877,7 @@ const CarMaterialsView = new (class CarMaterialsView {
 
   handleMaterialSelection(e) {
     const materialIndex = Number(e.target.getAttribute("data-material-index"));
-    CarConfiguratorStore.changeSelectedMaterial(materialIndex);
+    CarConfiguratorActions.changeSelectedMaterial(materialIndex);
   }
 })();
 
@@ -885,7 +911,7 @@ const CarBackgroundView = new (class CarBackgroundView {
    * @param {number} cubemapIndex
    */
   switchCubemap(cubemapIndex) {
-    CarConfiguratorStore.changeCubemap(cubemapIndex);
+    CarConfiguratorActions.changeCubemap(cubemapIndex);
   }
 })();
 
@@ -923,15 +949,15 @@ const CarConfigStepperView = new (class CarConfigStepperView {
   };
 
   launchModelSelection() {
-    CarConfiguratorStore.changeCurrentStep("modelSelection");
+    CarConfiguratorActions.changeCurrentStep("modelSelection");
   }
 
   launchCustomization() {
-    CarConfiguratorStore.changeCurrentStep("customization");
+    CarConfiguratorActions.changeCurrentStep("customization");
   }
 
   launchReview() {
-    CarConfiguratorStore.changeCurrentStep("review");
+    CarConfiguratorActions.changeCurrentStep("review");
   }
 })();
 
@@ -1006,7 +1032,10 @@ const CarOptionsBarView = new (class CarOptionsBarView {
     rgbGradientCheckbox.checked = CarConfiguratorStore.state.rgbGradientOn;
 
     const luminositySlider = document.getElementById("luminosity-slider");
-    luminositySlider.oninput = (e) => this.handleLuminosityChange(e);
+    luminositySlider.oninput = (e) =>
+      this.handleLuminosityChange(
+        /** @type {Event & { target: HTMLInputElement }} */ (e),
+      );
     const luminosityValue = document.getElementById("luminosity-value");
     luminosityValue.innerHTML =
       CarConfiguratorStore.state.userCameraLuminosity.toString();
@@ -1020,15 +1049,15 @@ const CarOptionsBarView = new (class CarOptionsBarView {
   }
 
   toggleLights() {
-    CarConfiguratorStore.toggleLightsOn();
+    CarConfiguratorActions.toggleLightsOn();
   }
 
   toggleRotation() {
-    CarConfiguratorStore.toggleRotationOn();
+    CarConfiguratorActions.toggleRotationOn();
   }
 
   async toggleGradientPlatform() {
-    CarConfiguratorStore.toggleRgbGradientOn();
+    CarConfiguratorActions.toggleRgbGradientOn();
   }
 
   /**
@@ -1036,7 +1065,7 @@ const CarOptionsBarView = new (class CarOptionsBarView {
    */
   handleLuminosityChange(e) {
     const luminosity = Number(e.target.value);
-    CarConfiguratorStore.changeUserCameraLuminosity(luminosity);
+    CarConfiguratorActions.changeUserCameraLuminosity(luminosity);
   }
 })();
 
