@@ -17,16 +17,6 @@ const PARTS_CATEGORY_MAPPING = {
   spoilers: "Spoiler",
 };
 
-// The VISIBLE_CART_PARTS entity is where we put
-// car parts to show
-let gVisibleCarParts = null;
-// We pre-instantiate car parts in HIDDEN_CAR_PARTS
-// so we can show them later by moving them to
-// VISIBLE_CAR_PARTS. HIDDEN_CAR_PARTS is technically
-// visible but it is moved far away from the camera
-// so we never see it.
-let gHiddenCarParts = null;
-
 //--------------------------------------------------------------------------------------------------
 async function initApp() {
   SDK3DVerse.setApiVersion("v1");
@@ -321,6 +311,21 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 
 const CarConfiguratorActions = new (class CarConfiguratorActions {
   /**
+   * The VISIBLE_ENTITIES container entity is where we put
+   * car parts and other entities to show
+   * @type {object | null}
+   */
+  visibleEntitiesContainer = null;
+  /**
+   * We pre-instantiate entities in HIDDEN_ENTITIES
+   * so we can show them later by moving them to
+   * VISIBLE_ENTITIES. HIDDEN_ENTITIES is technically
+   * visible but it is moved far away from the camera
+   * so we never see it.
+   * @type {object | null}
+   */
+  hiddenEntitiesContainer = null;
+  /**
    * @private
    * @type {{
    *   body: object;
@@ -375,14 +380,17 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
               if (this.selectedCarPartEntities[category]) {
                 await reparentEntities(
                   [this.selectedCarPartEntities[category]],
-                  gHiddenCarParts,
+                  this.hiddenEntitiesContainer,
                 );
               }
             },
             async () => {
               // make chosen part visible
               if (newPartEntity) {
-                await reparentEntities([newPartEntity], gVisibleCarParts);
+                await reparentEntities(
+                  [newPartEntity],
+                  this.visibleEntitiesContainer,
+                );
               }
             },
           ];
@@ -464,16 +472,20 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   async fetchSceneEntities() {
-    [gVisibleCarParts, gHiddenCarParts] =
+    const [visibleEntitiesContainer, hiddenEntitiesContainer] =
       await SDK3DVerse.engineAPI.findEntitiesByNames(
-        "VISIBLE_CAR_PARTS",
-        "HIDDEN_CAR_PARTS",
+        "VISIBLE_ENTITIES",
+        "HIDDEN_ENTITIES",
       );
+    Object.assign(this, {
+      visibleEntitiesContainer,
+      hiddenEntitiesContainer,
+    });
     /**
      * @param {object} entity
      */
     const isEntityVisible = (entity) =>
-      entity.getParent().getID() === gVisibleCarParts.getID();
+      entity.getParent().getID() === this.visibleEntitiesContainer.getID();
     for (const {
       name,
       frontBumpers,
@@ -642,9 +654,9 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       "SM_StaticPlatform",
     );
     if (CarConfiguratorStore.state.rgbGradientOn) {
-      await reparentEntities([gradientPlatform], gVisibleCarParts);
+      await reparentEntities([gradientPlatform], this.visibleEntitiesContainer);
     } else {
-      await reparentEntities([gradientPlatform], gHiddenCarParts);
+      await reparentEntities([gradientPlatform], this.hiddenEntitiesContainer);
     }
   }
 
@@ -949,7 +961,7 @@ const CarConfigStepperView = new (class CarConfigStepperView {
   };
 
   /**
-   * @param {CarConfiguratorState['currentStep']} currentStep 
+   * @param {CarConfiguratorState['currentStep']} currentStep
    */
   handleChangeCurrentStep(currentStep) {
     CarConfiguratorActions.changeCurrentStep(currentStep);
