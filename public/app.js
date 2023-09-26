@@ -252,7 +252,9 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       spoilers: 0,
     },
     selectedColor: AppConfig.colorChoices[0],
-    selectedMaterial: AppConfig.materials[0],
+    selectedMaterial: AppConfig.materials.find(
+      ({ name }) => name === "Metallic",
+    ),
     selectedCubemap: AppConfig.cubemaps[0],
     lightsOn: true,
     rotationOn: false,
@@ -867,52 +869,79 @@ const CarColorsView = new (class CarColorsView {
 const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
+    CarConfiguratorStore.subscribe(
+      ["selectedMaterial", "currentStep"],
+      this.render,
+    );
   }
 
   /** @private */
   render = () => {
-    const materialIcons = document.querySelectorAll(".material-icon");
-
-    materialIcons.forEach((icon) => {
-      icon.addEventListener("click", () => {
-        materialIcons.forEach((icon) =>
-          icon.classList.remove("active-material"),
-        );
-        icon.classList.add("active-material");
-      });
+    const materialsSelection = document.getElementById("materials-selection");
+    const { selectedMaterial, currentStep } = CarConfiguratorStore.state;
+    if (currentStep !== "customization") {
+      materialsSelection.classList.add("hidden");
+      return;
+    }
+    materialsSelection.classList.remove("hidden");
+    document.querySelectorAll(".material-icon").forEach((icon, i) => {
+      icon.classList.toggle(
+        "active-material",
+        AppConfig.materials.indexOf(selectedMaterial) === i,
+      );
     });
   };
 
   // UI EVENT HANDLERS:
 
-  handleChangeSelectedMaterial(e) {
-    const materialIndex = Number(e.target.getAttribute("data-material-index"));
+  /**
+   * @param {number} materialIndex
+   */
+  handleChangeSelectedMaterial(materialIndex) {
     CarConfiguratorActions.changeSelectedMaterial(materialIndex);
   }
 })();
 
 /** @global */
 const CarBackgroundView = new (class CarBackgroundView {
+  template = Handlebars.compile(
+    document.getElementById("cubemap-selection-template").innerHTML,
+  );
+
   constructor() {
-    this.render();
-    CarConfiguratorStore.subscribe(["selectedCubemap"], this.render);
+    this.initialRender();
+    CarConfiguratorStore.subscribe(
+      ["selectedCubemap", "currentStep"],
+      this.updateRender,
+    );
   }
 
   /** @private */
-  render = () => {
-    // this currently sets up cubemap state independent of the state
-    // in code. we might want to change that.
-    /** @type {NodeListOf<HTMLElement>} */
-    const cubemaps = document.querySelectorAll(".cubemap");
-    cubemaps.forEach((cubemap, i) => {
-      cubemap.onclick = () => {
-        this.handleChangeCubemap(i);
-        cubemaps.forEach((cubemap) =>
-          cubemap.classList.remove("active-cubemap"),
-        );
-        cubemap.classList.add("active-cubemap");
-      };
+  initialRender() {
+    document.getElementById("cubemap-selection").innerHTML = this.template({
+      cubemaps: AppConfig.cubemaps.map((cubemap) => ({
+        displayName: cubemap.name,
+        previewSrc: cubemap.previewSrc,
+      })),
+    });
+    this.updateRender();
+  }
+
+  /** @private */
+  updateRender = () => {
+    const cubemapSelection = document.getElementById("cubemap-selection");
+    const { selectedCubemap, currentStep } = CarConfiguratorStore.state;
+    if (currentStep !== "review") {
+      cubemapSelection.classList.add("hidden");
+      return;
+    }
+    cubemapSelection.classList.remove("hidden");
+    document.querySelectorAll(".cubemap").forEach((cubemap, i) => {
+      console.log('toggling', AppConfig.cubemaps.indexOf(selectedCubemap), i)
+      cubemap.classList.toggle(
+        "active-cubemap",
+        AppConfig.cubemaps.indexOf(selectedCubemap) === i,
+      );
     });
   };
 

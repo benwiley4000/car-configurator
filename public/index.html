@@ -268,7 +268,7 @@
         id="color-selection"
         class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element"
       ></div>
-      <!-- COLOR SELECTION CONTAINER -->
+      <!-- COLOR SELECTION TEMPLATE -->
       <script id="color-selection-template" type="text/x-handlebars">
         {{#each colors as | color |}}
           <div
@@ -279,120 +279,61 @@
         {{/each}}
       </script>
 
-      <!-- material section -->
+      <!-- MATERIALS SELECTION -->
       <div
         id="materials-selection"
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
       >
         <div
-          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
-          data-material-index="0"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
         >
           <svg
             width="50%"
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            class="unactive-icon"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
-            <path
-              d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
-              fill="white"
-            />
+            <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
           </svg>
+        </div>
+        <div
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
+        >
           <svg
             width="50%"
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            class="active-icon hidden"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle
-              cx="65"
-              cy="65"
-              r="57.5"
-              stroke="#272727"
-              stroke-width="15"
-            />
+            <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
             <path
               d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
-              fill="#272727"
+              class="fill"
             />
           </svg>
         </div>
         <div
-          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
-          data-material-index="1"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
         >
           <svg
             width="50%"
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            class="unactive-icon"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
-          </svg>
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-            class="active-icon hidden"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="65"
-              cy="65"
-              r="57.5"
-              stroke="#272727"
-              stroke-width="15"
-            />
-          </svg>
-        </div>
-        <div
-          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
-          data-material-index="2"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
-        >
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-            class="unactive-icon"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="65" cy="65" r="61" stroke="white" stroke-width="8" />
+            <circle cx="65" cy="65" r="61" class="stroke" stroke-width="8" />
             <circle
               cx="65"
               cy="65"
               r="65"
               transform="rotate(90 65 65)"
-              fill="white"
-            />
-          </svg>
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-            class="active-icon hidden"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="65" cy="65" r="61" stroke="#272727" stroke-width="8" />
-            <circle
-              cx="65"
-              cy="65"
-              r="65"
-              transform="rotate(90 65 65)"
-              fill="#272727"
+              class="fill"
             />
           </svg>
         </div>
@@ -440,72 +381,35 @@
         </div>
       </script>
 
-      <!-- Cubemap Selection -->
+      <!-- CUBEMAP SELECTION CONTAINER -->
       <div
-        id="cubemap"
+        id="cubemap-selection"
         class="absolute right-[7vw] space-y-[40px] flex align-center justify-center flex-col third-section-element hidden"
-      >
-        <div
-          id="cubemap1"
-          onclick="CarBackgroundView.handleChangeCubemap(0);"
-          class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center active-cubemap"
-        >
+      ></div>
+      <!-- CUBEMAP SELECTION TEMPLATE -->
+      <script id="cubemap-selection-template" type="text/x-handlebars">
+        {{#each cubemaps as | cubemap |}}
           <div
-            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
+            onclick="CarBackgroundView.handleChangeCubemap({{@index}})"
+            class="cubemap rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
           >
+            <div
+              class="cubemap-check absolute bg-black bg-opacity-70 rounded-full justify-center items-center"
+            >
+              <img
+                src="./img/orange-check.png"
+                class="cubemap-check-icon"
+                alt=""
+              />
+            </div>
             <img
-              src="./img/orange-check.png"
-              class="cubemap-check-icon"
-              alt=""
+              src="{{cubemap.previewSrc}}"
+              alt="{{cubemap.displayName}}"
+              class="rounded-full cubemap-bg"
             />
           </div>
-          <img
-            src="./img/cubemap1.png"
-            alt="City Cubemap"
-            class="rounded-full cubemap-bg"
-          />
-        </div>
-        <div
-          id="cubemap2"
-          onclick="CarBackgroundView.handleChangeCubemap(1);"
-          class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
-        >
-          <div
-            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
-          >
-            <img
-              src="./img/orange-check.png"
-              class="cubemap-check-icon"
-              alt=""
-            />
-          </div>
-          <img
-            src="./img/cubemap2.png"
-            alt="City Cubemap"
-            class="rounded-full cubemap-bg"
-          />
-        </div>
-        <div
-          id="cubemap3"
-          onclick="CarBackgroundView.handleChangeCubemap(2);"
-          class="cubemap bg-[#272727] rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
-        >
-          <div
-            class="cubemap-check absolute bg-black bg-opacity-70 rounded-full flex justify-center items-center hidden"
-          >
-            <img
-              src="./img/orange-check.png"
-              class="cubemap-check-icon"
-              alt=""
-            />
-          </div>
-          <img
-            src="./img/cubemap3.png"
-            alt="City Cubemap"
-            class="rounded-full cubemap-bg"
-          />
-        </div>
-      </div>
+        {{/each}}
+      </script>
 
       <!--------------------------------- BUTTONS ---------------------------------------------------->
 

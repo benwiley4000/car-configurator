@@ -144,18 +144,28 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
 
 /* MATERIALS */
 
-.active-material {
-  background-color: #ec6244 !important;
-  color: #272727 !important;
+.material-icon {
+  background-color: #272727;
 }
-.active-material:hover {
-  cursor: auto !important;
+
+.material-icon .stroke {
+  stroke: white;
 }
-.active-material .unactive-icon {
-  display: none !important;
+
+.material-icon .fill {
+  fill: white;
 }
-.active-material .active-icon {
-  display: block !important;
+
+.material-icon.active-material {
+  background-color: #ec6244;
+}
+
+.material-icon.active-material .stroke {
+  stroke: #272727;
+}
+
+.material-icon.active-material .fill {
+  fill: #272727;
 }
 
 /* CUBEMAP SELECTION */
@@ -164,19 +174,21 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   background-color: #ec6244 !important;
   cursor: auto !important;
 }
-.active-cubemap .cubemap-check {
-  display: flex !important;
-}
 .active-cubemap:hover {
   opacity: 100% !important;
 }
 .cubemap {
   height: 90px;
   width: 90px;
+  background-color: #272727;
 }
 .cubemap-check {
   height: 80px;
   width: 80px;
+  display: none;
+}
+.active-cubemap .cubemap-check {
+  display: flex;
 }
 .cubemap-check-icon {
   height: 40%;
