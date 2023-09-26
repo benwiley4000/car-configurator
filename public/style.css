@@ -130,6 +130,10 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
 
 /* COLORS */
 
+.color {
+  filter: brightness(2); /** actual color values look a bit muted */
+}
+
 .active-color {
   border: 4px solid #3c3c3c !important;
   cursor: auto !important;
