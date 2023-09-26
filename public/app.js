@@ -937,7 +937,6 @@ const CarBackgroundView = new (class CarBackgroundView {
     }
     cubemapSelection.classList.remove("hidden");
     document.querySelectorAll(".cubemap").forEach((cubemap, i) => {
-      console.log('toggling', AppConfig.cubemaps.indexOf(selectedCubemap), i)
       cubemap.classList.toggle(
         "active-cubemap",
         AppConfig.cubemaps.indexOf(selectedCubemap) === i,

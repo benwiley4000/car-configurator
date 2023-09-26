@@ -1,10 +1,11 @@
 # car-configurator
-A sample car configurator using 3dverse labs microverse
+A sample app built using the 3dverse Livelink SDK to manipulate a scene in 3dverse.
+
+This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars templates for data-driven HTML elements. The only external libraries it uses are Handlebars and the 3dverse Livelink SDK. But of course you can use whatever UI framework you prefer (React, Vue, Svelte, Angular, etc), to build your own 3dverse application.
 
 IMMEDIATE TODO
-3. Use handlebars for existing views ( CarColorsView,
-  CarMaterialsView,
-  CarBackgroundView,
+2. convert tailwind styles to css for all the car config stepper view buttons so we can simplify that all
+3. Use handlebars for existing views (
   CarConfigStepperView,)
 4. remove "x-section-element" etc concept.
 4. Put in the button baptiste wanted
