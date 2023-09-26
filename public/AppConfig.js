@@ -22,10 +22,17 @@ export default {
   ],
   cameraComponentDataJSON: {},
   materials: [
-    { name: "Solid", matUUID: "bd9dc4c5-20b7-404c-8a94-b84cf21de580" },
     { name: "Metallic", matUUID: "e1357fe8-7a6f-4af5-83e0-b16643b98372" },
+    { name: "Solid", matUUID: "bd9dc4c5-20b7-404c-8a94-b84cf21de580" },
     { name: "Matte", matUUID: "8585675f-5dad-4b3a-904d-3afe8cbf0c03" },
   ],
+  colorChoices: /** @type {[number, number, number][]} */ ([
+    [0, 0.369, 0.302], // teal
+    [0.467, 0.51, 0], // yellow
+    [0, 0.035, 0.29], // blue
+    [0.58, 0.141, 0.506], // pink
+    [0.251, 0, 0], // burnt red
+  ]),
   cars: [
     {
       name: "Dodge Viper SRT",
@@ -67,10 +74,7 @@ export default {
         "Lamborghini Urus REAR BUMPER 0",
         "Lamborghini Urus REAR BUMPER 1",
       ],
-      spoilers: [
-        "Lamborghini Urus SPOILER 0",
-        "Lamborghini Urus SPOILER 1",
-      ],
+      spoilers: ["Lamborghini Urus SPOILER 0", "Lamborghini Urus SPOILER 1"],
       headLightsMatUUID: "d2de613c-9d0e-4612-b253-e8ea0740c960",
       rearLightsMatUUID: "ef8b7508-7ef3-47a9-9e5a-6ed6f039b62a",
 

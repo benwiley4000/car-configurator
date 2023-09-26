@@ -251,7 +251,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
       rearBumpers: 0,
       spoilers: 0,
     },
-    selectedColor: [0, 0, 0],
+    selectedColor: AppConfig.colorChoices[0],
     selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],
     lightsOn: true,
@@ -703,7 +703,7 @@ const CarSelectionView = new (class CarSelectionView {
 
   /** @private */
   render = () => {
-    const modelSelection = document.querySelector(".model-selection");
+    const modelSelection = document.getElementById("model-selection");
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
@@ -815,44 +815,40 @@ const CarColorsView = new (class CarColorsView {
   template = Handlebars.compile(
     document.getElementById("color-selection-template").innerHTML,
   );
-  colors = /** @type {[number, number, number][]} */ ([
-    [0.467, 0.51, 0], // yellow
-    [0, 0.369, 0.302], // teal
-    [0, 0.035, 0.29], // blue
-    [0.58, 0.141, 0.506], // pink
-    [0.251, 0, 0], // burnt red
-  ]).reduce((colorsMap, sdkColor) => {
-    return colorsMap.set(this.getCssColorStringForSDKColor(sdkColor), sdkColor);
-  }, /** @type {Map<string, [number, number, number]>} */ (new Map()));
+  cssToSdkColorChoicesMap = AppConfig.colorChoices.reduce(
+    (colorsMap, sdkColor) => {
+      const cssColorString = `rgb(${sdkColor
+        .map((value) => Math.round(value * 255))
+        .join(",")})`;
+      return colorsMap.set(cssColorString, sdkColor);
+    },
+    /** @type {Map<string, [number, number, number]>} */ (new Map()),
+  );
 
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["selectedColor", "currentStep"], this.render);
-  }
-
-  /**
-   * @private
-   * @param {[number, number, number]} sdkColor
-   * @returns {string}
-   */
-  getCssColorStringForSDKColor(sdkColor) {
-    return `rgb(${sdkColor.map((value) => Math.round(value * 255)).join(",")})`;
+    CarConfiguratorStore.subscribe(
+      ["selectedColor", "currentStep"],
+      this.render,
+    );
   }
 
   /** @private */
   render = () => {
-    const colorSelection = document.querySelector(".color-selection");
+    const colorSelection = document.getElementById("color-selection");
     const { selectedColor, currentStep } = CarConfiguratorStore.state;
-    if (currentStep !== 'customization') {
-      colorSelection.classList.add('hidden');
+    if (currentStep !== "customization") {
+      colorSelection.classList.add("hidden");
       return;
     }
-    colorSelection.classList.remove('hidden');
+    colorSelection.classList.remove("hidden");
     colorSelection.innerHTML = this.template({
-      colors: [...this.colors.entries()].map(([cssColor, sdkColor]) => ({
-        cssColor,
-        isActive: sdkColor.every((c, i) => c === selectedColor[i]),
-      })),
+      colors: [...this.cssToSdkColorChoicesMap.entries()].map(
+        ([cssColor, sdkColor]) => ({
+          cssColor,
+          isActive: sdkColor === selectedColor,
+        }),
+      ),
     });
   };
 
@@ -862,7 +858,9 @@ const CarColorsView = new (class CarColorsView {
    * @param {string} cssColor
    */
   handleChangeSelectedColor(cssColor) {
-    CarConfiguratorActions.changeSelectedColor(this.colors.get(cssColor));
+    CarConfiguratorActions.changeSelectedColor(
+      this.cssToSdkColorChoicesMap.get(cssColor),
+    );
   }
 })();
 
@@ -1071,7 +1069,7 @@ const CarSceneLoadingView = new (class CarSceneLoadingView {
     loader.classList.toggle("hidden", !sceneLoadingState);
     loader.classList.toggle(
       "opacity-0",
-      sceneLoadingState === "Loading complete",
+      sceneLoadingState === "Loading complete.",
     );
 
     document.getElementById("info_span").innerHTML = sceneLoadingState || "";

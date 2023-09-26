@@ -38,7 +38,7 @@
       ></canvas>
 
       <!-- MODEL SELECTION CONTAINER -->
-      <div class="model-selection"></div>
+      <div id="model-selection"></div>
       <!-- MODEL SELECTION TEMPLATE -->
       <script id="model-selection-template" type="text/x-handlebars">
         {{#each arrows}}
@@ -265,7 +265,7 @@
 
       <!-- COLORS SELECTION CONTAINER -->
       <div
-        class="color-selection"
+        id="color-selection"
         class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element"
       ></div>
       <!-- COLOR SELECTION CONTAINER -->
@@ -281,45 +281,13 @@
 
       <!-- material section -->
       <div
-        id="materials"
+        id="materials-selection"
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
       >
         <div
-          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
-          data-material-index="1"
-          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
-        >
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-            class="unactive-icon"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
-          </svg>
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-            class="active-icon hidden"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="65"
-              cy="65"
-              r="57.5"
-              stroke="#272727"
-              stroke-width="15"
-            />
-          </svg>
-        </div>
-        <div
           class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
           data-material-index="0"
-          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
         >
           <svg
             width="50%"
@@ -358,8 +326,40 @@
         </div>
         <div
           class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          data-material-index="1"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
+        >
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="unactive-icon"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="65" cy="65" r="57.5" stroke="white" stroke-width="15" />
+          </svg>
+          <svg
+            width="50%"
+            height="50%"
+            viewBox="0 0 130 130"
+            fill="none"
+            class="active-icon hidden"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="65"
+              cy="65"
+              r="57.5"
+              stroke="#272727"
+              stroke-width="15"
+            />
+          </svg>
+        </div>
+        <div
+          class="bg-[#272727] h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
           data-material-index="2"
-          onclick="CarMaterialsView.handleMaterialSelection({ target: this })"
+          onclick="CarMaterialsView.handleChangeSelectedMaterial({ target: this })"
         >
           <svg
             width="50%"
