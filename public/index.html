@@ -263,42 +263,21 @@
 
       <!---------------------------------- CUSTOMIZATION ----------------------------------------->
 
-      <!-- colors selection -->
+      <!-- COLORS SELECTION CONTAINER -->
       <div
-        id="colors"
-        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
-      >
-        <div
-          id="color1"
-          data-color="0.467,0.51,0"
-          onclick="CarColorsView.handleChangeSelectedColor({ target: this })"
-          class="color h-[36px] w-[36px] bg-yellow-300 rounded-full hover:cursor-pointer transition hover:scale-125"
-        ></div>
-        <div
-          id="color2"
-          data-color="0,0.369,0.302"
-          onclick="CarColorsView.handleChangeSelectedColor({ target: this })"
-          class="color h-[36px] w-[36px] bg-blue-300 rounded-full hover:cursor-pointer transition hover:scale-125"
-        ></div>
-        <div
-          id="color3"
-          data-color="0,0.035,0.29"
-          onclick="CarColorsView.handleChangeSelectedColor({ target: this })"
-          class="color h-[36px] w-[36px] bg-blue-700 rounded-full hover:cursor-pointer transition hover:scale-125"
-        ></div>
-        <div
-          id="color4"
-          data-color="0.58,0.141,0.506"
-          onclick="CarColorsView.handleChangeSelectedColor({ target: this })"
-          class="color h-[36px] w-[36px] bg-pink-600 rounded-full hover:cursor-pointer transition hover:scale-125"
-        ></div>
-        <div
-          id="color5"
-          data-color="0.251,0,0"
-          onclick="CarColorsView.handleChangeSelectedColor({ target: this })"
-          class="color h-[36px] w-[36px] bg-red-800 rounded-full hover:cursor-pointer transition hover:scale-125"
-        ></div>
-      </div>
+        class="color-selection"
+        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element"
+      ></div>
+      <!-- COLOR SELECTION CONTAINER -->
+      <script id="color-selection-template" type="text/x-handlebars">
+        {{#each colors as | color |}}
+          <div
+            style="background-color: {{color.cssColor}}"
+            onclick="CarColorsView.handleChangeSelectedColor('{{color.cssColor}}')"
+            class="{{#if color.isActive}} active-color {{/if}} color h-[36px] w-[36px] rounded-full hover:cursor-pointer transition hover:scale-125"
+          ></div>
+        {{/each}}
+      </script>
 
       <!-- material section -->
       <div

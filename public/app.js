@@ -810,45 +810,57 @@ const CarPartsView = new (class CarPartsView {
 
 /** @global */
 const CarColorsView = new (class CarColorsView {
+  template = Handlebars.compile(
+    document.getElementById("color-selection-template").innerHTML,
+  );
+  colors = /** @type {[number, number, number][]} */ ([
+    [0.467, 0.51, 0], // yellow
+    [0, 0.369, 0.302], // teal
+    [0, 0.035, 0.29], // blue
+    [0.58, 0.141, 0.506], // pink
+    [0.251, 0, 0], // burnt red
+  ]).reduce((colorsMap, sdkColor) => {
+    return colorsMap.set(this.getCssColorStringForSDKColor(sdkColor), sdkColor);
+  }, /** @type {Map<string, [number, number, number]>} */ (new Map()));
+
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["selectedColor"], this.render);
+    CarConfiguratorStore.subscribe(["selectedColor", "currentStep"], this.render);
   }
 
   /**
    * @private
-   * @param {Element} colorElement
-   * @returns {[number, number, number]}
+   * @param {[number, number, number]} sdkColor
+   * @returns {string}
    */
-  getRgbForColorElement(colorElement) {
-    const [r, g, b] = colorElement
-      .getAttribute("data-color")
-      .split(",")
-      .map(Number);
-    return [r, g, b];
+  getCssColorStringForSDKColor(sdkColor) {
+    return `rgb(${sdkColor.map((value) => Math.round(value * 255)).join(",")})`;
   }
 
   /** @private */
   render = () => {
-    const colors = document.querySelectorAll(".color");
-    colors.forEach((color) => {
-      const rgb = this.getRgbForColorElement(color);
-      if (
-        CarConfiguratorStore.state.selectedColor.every((v, i) => rgb[i] === v)
-      ) {
-        color.classList.add("active-color");
-      } else {
-        color.classList.remove("active-color");
-      }
+    const colorSelection = document.querySelector(".color-selection");
+    const { selectedColor, currentStep } = CarConfiguratorStore.state;
+    if (currentStep !== 'customization') {
+      colorSelection.classList.add('hidden');
+      return;
+    }
+    colorSelection.classList.remove('hidden');
+    colorSelection.innerHTML = this.template({
+      colors: [...this.colors.entries()].map(([cssColor, sdkColor]) => ({
+        cssColor,
+        isActive: sdkColor.every((c, i) => c === selectedColor[i]),
+      })),
     });
   };
 
   // UI EVENT HANDLERS:
 
-  handleChangeSelectedColor(e) {
-    CarConfiguratorActions.changeSelectedColor(
-      this.getRgbForColorElement(e.target),
-    );
+  /**
+   * @param {string} cssColor
+   */
+  handleChangeSelectedColor(cssColor) {
+    CarConfiguratorActions.changeSelectedColor(this.colors.get(cssColor));
   }
 })();
 
