@@ -63,6 +63,7 @@ async function initApp() {
     bloomThreshold: 50,
   });
 
+  CarConfiguratorActions.setSceneLoadingState("Analyzing scene objects...");
   await CarConfiguratorActions.fetchSceneEntities();
   // SDK3DVerse.updateControllerSetting({ rotation: 10 });
   // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
@@ -129,17 +130,18 @@ function setResolution(showInfo = true) {
 //--------------------------------------------------------------------------------------------------
 async function connect() {
   CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
-
   const connectionInfo = await SDK3DVerse.webAPI.createSession(
     AppConfig.sceneUUID,
   );
   connectionInfo.useSSL = true;
   SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
-  SDK3DVerse.startStreamer(connectionInfo);
+
+  CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
+  await SDK3DVerse.startStreamer(connectionInfo);
+
+  CarConfiguratorActions.setSceneLoadingState("Connecting to editor API...");
   await SDK3DVerse.connectToEditor();
-  CarConfiguratorActions.setSceneLoadingState(
-    "Connection to 3dverse established...",
-  );
+
   return true; //connectionInfo.sessionCreated;
 }
 
@@ -557,7 +559,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
     // TODO: after fetching I need to initialize state from entities
 
-    this.setSceneLoadingState("Loading complete");
+    this.setSceneLoadingState("Loading complete.");
     setTimeout(() => this.setSceneLoadingState(null), 500);
   }
 
