@@ -700,28 +700,27 @@ const CarSelectionView = new (class CarSelectionView {
 
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(
-      ["selectedCarIndex", "currentStep"],
-      this.render,
-    );
+    this.updateVisibility();
+    CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
+    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
+  updateVisibility = () => {
+    document
+      .getElementById("model-selection")
+      .classList.toggle(
+        "hidden",
+        CarConfiguratorStore.state.currentStep !== "modelSelection",
+      );
+  };
+
+  /** @private */
   render = () => {
-    const modelSelection = document.getElementById("model-selection");
-    const { selectedCarIndex, currentStep } = CarConfiguratorStore.state;
-
-    if (currentStep !== "modelSelection") {
-      modelSelection.classList.add("hidden");
-      return;
-    }
-
-    modelSelection.classList.remove("hidden");
-
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
-    modelSelection.innerHTML = this.template({
+    document.getElementById("model-selection").innerHTML = this.template({
       arrows: [
         { direction: "left", path: "M25 2L4 23.5L25 45" },
         { direction: "right", path: "M2 2L23 23.5L2 45" },
@@ -758,38 +757,32 @@ const CarPartsView = new (class CarPartsView {
 
   constructor() {
     this.render();
+    this.updateVisibility();
     CarConfiguratorStore.subscribe(
-      [
-        "selectedPartCategory",
-        "selectedParts",
-        "selectedCarIndex",
-        "currentStep",
-      ],
+      ["selectedPartCategory", "selectedParts", "selectedCarIndex"],
       this.render,
     );
+    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
+  updateVisibility = () => {
+    document
+      .getElementById("car-parts")
+      .classList.toggle(
+        "hidden",
+        CarConfiguratorStore.state.currentStep !== "customization",
+      );
+  };
+
+  /** @private */
   render = () => {
-    const carPartsElement = document.querySelector(".car-parts");
-
-    const {
-      selectedPartCategory,
-      selectedParts,
-      selectedCarIndex,
-      currentStep,
-    } = CarConfiguratorStore.state;
-
-    if (currentStep !== "customization") {
-      carPartsElement.classList.add("hidden");
-      return;
-    }
-
-    carPartsElement.classList.remove("hidden");
+    const { selectedPartCategory, selectedParts, selectedCarIndex } =
+      CarConfiguratorStore.state;
 
     const selectedPartIndex = selectedParts[selectedPartCategory];
 
-    carPartsElement.innerHTML = this.template({
+    document.getElementById("car-parts").innerHTML = this.template({
       availableCategories: Object.keys(PARTS_CATEGORY_MAPPING)
         .filter((category) => AppConfig.cars[selectedCarIndex][category].length)
         .map((name) => ({
@@ -841,22 +834,25 @@ const CarColorsView = new (class CarColorsView {
 
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(
-      ["selectedColor", "currentStep"],
-      this.render,
-    );
+    this.updateVisibility();
+    CarConfiguratorStore.subscribe(["selectedColor"], this.render);
+    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
+  updateVisibility = () => {
+    document
+      .getElementById("color-selection")
+      .classList.toggle(
+        "hidden",
+        CarConfiguratorStore.state.currentStep !== "customization",
+      );
+  };
+
+  /** @private */
   render = () => {
-    const colorSelection = document.getElementById("color-selection");
-    const { selectedColor, currentStep } = CarConfiguratorStore.state;
-    if (currentStep !== "customization") {
-      colorSelection.classList.add("hidden");
-      return;
-    }
-    colorSelection.classList.remove("hidden");
-    colorSelection.innerHTML = this.template({
+    const { selectedColor } = CarConfiguratorStore.state;
+    document.getElementById("color-selection").innerHTML = this.template({
       colors: [...this.cssToSdkColorChoicesMap.entries()].map(
         ([cssColor, sdkColor]) => ({
           cssColor,
@@ -881,21 +877,24 @@ const CarColorsView = new (class CarColorsView {
 const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(
-      ["selectedMaterial", "currentStep"],
-      this.render,
-    );
+    this.updateVisibility();
+    CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
+    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
+  updateVisibility = () => {
+    document
+      .getElementById("materials-selection")
+      .classList.toggle(
+        "hidden",
+        CarConfiguratorStore.state.currentStep !== "customization",
+      );
+  };
+
+  /** @private */
   render = () => {
-    const materialsSelection = document.getElementById("materials-selection");
-    const { selectedMaterial, currentStep } = CarConfiguratorStore.state;
-    if (currentStep !== "customization") {
-      materialsSelection.classList.add("hidden");
-      return;
-    }
-    materialsSelection.classList.remove("hidden");
+    const { selectedMaterial } = CarConfiguratorStore.state;
     document.querySelectorAll(".material-icon").forEach((icon, i) => {
       icon.classList.toggle(
         "active-material",
@@ -922,10 +921,9 @@ const CarBackgroundView = new (class CarBackgroundView {
 
   constructor() {
     this.initialRender();
-    CarConfiguratorStore.subscribe(
-      ["selectedCubemap", "currentStep"],
-      this.updateRender,
-    );
+    this.updateVisibility();
+    CarConfiguratorStore.subscribe(["selectedCubemap"], this.updateRender);
+    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
@@ -940,14 +938,18 @@ const CarBackgroundView = new (class CarBackgroundView {
   }
 
   /** @private */
+  updateVisibility = () => {
+    document
+      .getElementById("cubemap-selection")
+      .classList.toggle(
+        "hidden",
+        CarConfiguratorStore.state.currentStep !== "review",
+      );
+  };
+
+  /** @private */
   updateRender = () => {
-    const cubemapSelection = document.getElementById("cubemap-selection");
-    const { selectedCubemap, currentStep } = CarConfiguratorStore.state;
-    if (currentStep !== "review") {
-      cubemapSelection.classList.add("hidden");
-      return;
-    }
-    cubemapSelection.classList.remove("hidden");
+    const { selectedCubemap } = CarConfiguratorStore.state;
     document.querySelectorAll(".cubemap").forEach((cubemap, i) => {
       cubemap.classList.toggle(
         "active-cubemap",
