@@ -120,6 +120,26 @@ function onMediaQueryChange(mediaQuery) {
 }
 
 /**
+ * @param {[number, number, number]} destinationPosition
+ * @param {[number, number, number, number]} destinationOrientation
+ */
+async function changeCameraPosition(
+  destinationPosition,
+  destinationOrientation,
+) {
+  const { cameraAPI } = SDK3DVerse.engineAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+
+  SDK3DVerse.engineAPI.cameraAPI.travel(
+    viewport,
+    destinationPosition,
+    destinationOrientation,
+    10,
+  );
+}
+
+/**
  * This function sets the resolution with a max rendering resolution of
  * 1920px then adapts the scale appropriately for the canvas size.
  */
@@ -147,6 +167,20 @@ function reconfigureResolution() {
 }
 
 /**
+ * @param {Record<string, any>} settings
+ */
+function setCameraSettings(settings) {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const camera = viewport.getCamera();
+  const cameraComponent = camera.getComponent("camera");
+  Object.assign(cameraComponent.dataJSON, settings);
+  camera.setComponent("camera", cameraComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
+}
+
+/**
  * @param {object[]} entities
  * @param {object} parentEntity
  */
@@ -159,20 +193,6 @@ async function reparentEntities(entities, parentEntity) {
     shouldKeepGlobalTransform,
     shouldCommit,
   );
-}
-
-/**
- * @param {Record<string, any>} settings
- */
-function setCameraSettings(settings) {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-  const camera = viewport.getCamera();
-  const cameraComponent = camera.getComponent("camera");
-  Object.assign(cameraComponent.dataJSON, settings);
-  camera.setComponent("camera", cameraComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
 }
 
 /**
@@ -194,26 +214,6 @@ async function getAssetDescription(assetType, assetUUID) {
     throw data;
   }
   return data;
-}
-
-/**
- * @param {[number, number, number]} destinationPosition
- * @param {[number, number, number, number]} destinationOrientation
- */
-async function changeCameraPosition(
-  destinationPosition,
-  destinationOrientation,
-) {
-  const { cameraAPI } = SDK3DVerse.engineAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-
-  SDK3DVerse.engineAPI.cameraAPI.travel(
-    viewport,
-    destinationPosition,
-    destinationOrientation,
-    10,
-  );
 }
 
 /**
@@ -1148,9 +1148,14 @@ Object.assign(window, {
   CarSceneLoadingView,
 });
 
-SDK3DVerse.engineAPI.editorAPI.on("editor-error", (error) => {
-  if (error.httpCode === 429) {
-    // Tell user to stop spamming
-    alert(`3dverse says: ${error.message}\n${JSON.stringify(error, null, 2)}`);
-  }
-});
+SDK3DVerse.engineAPI.editorAPI.on(
+  "editor-error",
+  (/** @type {{ httpCode?: number; message?: string }} */ error) => {
+    if (error.httpCode === 429) {
+      // Tell user to stop spamming
+      alert(
+        `3dverse says: ${error.message}\n${JSON.stringify(error, null, 2)}`,
+      );
+    }
+  },
+);
