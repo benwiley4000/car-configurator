@@ -36,6 +36,10 @@ canvas {
   all: unset;
 }
 
+.hidden {
+  display: none;
+}
+
 /* MODEL NAME */
 
 #car_name {
