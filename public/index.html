@@ -291,41 +291,31 @@
       <div id="car-parts" class="car-parts"></div>
       <!-- PARTS SELECTION TEMPLATE -->
       <script id="car-parts-template" type="text/x-handlebars">
-        <div class="absolute top-[7vh] left-[5vw] text-base font-semibold w-[450px]">
-          <!-- Switch between categories -->
-          <div class="flex">
-            {{#each availableCategories as | category |}}
-              <button
-                onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
-                class="{{#if category.isSelected}} active-tab {{/if}} rounded-xl bg-[#22242A] text-[#6D6D6D] hover:bg-[#2E2F31] transition cursor-pointer py-[12px] px-[20px] w-full"
-              >
-                {{category.displayName}}
-              </button>
-            {{/each}}
-          </div>
+        <!-- Switch between categories -->
+        <div class="categories">
+          {{#each availableCategories as | category |}}
+            <button
+              onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
+              class="tab {{#if category.isSelected}} active-tab {{/if}} transition"
+            >
+              {{category.displayName}}
+            </button>
+          {{/each}}
+        </div>
 
-          <!-- Display the data for the selected category -->
-          {{#if selectedCategoryData.length}}
-            <div className="w-full bg-[#272727] rounded-xl text-white w-full p-4 transition font-medium space-y-2">
-              {{#each selectedCategoryData as | part |}}
-                <div
-                  class="{{#if part.isSelected}} active-part {{/if}} part-item first-panel-item w-full rounded-xl p-[16px] flex items-center hover:bg-[#454642] cursor-pointer transition py-[20px]"
-                  onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
-                >
-                  <div>{{part.displayName}}</div>
-                  <div
-                    id="check-circle"
-                    class="check-circle flex items-center justify-center bg-[#1E1E1E] rounded-full h-[24px] w-[24px]"
-                  >
-                    <img
-                      src="./img/white-check.png"
-                      class="{{#if part.isSelected}} w-1/2 h-1/2 {{else}} hidden {{/if}}"
-                    />
-                  </div>
-                </div>
-              {{/each}}
+        <!-- Display the data for the selected category -->
+        <div class="parts-for-category transition">
+          {{#each selectedCategoryData as | part |}}
+            <div
+              class="{{#if part.isSelected}} active-part {{/if}} part-item transition"
+              onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
+            >
+              <div>{{part.displayName}}</div>
+              <div class="check-circle">
+                <img src="./img/white-check.png" />
+              </div>
             </div>
-          {{/if}}
+          {{/each}}
         </div>
       </script>
 

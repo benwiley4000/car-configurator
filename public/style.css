@@ -180,27 +180,94 @@ svg.active.toggle-button-stroke {
 
 /* PART SELECTION MENU */
 
-.active-tab {
-  background-color: #272727 !important;
-  color: white !important;
-}
-.active-tab:hover {
-  color: #acacac !important;
+.car-parts {
+  position: absolute;
+  top: 7vh;
+  left: 5vw;
+  width: 450px;
+  font-weight: 600;
 }
 
-.active-part {
-  background-color: #ec6244 !important;
-  color: #22242a !important;
-  cursor: auto !important;
+.car-parts .categories {
+  display: flex;
 }
-.active-part #check-circle {
-  background-color: #272727 !important;
+
+.car-parts .categories .tab {
+  border-radius: 0.75rem;
+  color: #6D6D6D;
+  background-color: #22242A;
+  cursor: pointer;
+  padding: 12px 20px;
+  width: 100%;
 }
-.active-part #check-circle img {
-  display: block !important;
+
+.car-parts .categories .tab:hover {
+  background-color: #2E2F31;
 }
-.part-item {
+
+.car-parts .categories .tab.active-tab {
+  background-color: #272727;
+  color: white;
+}
+
+.car-parts .categories .tab.active-tab:hover {
+  color: #acacac;
+}
+
+.car-parts .parts-for-category {
+  border-radius: 0.75rem;
+  color: white;
+  background-color: #272727;
+  font-weight: 500;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.car-parts .part-item {
   justify-content: space-between;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  padding: 1.25rem 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.car-parts .part-item:hover {
+  background-color: #454642;
+}
+
+.car-parts .part-item.active-part {
+  background-color: #ec6244;
+  color: #22242a;
+  cursor: auto;
+}
+
+.car-parts .part-item .check-circle {
+  border-radius: 50%;
+  background-color: #1E1E1E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.car-parts .part-item .check-circle img {
+  display: none;
+  width: 50%;
+  height: 50%;
+}
+
+.car-parts .part-item.active-part .check-circle {
+  background-color: #272727;
+}
+
+.car-parts .part-item.active-part .check-circle img {
+  display: unset;
 }
 
 /* COLORS */
