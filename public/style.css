@@ -23,17 +23,20 @@ body {
   overflow: hidden;
 }
 
-#container {
-  width: calc(100% /* - 4rem*/);
-  height: calc(100% /* - 4rem*/);
+#canvas_container {
+  width: 100vw;
+  height: 100vh;
   align-items: center;
   display: flex;
   justify-content: center;
 }
 
-canvas {
-  position: absolute;
-  all: unset;
+#display_canvas:hover {
+  cursor: grab;
+}
+
+#display_canvas:active {
+  cursor: grabbing;
 }
 
 .hidden {

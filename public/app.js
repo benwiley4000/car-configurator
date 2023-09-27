@@ -17,14 +17,20 @@ const PARTS_CATEGORY_MAPPING = {
   spoilers: "Spoiler",
 };
 
-//--------------------------------------------------------------------------------------------------
+/**
+ * This sets up the canvas display, gets connected with 3dverse,
+ * initializes some camera settings for the user, and fetches
+ * some enitities and asset descriptions that will be needed
+ * by the app.
+ *
+ * It updates the loading overlay with info about
+ * each async operation, and hides the loading overlay once
+ * it's finished.
+ */
 async function initApp() {
   SDK3DVerse.setApiVersion("v1");
   SDK3DVerse.webAPI.setUserToken(userToken);
 
-  window.addEventListener("contextmenu", (e) => e.preventDefault());
-
-  // -------------- Media Query
   const mediaQuery = window.matchMedia("(max-width: 768px)");
   mediaQuery.addEventListener("change", onMediaQueryChange);
 
@@ -41,19 +47,33 @@ async function initApp() {
   ];
 
   SDK3DVerse.setViewports(viewports);
-  setResolution();
+  reconfigureResolution();
   let debounceResizeTimeout = null;
   window.addEventListener("resize", () => {
     if (debounceResizeTimeout) {
       clearTimeout(debounceResizeTimeout);
     }
     debounceResizeTimeout = setTimeout(() => {
-      setResolution(false);
+      reconfigureResolution();
       debounceResizeTimeout = null;
     }, 100);
   });
 
-  const sessionCreated = await connect();
+  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
+  const connectionInfo = await SDK3DVerse.webAPI.createSession(
+    AppConfig.sceneUUID,
+  );
+
+  const displayCanvas = document.getElementById("display_canvas");
+  SDK3DVerse.setupDisplay(displayCanvas);
+  // right click is used to zoom in and out so prevent default action
+  displayCanvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
+  await SDK3DVerse.startStreamer(connectionInfo);
+
+  CarConfiguratorActions.setSceneLoadingState("Connecting to editor API...");
+  await SDK3DVerse.connectToEditor();
 
   // these are the right bloom settings to emphasize
   // the emission of the car headlights
@@ -65,8 +85,65 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Analyzing scene objects...");
   await CarConfiguratorActions.fetchSceneEntities();
-  // SDK3DVerse.updateControllerSetting({ rotation: 10 });
-  // SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 }); //reduce scroll speed
+
+  CarConfiguratorActions.setSceneLoadingState("Caching materials...");
+  await CarConfiguratorActions.cacheMaterials();
+
+  CarConfiguratorActions.setSceneLoadingState("Loading complete.");
+  setTimeout(() => CarConfiguratorActions.setSceneLoadingState(null), 500);
+}
+
+/**
+ *
+ * @param {MediaQueryList | MediaQueryListEvent} mediaQuery
+ */
+function onMediaQueryChange(mediaQuery) {
+  if (mediaQuery.matches) {
+    changeCameraPosition(
+      [-4.595289707183838, 1.6792974472045898, 8.23273754119873],
+      [
+        -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
+        0.9640212059020996,
+      ],
+    );
+    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 });
+  } else {
+    changeCameraPosition(
+      [-3.3017091751098633, 1.3626002073287964, 4.2906060218811035],
+      [
+        -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
+        0.9428451061248779,
+      ],
+    );
+    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 });
+  }
+}
+
+/**
+ * This function sets the resolution with a max rendering resolution of
+ * 1920px then adapts the scale appropriately for the canvas size.
+ */
+function reconfigureResolution() {
+  const { width, height } = document
+    .getElementById("canvas_container")
+    .getBoundingClientRect();
+
+  const largestDim = Math.max(width, height);
+  const MAX_DIM = 1920;
+  const scale = largestDim > MAX_DIM ? MAX_DIM / largestDim : 1;
+
+  let w = Math.floor(width);
+  let h = Math.floor(height);
+  const aspectRatio = w / h;
+
+  if (w > h) {
+    // landscape
+    w = Math.floor(aspectRatio * h);
+  } else {
+    // portrait
+    h = Math.floor(w / aspectRatio);
+  }
+  SDK3DVerse.setResolution(w, h, scale);
 }
 
 /**
@@ -98,53 +175,11 @@ function setCameraSettings(settings) {
   SDK3DVerse.engineAPI.propagateChanges();
 }
 
-//--------------------------------------------------------------------------------------------------
-function setResolution(showInfo = true) {
-  const container = document.getElementById("container");
-  const canvasSize = container.getBoundingClientRect();
-
-  const largestDim = Math.max(canvasSize.width, canvasSize.height);
-  const MAX_DIM = 1920;
-  const scale = largestDim > MAX_DIM ? MAX_DIM / largestDim : 1;
-
-  let w = Math.floor(canvasSize.width);
-  let h = Math.floor(canvasSize.height);
-  const aspectRatio = w / h;
-
-  if (w > h) {
-    // landscape
-    w = Math.floor(aspectRatio * h);
-  } else {
-    // portrait
-    h = Math.floor(w / aspectRatio);
-  }
-  SDK3DVerse.setResolution(w, h, scale);
-
-  if (showInfo) {
-    CarConfiguratorActions.setSceneLoadingState(
-      `Setting resolution to ${w} x ${h} (scale=${scale})`,
-    );
-  }
-}
-
-//--------------------------------------------------------------------------------------------------
-async function connect() {
-  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
-  const connectionInfo = await SDK3DVerse.webAPI.createSession(
-    AppConfig.sceneUUID,
-  );
-  connectionInfo.useSSL = true;
-  SDK3DVerse.setupDisplay(document.getElementById("display_canvas"));
-
-  CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
-  await SDK3DVerse.startStreamer(connectionInfo);
-
-  CarConfiguratorActions.setSceneLoadingState("Connecting to editor API...");
-  await SDK3DVerse.connectToEditor();
-
-  return true; //connectionInfo.sessionCreated;
-}
-
+/**
+ * @param {string} assetType
+ * @param {string} assetUUID
+ * @returns
+ */
 async function getAssetDescription(assetType, assetUUID) {
   const res = await fetch(
     `https://api.3dverse.com/app/v1/assets/${assetType}/${assetUUID}/description`,
@@ -159,31 +194,6 @@ async function getAssetDescription(assetType, assetUUID) {
     throw data;
   }
   return data;
-}
-
-//---------------------------------------------------------------------------
-function onMediaQueryChange(e) {
-  if (e.matches) {
-    console.log("< 768px");
-    changeCameraPosition(
-      [-4.595289707183838, 1.6792974472045898, 8.23273754119873],
-      [
-        -0.08518092334270477, -0.2508307993412018, -0.02216341346502304,
-        0.9640212059020996,
-      ],
-    );
-    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.8 });
-  } else {
-    console.log("> 768px");
-    changeCameraPosition(
-      [-3.3017091751098633, 1.3626002073287964, 4.2906060218811035],
-      [
-        -0.12355230003595352, -0.3068566918373108, -0.04021146148443222,
-        0.9428451061248779,
-      ],
-    );
-    SDK3DVerse.updateControllerSetting({ speed: 1, sensitivity: 0.4 });
-  }
 }
 
 /**
@@ -554,8 +564,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       .findEntitiesByNames("Env")
       .then(([entity]) => entity);
 
-    this.setSceneLoadingState("Caching materials...");
+    // TODO: after fetching I need to initialize state from entities
+  }
 
+  async cacheMaterials() {
     await Promise.all(
       [
         ...AppConfig.cars
@@ -569,11 +581,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
         this.cachedMaterialAssetDescriptions[materialUUID] = desc;
       }),
     );
-
-    // TODO: after fetching I need to initialize state from entities
-
-    this.setSceneLoadingState("Loading complete.");
-    setTimeout(() => this.setSceneLoadingState(null), 500);
   }
 
   /**

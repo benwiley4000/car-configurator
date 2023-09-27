@@ -13,7 +13,10 @@
   </head>
 
   <body>
-    <div id="container">
+    <div id="canvas_container">
+      <!-------------------------------------- CANVAS ------------------------------------------>
+      <canvas tabindex="1" id="display_canvas"></canvas>
+
       <!-------------------------------------- LOADER ------------------------------------------>
       <div
         id="loader"
@@ -29,13 +32,6 @@
           >
         </div>
       </div>
-
-      <!-------------------------------------- CANVAS ------------------------------------------>
-      <canvas
-        tabindex="1"
-        id="display_canvas"
-        class="hover:cursor-grab active:cursor-grabbing"
-      ></canvas>
 
       <!-- MODEL SELECTION CONTAINER -->
       <div id="model-selection"></div>
