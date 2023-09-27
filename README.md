@@ -4,16 +4,16 @@ A sample app built using the 3dverse Livelink SDK to manipulate a scene in 3dver
 This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars templates for data-driven HTML elements. The only external libraries it uses are Handlebars and the 3dverse Livelink SDK. But of course you can use whatever UI framework you prefer (React, Vue, Svelte, Angular, etc), to build your own 3dverse application.
 
 IMMEDIATE TODO
-3. Get rid of tailwind styles (use CSS) for car parts and selected car
-4. Get rid of remaining tailwind classes
-5. Put in the button baptiste wanted
+4. implement sync for rotation and cubemap somehow
+4.5. implement sync for luminosity just at beginning
+5. implement user avatars
+6. Get rid of remaining tailwind classes
+7. Put in the button baptiste wanted
 
 ## Code style stuff
-10. heavy use of jsdoc typescript so autocomplete works well
+10. heavy use of jsdoc typescript so autocomplete works well (remove object type as well)
 11. Remove useless html after cleaning up css/tailwind usage
-12. Review all functions used for bootstrap and clean them up (initApp, setResolution, connect, getAssetDescription, onMediaQueryChange, changeCameraPosition)
 13. really enforce 80char col
-
 
 ## We need the general update flow for every action to go:
 4. We need to init state from 3dverse and then subscribe to 3dverse changes as well.
@@ -26,6 +26,7 @@ IMMEDIATE TODO
 8. Why did we stop waiting for connectionInfo.sessionCreated?
 10. Replace tailwind (after making a bunch of templates)
 11. Fix app in Safari and maybe firefox
+12. no client avatars?
 
 ## app changes
 - Add tooltips to UI (in form of title="")
