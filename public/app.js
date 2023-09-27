@@ -1,5 +1,6 @@
 import AppConfig from "./AppConfig.js";
 import { userToken } from "./secrets.js";
+import AssetEditorAPI from "./AssetEditorAPI.js";
 
 // Include external library definitions to help with autocompletion
 /// <reference path="./vendor/handlebars.d.ts" />
@@ -69,7 +70,7 @@ async function initApp() {
   });
 
   CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
-  const connectionInfo = await SDK3DVerse.webAPI.createSession(
+  const connectionInfo = await SDK3DVerse.webAPI.createOrJoinSession(
     AppConfig.sceneUUID,
   );
 
@@ -232,24 +233,24 @@ function deepFreezeObject(obj) {
   return Object.freeze(obj);
 }
 
-const CarConfiguratorStore = new (class CarConfiguratorStore {
-  /**
-   * @typedef {{
-   *   selectedCarIndex: number;
-   *   selectedPartCategory: keyof (typeof PARTS_CATEGORY_MAPPING);
-   *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
-   *   selectedColor: [Number, Number, number];
-   *   selectedMaterial: (typeof AppConfig)['materials'][number];
-   *   selectedCubemap: (typeof AppConfig)['cubemaps'][number];
-   *   lightsOn: boolean;
-   *   rotationOn: boolean;
-   *   rgbGradientOn: boolean;
-   *   userCameraLuminosity: number;
-   *   currentStep: 'modelSelection' | 'customization' | 'review';
-   *   sceneLoadingState: string | null;
-   * }} CarConfiguratorState
-   */
+/**
+ * @typedef {{
+ *   selectedCarIndex: number;
+ *   selectedPartCategory: keyof (typeof PARTS_CATEGORY_MAPPING);
+ *   selectedParts: Record<keyof (typeof PARTS_CATEGORY_MAPPING), number>;
+ *   selectedColor: [Number, Number, number];
+ *   selectedMaterial: (typeof AppConfig)['materials'][number];
+ *   selectedCubemap: (typeof AppConfig)['cubemaps'][number];
+ *   lightsOn: boolean;
+ *   rotationOn: boolean;
+ *   rgbGradientOn: boolean;
+ *   userCameraLuminosity: number;
+ *   currentStep: 'modelSelection' | 'customization' | 'review';
+ *   sceneLoadingState: string | null;
+ * }} CarConfiguratorState
+ */
 
+const CarConfiguratorStore = new (class CarConfiguratorStore {
   /** @private @type {CarConfiguratorState} */
   internalState = deepFreezeObject({
     selectedCarIndex: 0,
@@ -324,6 +325,14 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   }
 })();
 
+function getAssetEditorAPIForMaterial(materialUUID, callback) {
+  const api = new AssetEditorAPI(userToken, callback);
+  api
+    .connect("material", materialUUID)
+    .then(({ description }) => callback("assetUpdated", description));
+  return api;
+}
+
 const CarConfiguratorActions = new (class CarConfiguratorActions {
   /**
    * The VISIBLE_ENTITIES container entity is where we put
@@ -367,16 +376,141 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   };
   /** @private @type {object | null} */
   environmentEntity = null;
+  /** @private @type {object | null} */
+  gradientPlatformEntity = null;
   /** @type {Record<string, object>} */
   cachedMaterialAssetDescriptions = {};
+  /** @type {AssetEditorAPI[]} */
+  headlightAssetEditors = [];
+  /** @type {AssetEditorAPI[]} */
+  rearlightAssetEditors = [];
+  /** @type {AssetEditorAPI[]} */
+  paintAssetEditors = [];
 
-  constructor() {
-    // TODO: find way to initialize scene graph based on default settings
-    // (or just hardcode those default settings in scene graph). For example
-    // there is no color by default.
-    // TODO: asynchronously initialize state from current scene graph
-    // TODO: update state when receiving scene graph updates from 3dverse
+  /**
+   * @private
+   * @param {object} entity
+   */
+  isEntityVisible(entity) {
+    return entity.getParent().getID() === this.visibleEntitiesContainer.getID();
   }
+
+  /** @private */
+  updateStateFromEntities = () => {
+    // TODO: also sync luminosity setting for camera
+
+    const selectedCarIndex = this.allCarPartEntities.findIndex(({ body }) => {
+      return this.isEntityVisible(body);
+    });
+    if (selectedCarIndex === -1) {
+      // intermediate state while switching cars, ignore
+      return;
+    }
+    const selectedFrontBumperIndex = Math.max(
+      this.allCarPartEntities[selectedCarIndex].frontBumpers.findIndex(
+        (entity) => {
+          return this.isEntityVisible(entity);
+        },
+      ),
+      0,
+    );
+    const selectedRearBumpersIndex = Math.max(
+      this.allCarPartEntities[selectedCarIndex].rearBumpers.findIndex(
+        (entity) => {
+          return this.isEntityVisible(entity);
+        },
+      ),
+      0,
+    );
+    const selectedSpoilersIndex = Math.max(
+      this.allCarPartEntities[selectedCarIndex].spoilers.findIndex((entity) => {
+        return this.isEntityVisible(entity);
+      }),
+      0,
+    );
+    /** @type {CarConfiguratorState['selectedParts']} */
+    const selectedParts =
+      CarConfiguratorStore.state.selectedParts.frontBumpers ===
+        selectedFrontBumperIndex &&
+      CarConfiguratorStore.state.selectedParts.rearBumpers ===
+        selectedRearBumpersIndex &&
+      CarConfiguratorStore.state.selectedParts.spoilers ===
+        selectedSpoilersIndex
+        ? CarConfiguratorStore.state.selectedParts
+        : {
+            frontBumpers: selectedFrontBumperIndex,
+            rearBumpers: selectedRearBumpersIndex,
+            spoilers: selectedSpoilersIndex,
+          };
+
+    /**
+     * @typedef {Pick<
+     *   CarConfiguratorState,
+     *   | 'selectedCarIndex'
+     *   | 'selectedParts'
+     *   | 'selectedCubemap'
+     *   | 'rgbGradientOn'
+     *   | 'rotationOn'
+     * >} StateSyncableFromEntities
+     */
+
+    /** @type {StateSyncableFromEntities} */
+    const newState = {
+      selectedCarIndex,
+      selectedParts,
+      selectedCubemap: AppConfig.cubemaps.find(({ skyboxUUID }) => {
+        return (
+          this.environmentEntity.getComponent("environment").skyboxUUID ===
+          skyboxUUID
+        );
+      }),
+      // rotationOn: false,
+      rgbGradientOn: this.isEntityVisible(this.gradientPlatformEntity),
+    };
+
+    CarConfiguratorStore.setState(newState);
+  };
+
+  /** @private */
+  updateStateFromMaterials = () => {
+    const { selectedCarIndex } = CarConfiguratorStore.state;
+    const selectedCar = AppConfig.cars[selectedCarIndex];
+
+    /**
+     * @typedef {Pick<
+     *   CarConfiguratorState,
+     *   | 'selectedColor'
+     *   | 'selectedMaterial'
+     *   | 'lightsOn'
+     * >} StateSyncableFromMaterials
+     */
+
+    /** @type {StateSyncableFromMaterials} */
+    const newState = {
+      selectedColor: AppConfig.colorChoices.find((color) => {
+        return this.cachedMaterialAssetDescriptions[
+          selectedCar.paintMaterialUUID
+        ].dataJson.albedo.every((v, i) => color[i] === v);
+      }),
+      selectedMaterial: AppConfig.materials.find(({ matUUID }) => {
+        const cachedSourceMaterial =
+          this.cachedMaterialAssetDescriptions[matUUID];
+        const { clearCoatRoughness, clearCoatStrength } =
+          this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
+            .dataJson;
+        return (
+          cachedSourceMaterial.dataJson.clearCoatRoughness ===
+            clearCoatRoughness &&
+          cachedSourceMaterial.dataJson.clearCoatStrength === clearCoatStrength
+        );
+      }),
+      lightsOn:
+        this.cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID]
+          .dataJson.emissionIntensity > 0,
+    };
+
+    CarConfiguratorStore.setState(newState);
+  };
 
   /**
    * @private
@@ -422,10 +556,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   async applySelectedCar() {
-    // material settings need to be reapplied to the car that we will show
-    this.applySelectedMaterial();
-    this.applyLightsSetting();
-
     const allPartsForSelectedCar =
       this.allCarPartEntities[CarConfiguratorStore.state.selectedCarIndex];
 
@@ -439,14 +569,12 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   applySelectedMaterial() {
-    const { selectedMaterial, selectedColor, selectedCarIndex } =
-      CarConfiguratorStore.state;
+    const { selectedMaterial, selectedColor } = CarConfiguratorStore.state;
     const desc = this.cachedMaterialAssetDescriptions[selectedMaterial.matUUID];
     desc.dataJson.albedo = selectedColor;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      AppConfig.cars[selectedCarIndex].paintMaterialUUID,
-      desc,
-    );
+    AppConfig.cars.forEach((_, i) => {
+      this.paintAssetEditors[i].updateAsset(desc);
+    });
   }
 
   /** @private */
@@ -463,26 +591,19 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   applyLightsSetting() {
-    const { selectedCarIndex, lightsOn } = CarConfiguratorStore.state;
-    const selectedCar = AppConfig.cars[selectedCarIndex];
+    const { lightsOn } = CarConfiguratorStore.state;
 
     const intensity = lightsOn ? 100 : 0;
 
-    const desc1 =
-      this.cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID];
-    desc1.dataJson.emissionIntensity = intensity;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      selectedCar.headLightsMatUUID,
-      desc1,
-    );
+    AppConfig.cars.forEach(({ headLightsMatUUID, rearLightsMatUUID }, i) => {
+      const desc1 = this.cachedMaterialAssetDescriptions[headLightsMatUUID];
+      desc1.dataJson.emissionIntensity = intensity;
+      this.headlightAssetEditors[i].updateAsset(desc1);
 
-    const desc2 =
-      this.cachedMaterialAssetDescriptions[selectedCar.rearLightsMatUUID];
-    desc2.dataJson.emissionIntensity = intensity;
-    SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
-      selectedCar.rearLightsMatUUID,
-      desc2,
-    );
+      const desc2 = this.cachedMaterialAssetDescriptions[rearLightsMatUUID];
+      desc2.dataJson.emissionIntensity = intensity;
+      this.rearlightAssetEditors[i].updateAsset(desc2);
+    });
   }
 
   async fetchSceneEntities() {
@@ -495,11 +616,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       visibleEntitiesContainer,
       hiddenEntitiesContainer,
     });
-    /**
-     * @param {object} entity
-     */
-    const isEntityVisible = (entity) =>
-      entity.getParent().getID() === this.visibleEntitiesContainer.getID();
     for (const {
       name,
       frontBumpers,
@@ -517,7 +633,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
         (async () => {
           const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
           entitiesForCar.body = body;
-          if (isEntityVisible(entitiesForCar.body)) {
+          if (this.isEntityVisible(entitiesForCar.body)) {
             this.selectedCarPartEntities.body = entitiesForCar.body;
           }
         })(),
@@ -528,7 +644,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
           entitiesForCar.frontBumpers =
             await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
           for (const frontBumper of entitiesForCar.frontBumpers) {
-            if (isEntityVisible(frontBumper)) {
+            if (this.isEntityVisible(frontBumper)) {
               this.selectedCarPartEntities.frontBumpers = frontBumper;
               break;
             }
@@ -541,7 +657,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
           entitiesForCar.rearBumpers =
             await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
           for (const rearBumper of entitiesForCar.rearBumpers) {
-            if (isEntityVisible(rearBumper)) {
+            if (this.isEntityVisible(rearBumper)) {
               this.selectedCarPartEntities.rearBumpers = rearBumper;
               break;
             }
@@ -554,7 +670,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
           entitiesForCar.spoilers =
             await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
           for (const spoiler of entitiesForCar.spoilers) {
-            if (isEntityVisible(spoiler)) {
+            if (this.isEntityVisible(spoiler)) {
               this.selectedCarPartEntities.spoilers = spoiler;
               break;
             }
@@ -569,16 +685,28 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       .findEntitiesByNames("Env")
       .then(([entity]) => entity);
 
-    // TODO: after fetching I need to initialize state from entities
+    this.gradientPlatformEntity = await SDK3DVerse.engineAPI
+      .findEntitiesByNames("SM_StaticPlatform")
+      .then(([entity]) => entity);
+
+    this.updateStateFromEntities();
+    SDK3DVerse.notifier.on("onEntitiesUpdated", this.updateStateFromEntities);
+    SDK3DVerse.notifier.on(
+      "onEntityVisibilityChanged",
+      this.updateStateFromEntities,
+    );
+    SDK3DVerse.notifier.on("onEntityReparent", this.updateStateFromEntities);
   }
 
   async cacheMaterials() {
     await Promise.all(
       [
         ...AppConfig.cars
-          .map(({ headLightsMatUUID, rearLightsMatUUID }) => {
-            return [headLightsMatUUID, rearLightsMatUUID];
-          })
+          .map(
+            ({ headLightsMatUUID, rearLightsMatUUID, paintMaterialUUID }) => {
+              return [headLightsMatUUID, rearLightsMatUUID, paintMaterialUUID];
+            },
+          )
           .flat(),
         ...AppConfig.materials.map(({ matUUID }) => matUUID),
       ].map(async (materialUUID) => {
@@ -586,6 +714,28 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
         this.cachedMaterialAssetDescriptions[materialUUID] = desc;
       }),
     );
+
+    this.headlightAssetEditors = AppConfig.cars.map(({ headLightsMatUUID }) => {
+      return getAssetEditorAPIForMaterial(headLightsMatUUID, (event, desc) => {
+        if (event !== "assetUpdated") return;
+        this.cachedMaterialAssetDescriptions[headLightsMatUUID] = desc;
+        this.updateStateFromMaterials();
+      });
+    });
+    this.rearlightAssetEditors = AppConfig.cars.map(({ rearLightsMatUUID }) => {
+      return getAssetEditorAPIForMaterial(rearLightsMatUUID, (event, desc) => {
+        if (event !== "assetUpdated") return;
+        this.cachedMaterialAssetDescriptions[rearLightsMatUUID] = desc;
+        this.updateStateFromMaterials();
+      });
+    });
+    this.paintAssetEditors = AppConfig.cars.map(({ paintMaterialUUID }) => {
+      return getAssetEditorAPIForMaterial(paintMaterialUUID, (event, desc) => {
+        if (event !== "assetUpdated") return;
+        this.cachedMaterialAssetDescriptions[paintMaterialUUID] = desc;
+        this.updateStateFromMaterials();
+      });
+    });
   }
 
   /**
@@ -677,13 +827,16 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     CarConfiguratorStore.setState({
       rgbGradientOn: !CarConfiguratorStore.state.rgbGradientOn,
     });
-    const [gradientPlatform] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-      "SM_StaticPlatform",
-    );
     if (CarConfiguratorStore.state.rgbGradientOn) {
-      await reparentEntities([gradientPlatform], this.visibleEntitiesContainer);
+      await reparentEntities(
+        [this.gradientPlatformEntity],
+        this.visibleEntitiesContainer,
+      );
     } else {
-      await reparentEntities([gradientPlatform], this.hiddenEntitiesContainer);
+      await reparentEntities(
+        [this.gradientPlatformEntity],
+        this.hiddenEntitiesContainer,
+      );
     }
   }
 
@@ -1154,6 +1307,8 @@ const CarSceneLoadingView = new (class CarSceneLoadingView {
   };
 })();
 
+// Expose views as globals so their public
+// methods can be used as UI event handlers
 Object.assign(window, {
   CarSelectionView,
   CarPartsView,
