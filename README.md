@@ -4,27 +4,24 @@ A sample app built using the 3dverse Livelink SDK to manipulate a scene in 3dver
 This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars templates for data-driven HTML elements. The only external libraries it uses are Handlebars and the 3dverse Livelink SDK. But of course you can use whatever UI framework you prefer (React, Vue, Svelte, Angular, etc), to build your own 3dverse application.
 
 IMMEDIATE TODO
-2. convert tailwind styles to css for all the car config stepper view buttons so we can simplify that all
-3. Use handlebars for existing views (
-  CarConfigStepperView,)
-4. remove "x-section-element" etc concept.
-4. Put in the button baptiste wanted
+3. Get rid of tailwind styles (use CSS) for car parts and selected car
+4. Get rid of remaining tailwind classes
+5. Put in the button baptiste wanted
 
 ## Code style stuff
 10. heavy use of jsdoc typescript so autocomplete works well
 11. Remove useless html after cleaning up css/tailwind usage
 12. Review all functions used for bootstrap and clean them up (initApp, setResolution, connect, getAssetDescription, onMediaQueryChange, changeCameraPosition)
+13. really enforce 80char col
+
 
 ## We need the general update flow for every action to go:
 4. We need to init state from 3dverse and then subscribe to 3dverse changes as well.
 5. Then enable createOrJoinSession and test.
 
 ## Bugs
-2. Colors are changed but not persisted (and other stuff I guess)
 3. audit rendering perf
-4. The arrows switching between cars seem sometimes non-responsive.
-5. We are doing a bunch of getassetdescriptions that can be slow and can block changes to FTL
-6. There might be a bug with color selection state
+4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch)
 7. there's a bug with switching cars.. eventually you cannot do it anymore.
 8. Why did we stop waiting for connectionInfo.sessionCreated?
 10. Replace tailwind (after making a bunch of templates)
@@ -32,12 +29,9 @@ IMMEDIATE TODO
 
 ## app changes
 - Add tooltips to UI (in form of title="")
-- We might be able to make the loading time feel faster by either giving more information, or trying to find some optimizations, or both.
 - Implement session timeout warning, and add UI for reconnecting after session is closed.
 - Randomize initial viewing angle to increase the chance that you can see others in the scene.
-- Edit UI for nav arrows 
 - Add some UI to show others in the scene. Maybe we can publish the client list as an embeddable react component.
-- Review mobile UI to make sure it makes sense
 - Find less shitty-looking skyboxes?
 - More obvious tab layout/hierarchy for toolbox part selection
 - and dont hide part selection on mobile
