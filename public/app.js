@@ -422,6 +422,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   async applySelectedCar() {
+    // material settings need to be reapplied to the car that we will show
+    this.applySelectedMaterial();
+    this.applyLightsSetting();
+
     const allPartsForSelectedCar =
       this.allCarPartEntities[CarConfiguratorStore.state.selectedCarIndex];
 
