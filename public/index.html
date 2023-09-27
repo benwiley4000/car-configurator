@@ -43,7 +43,7 @@
       <script id="model-selection-template" type="text/x-handlebars">
         {{#each arrows}}
           <div
-            class="model-{{direction}}-button absolute {{direction}}-[5vw] cursor-pointer h-[5vh] w-[3vw] first-section-element switch-model-button"
+            class="model-{{direction}}-button absolute {{direction}}-[5vw] cursor-pointer h-[5vh] w-[3vw] switch-model-button"
             onclick="CarSelectionView.handlePreviousCar()"
           >
             <svg
@@ -66,7 +66,7 @@
 
         <div
           id="model-title"
-          class="absolute top-[7vh] left-[10vw] flex flex-col w-[80%] md:w-2/3 space-y-2 first-section-element"
+          class="absolute top-[7vh] left-[10vw] flex flex-col w-[80%] md:w-2/3 space-y-2"
         >
           <h2
             id="car_name"
@@ -81,7 +81,7 @@
 
         <div
           id="model-infos"
-          class="absolute flex flex-col items-end right-[12%] justify-items-end space-y-[1.5vh] first-section-element"
+          class="absolute flex flex-col items-end right-[12%] justify-items-end space-y-[1.5vh]"
         >
           <div class="info-item">
             <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
@@ -187,7 +187,7 @@
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
-              class="group-hover:opacity-50 hidden"
+              class="group-hover:opacity-50"
               viewBox="0 0 214.367 214.367"
               xml:space="preserve"
             >
@@ -266,7 +266,7 @@
       <!-- COLORS SELECTION CONTAINER -->
       <div
         id="color-selection"
-        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col second-section-element"
+        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col"
       ></div>
       <!-- COLOR SELECTION TEMPLATE -->
       <script id="color-selection-template" type="text/x-handlebars">
@@ -282,7 +282,7 @@
       <!-- MATERIALS SELECTION -->
       <div
         id="materials-selection"
-        class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col second-section-element hidden"
+        class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col"
       >
         <div
           class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
@@ -343,7 +343,7 @@
       <div class="car-parts"></div>
       <!-- PARTS SELECTION TEMPLATE -->
       <script id="car-parts-template" type="text/x-handlebars">
-        <div class="absolute top-[7vh] left-[5vw] second-section-element text-base font-semibold w-[450px]">
+        <div class="absolute top-[7vh] left-[5vw] text-base font-semibold w-[450px]">
           <!-- Switch between categories -->
           <div class="flex">
             {{#each availableCategories as | category |}}
@@ -384,7 +384,7 @@
       <!-- CUBEMAP SELECTION CONTAINER -->
       <div
         id="cubemap-selection"
-        class="absolute right-[7vw] space-y-[40px] flex align-center justify-center flex-col third-section-element hidden"
+        class="absolute right-[7vw] space-y-[40px] flex align-center justify-center flex-col"
       ></div>
       <!-- CUBEMAP SELECTION TEMPLATE -->
       <script id="cubemap-selection-template" type="text/x-handlebars">
@@ -411,252 +411,37 @@
         {{/each}}
       </script>
 
-      <!--------------------------------- BUTTONS ---------------------------------------------------->
-
-      <!-- First Screen PC Button -->
-      <div
-        id="select-model-button"
-        class="absolute flex space-x-4 bottom-[5vh] right-[5vw] items-center first-section-element"
-      >
-        <div class="flex flex-col mr-2">
-          <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right mt-4">
-            Customize
-          </h3>
-          <h3
-            id="starting-price"
-            class="price text-[#EC6244] text-[6vh] text-right"
-          >
-            346 000$
-          </h3>
-        </div>
+      <!-- STEPPER BUTTONS CONTAINER -->
+      <div id="stepper-buttons" class="stepper-buttons"></div>
+      <!-- CUBEMAP SELECTION TEMPLATE -->
+      <script id="stepper-buttons-template" type="text/x-handlebars">
         <div
-          class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('customization')"
+          class="step-back-button-container {{#unless prevStep}} no-step {{/unless}}"
         >
-          <svg
-            width="30%"
-            height="30%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <div
+            class="step-button transition"
+            onclick="CarConfigStepperView.handleChangeCurrentStep('{{prevStep}}')"
           >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <!-- First Screen Mobile Button -->
-      <div
-        class="mobile-select-model-button bg-[#EC6244] flex rounded-full px-10 py-6 absolute bottom-[3vh] justify-center items-center w-[90%] transition cursor-pointer md:hidden first-section-element"
-        onclick="CarConfigStepperView.handleChangeCurrentStep('customization')"
-      >
-        <div class="text w-3/4">
-          <h3
-            id="starting-price-mobile"
-            class="price text-[#141614] text-[3vh]"
-          >
-            346 000$
-          </h3>
-        </div>
-        <div class="arrow w-1/4 flex justify-end items-center h-[3vh]">
-          <svg
-            width="80%"
-            height="80%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <!-- Second Screen PC Buttons -->
-      <div
-        id="select-parts-button"
-        class="absolute flex space-x-4 bottom-[5vh] right-[5vw] items-center hidden second-section-element"
-      >
-        <div class="flex flex-col mr-2">
-          <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right mt-4">
-            Confirm & Review
-          </h3>
-          <h3
-            id="final-price"
-            class="price text-[#EC6244] text-[6vh] text-right"
-          ></h3>
-        </div>
-        <div
-          class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('review')"
-        >
-          <svg
-            width="30%"
-            height="30%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div
-        id="back-to-model-button"
-        class="absolute flex space-x-4 bottom-[5vh] left-[5vw] items-center hidden second-section-element mb-[1%]"
-      >
-        <div
-          class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('modelSelection')"
-        >
-          <svg
-            width="30%"
-            height="30%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="rotate-180"
-          >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <!-- Second Screen Mobile Buttons -->
-
-      <div
-        class="second-screen-mobile-button absolute flex space-x-[5%] bottom-[3vh] md:hidden w-[90%] second-section-element hidden"
-      >
-        <div
-          class="mobile-back-model-button bg-[#EC6244] flex rounded-full px-5 py-6 w-[25%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('modelSelection')"
-        >
-          <div class="arrow w-full flex justify-center items-center h-[3vh]">
-            <svg
-              width="80%"
-              height="80%"
-              viewBox="0 0 30 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="rotate-180"
-            >
-              <path
-                d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-                stroke="#141614"
-                stroke-width="4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <svg viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
             </svg>
           </div>
         </div>
         <div
-          class="mobile-select-parts-button bg-[#EC6244] flex rounded-full px-10 py-6 w-[70%] justify-center items-center transition cursor-pointer"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('review')"
+          class="step-forward-button-container {{#unless nextStep}} no-step {{/unless}}"
         >
-          <div class="text w-3/4">
-            <h3 class="price text-[#141614] text-[3vh]">Review</h3>
-          </div>
-          <div class="arrow w-1/4 flex justify-end items-center h-[3vh]">
-            <svg
-              width="80%"
-              height="80%"
-              viewBox="0 0 30 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-                stroke="#141614"
-                stroke-width="4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Third Screen PC Button -->
-      <div
-        id="back-to-model-button"
-        class="absolute flex space-x-4 bottom-[5vh] left-[5vw] items-center hidden third-section-element mb-[1%]"
-      >
-        <div
-          class="customization-btn bg-[#EC6244] h-[9vh] w-[9vh] min-h-[60px] min-w-[60px] rounded-[25%] flex justify-center items-center cursor-pointer transition"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('customization')"
-        >
-          <svg
-            width="30%"
-            height="30%"
-            viewBox="0 0 30 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="rotate-180"
+          <h3 class="price">{{carPrice}}</h3>
+          <div
+            class="step-button transition"
+            onclick="CarConfigStepperView.handleChangeCurrentStep('{{nextStep}}')"
           >
-            <path
-              d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-              stroke="#141614"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <!-- Third Screen Mobile Button -->
-      <div
-        class="third-screen-mobile-button absolute bottom-[3vh] w-[90%] third-section-element hidden"
-      >
-        <div
-          class="bg-[#EC6244] flex rounded-full py-6 justify-center w-[25%] items-center transition cursor-pointer md:hidden third-section-element"
-          onclick="CarConfigStepperView.handleChangeCurrentStep('customization')"
-        >
-          <div class="arrow w-1/2 flex justify-center items-center h-[4.5vh]">
-            <svg
-              width="53%"
-              height="53%"
-              viewBox="0 0 30 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="rotate-180"
-            >
-              <path
-                d="M14.25 2L28 16M28 16L14.25 30M28 16H2"
-                stroke="#141614"
-                stroke-width="4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <h3>{{nextStepName}}</h3>
+            <svg viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
             </svg>
           </div>
         </div>
-      </div>
+      </script>
     </div>
 
     <!-- SCRIPTS -->

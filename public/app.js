@@ -700,12 +700,24 @@ const CarSelectionView = new (class CarSelectionView {
 
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
+    CarConfiguratorStore.subscribe(
+      ["selectedCarIndex", "currentStep"],
+      this.render,
+    );
   }
 
   /** @private */
   render = () => {
     const modelSelection = document.getElementById("model-selection");
+    const { selectedCarIndex, currentStep } = CarConfiguratorStore.state;
+
+    if (currentStep !== "modelSelection") {
+      modelSelection.classList.add("hidden");
+      return;
+    }
+
+    modelSelection.classList.remove("hidden");
+
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
@@ -956,6 +968,10 @@ const CarBackgroundView = new (class CarBackgroundView {
 
 /** @global */
 const CarConfigStepperView = new (class CarConfigStepperView {
+  template = Handlebars.compile(
+    document.getElementById("stepper-buttons-template").innerHTML,
+  );
+
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(
@@ -967,39 +983,36 @@ const CarConfigStepperView = new (class CarConfigStepperView {
   /** @private */
   render = () => {
     const { currentStep, selectedCarIndex } = CarConfiguratorStore.state;
-    document.querySelectorAll(".first-section-element").forEach((element) => {
-      if (currentStep === "modelSelection") {
-        element.classList.remove("hidden");
-      } else {
-        element.classList.add("hidden");
-      }
-    });
-    document.querySelectorAll(".second-section-element").forEach((element) => {
-      if (currentStep === "customization") {
-        element.classList.remove("hidden");
-      } else {
-        element.classList.add("hidden");
-      }
-    });
-    document.querySelectorAll(".third-section-element").forEach((element) => {
-      if (currentStep === "review") {
-        element.classList.remove("hidden");
-      } else {
-        element.classList.add("hidden");
-      }
-    });
-
     const selectedCar = AppConfig.cars[selectedCarIndex];
 
-    const startingPrice = document.getElementById("starting-price");
-    const startingPriceMobile = document.getElementById(
-      "starting-price-mobile",
-    );
-    const finalPrice = document.getElementById("final-price");
+    /** @type {typeof currentStep} */
+    const prevStep =
+      currentStep === "modelSelection"
+        ? null
+        : currentStep === "customization"
+        ? "modelSelection"
+        : "customization";
+    /** @type {typeof currentStep} */
+    const nextStep =
+      currentStep === "modelSelection"
+        ? "customization"
+        : currentStep === "customization"
+        ? "review"
+        : null;
+    const nextStepName =
+      nextStep === "customization"
+        ? "Customize"
+        : nextStep === "review"
+        ? "Confirm & Review"
+        : null;
+    const carPrice = selectedCar.price;
 
-    startingPrice.innerHTML = selectedCar.price;
-    startingPriceMobile.innerHTML = selectedCar.price;
-    finalPrice.innerHTML = selectedCar.price;
+    document.getElementById("stepper-buttons").innerHTML = this.template({
+      prevStep,
+      nextStep,
+      nextStepName,
+      carPrice,
+    });
   };
 
   /**

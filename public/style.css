@@ -69,20 +69,6 @@ canvas {
   font-weight: 700;
   font-style: italic;
 }
-.price {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 800;
-}
-
-.customization-btn:hover {
-  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
-  background-color: #f27357;
-}
-.mobile-select-model-button:hover {
-  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
-  background-color: #f27357;
-  cursor: po;
-}
 
 /* SETTINGS PANEL */
 
@@ -199,9 +185,95 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   width: 80px;
 }
 
+/** STEPPER BUTTONS */
+
+.stepper-buttons {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  align-items: flex-start;
+  bottom: 5vh;
+  left: 5vw;
+  right: 5vw;
+}
+
+.stepper-buttons .step-back-button-container,
+.stepper-buttons .step-forward-button-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.stepper-buttons .step-back-button-container.no-step,
+.stepper-buttons .step-forward-button-container.no-step {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.stepper-buttons .step-button {
+  --step-button-size: 9vh;
+
+  background-color: #EC6244;
+  height: var(--step-button-size);
+  min-height: 60px;
+  min-width: max(60px, var(--step-button-size));
+  border-radius: calc(0.25 * var(--step-button-size));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+
+.stepper-buttons .step-button:hover {
+  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
+  background-color: #F27357;
+}
+
+.stepper-buttons .step-button h3 {
+  color: #141614; 
+  font-size: 3vh;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 450px) {
+  .stepper-buttons .step-button h3 {
+    font-size: 1rem;
+  }
+}
+
+.stepper-buttons .step-button svg {
+  width: calc(0.3 * var(--step-button-size));
+  height: calc(0.3 * var(--step-button-size));
+}
+
+.step-back-button-container .step-button svg {
+  transform: rotate(180deg);
+}
+
+.stepper-buttons .step-button svg path {
+  stroke: #141614;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.price {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  color: #EC6244;
+  font-size: 6vh;
+}
+
 /* MEDIA QUERIES */
 
 @media (max-width: 768px) {
+  .price {
+    display: none;
+  }
   .car-parts {
     display: none;
   }
