@@ -42,7 +42,16 @@ async function initApp() {
       width: 1,
       height: 1,
       defaultControllerType: 1,
-      onCameraCreation: () => onMediaQueryChange(mediaQuery),
+      onCameraCreation: () => {
+        onMediaQueryChange(mediaQuery);
+        // these are the right bloom settings to emphasize
+        // the emission of the car headlights
+        setCameraSettings({
+          bloom: true,
+          bloomStrength: 1,
+          bloomThreshold: 50,
+        });
+      },
     },
   ];
 
@@ -74,14 +83,6 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Connecting to editor API...");
   await SDK3DVerse.connectToEditor();
-
-  // these are the right bloom settings to emphasize
-  // the emission of the car headlights
-  setCameraSettings({
-    bloom: true,
-    bloomStrength: 1,
-    bloomThreshold: 50,
-  });
 
   CarConfiguratorActions.setSceneLoadingState("Analyzing scene objects...");
   await CarConfiguratorActions.fetchSceneEntities();
@@ -140,6 +141,20 @@ async function changeCameraPosition(
 }
 
 /**
+ * @param {Record<string, any>} settings
+ */
+function setCameraSettings(settings) {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  const camera = viewport.getCamera();
+  const cameraComponent = camera.getComponent("camera");
+  Object.assign(cameraComponent.dataJSON, settings);
+  camera.setComponent("camera", cameraComponent);
+  SDK3DVerse.engineAPI.propagateChanges();
+}
+
+/**
  * This function sets the resolution with a max rendering resolution of
  * 1920px then adapts the scale appropriately for the canvas size.
  */
@@ -164,20 +179,6 @@ function reconfigureResolution() {
     h = Math.floor(w / aspectRatio);
   }
   SDK3DVerse.setResolution(w, h, scale);
-}
-
-/**
- * @param {Record<string, any>} settings
- */
-function setCameraSettings(settings) {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-  const camera = viewport.getCamera();
-  const cameraComponent = camera.getComponent("camera");
-  Object.assign(cameraComponent.dataJSON, settings);
-  camera.setComponent("camera", cameraComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
 }
 
 /**
