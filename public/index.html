@@ -37,9 +37,9 @@
       <div id="model-selection"></div>
       <!-- MODEL SELECTION TEMPLATE -->
       <script id="model-selection-template" type="text/x-handlebars">
-        {{#each arrows}}
+        {{#each arrows as | arrow |}}
           <div
-            class="model-{{direction}}-button absolute {{direction}}-[5vw] cursor-pointer h-[5vh] w-[3vw] switch-model-button"
+            class="switch-model-button {{arrow.direction}}"
             onclick="CarSelectionView.handlePreviousCar()"
           >
             <svg
@@ -48,82 +48,34 @@
               viewBox="0 0 27 47"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              class="arrow"
             >
-              <path
-                d="{{path}}"
-                stroke="white"
-                stroke-width="5"
-                class="arrow-hover"
-              />
+              <path d="M2 2L23 23.5L2 45" />
             </svg>
           </div>
         {{/each}}
 
-        <div
-          id="model-title"
-          class="absolute top-[7vh] left-[10vw] flex flex-col w-[80%] md:w-2/3 space-y-2"
-        >
-          <h2
-            id="car_name"
-            class="text-white text-[7rem] uppercase leading-[7rem]"
-          >
-            <span class=highlighted-word>{{firstWord}}</span> {{afterFirstWord}}
+        <div class="model-heading">
+          <h2 class="model-name">
+            <span>
+              <span class="highlighted-word">{{firstWord}}</span>
+              {{afterFirstWord}}
+            </span>
           </h2>
-          <p id="car_description" class="text-gray-400 text-l leading-7">
-            {{selectedCar.description}}
+          <p class="model-description">
+            <span>{{description}}</span>
           </p>
         </div>
 
-        <div
-          id="model-infos"
-          class="absolute flex flex-col items-end right-[12%] justify-items-end space-y-[1.5vh]"
-        >
-          <div class="info-item">
-            <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
-              Maximum Speed
-            </h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-speed-number" class="text-[5vh]">{{selectedCar.maxSpeed}}</p>
-              <p class="text-[2.5vh] ml-2 mb-[1vh]">KPH</p>
+        <div class="model-infos">
+          {{#each stats as | stat |}}
+            <div class="info-item">
+              <h3 class="info-label">{{stat.label}}</h3>
+              <div class="number">
+                <p class="value">{{stat.value}}</p>
+                <p class="unit">{{stat.unit}}</p>
+              </div>
             </div>
-          </div>
-          <div class="info-item">
-            <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
-              0-100kph
-            </h3>
-            <div class="value flex text-white number items-end">
-              <p id="acceleration-number" class="text-[5vh]">{{selectedCar.acceleration}}</p>
-              <p class="text-[2.5vh] ml-2 mb-[1vh]">S</p>
-            </div>
-          </div>
-          <div class="info-item">
-            <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
-              Maximum Power
-            </h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-power-number" class="text-[5vh]">{{selectedCar.maximumPower}}</p>
-              <p class="text-[2.5vh] ml-2 mb-[1vh]">PS</p>
-            </div>
-          </div>
-          <div class="info-item">
-            <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
-              Maximum Torque
-            </h3>
-            <div class="value flex text-white number items-end">
-              <p id="maximum-torque-number" class="text-[5vh]">{{selectedCar.maximumTorque}}</p>
-              <p class="text-[2.5vh] ml-2 mb-[1vh]">NM</p>
-            </div>
-          </div>
-          <div class="info-item">
-            <h3 class="text-[#AAAAAA] text-[1.6vh] font-medium text-right">
-              Engine Capacity
-            </h3>
-            <div class="value flex text-white number items-end">
-              <p id="engine-capacity-number" class="text-[5vh]">{{selectedCar.engineCapacity}}</p>
-              <p class="text-[2.5vh] ml-2 mb-[1vh]">CC</p>
-            </div>
-          </div>
+          {{/each}}
         </div>
       </script>
 

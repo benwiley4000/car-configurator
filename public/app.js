@@ -740,13 +740,25 @@ const CarSelectionView = new (class CarSelectionView {
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
     document.getElementById("model-selection").innerHTML = this.template({
-      arrows: [
-        { direction: "left", path: "M25 2L4 23.5L25 45" },
-        { direction: "right", path: "M2 2L23 23.5L2 45" },
-      ],
-      selectedCar,
+      arrows: [{ direction: "left" }, { direction: "right" }],
       firstWord,
       afterFirstWord: otherWords.join(" "),
+      description: selectedCar.description,
+      stats: [
+        { label: "Maximum Speed", unit: "KPH", value: selectedCar.maxSpeed },
+        { label: "0-100kph", unit: "S", value: selectedCar.acceleration },
+        { label: "Maximum Power", unit: "PS", value: selectedCar.maximumPower },
+        {
+          label: "Maximum Torque",
+          unit: "NM",
+          value: selectedCar.maximumTorque,
+        },
+        {
+          label: "Engine Capacity",
+          unit: "CC",
+          value: selectedCar.engineCapacity,
+        },
+      ],
     });
   };
 

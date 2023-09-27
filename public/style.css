@@ -14,12 +14,6 @@ body {
   margin: auto;
   display: flex;
   font-family: "Inter", sans-serif;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   overflow: hidden;
 }
 
@@ -29,6 +23,7 @@ body {
   align-items: center;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 #display_canvas:hover {
@@ -43,10 +38,63 @@ body {
   display: none;
 }
 
-/* MODEL NAME */
+/* MODEL SELECTION */
 
-#car_name {
+.switch-model-button {
+  position: absolute;
+  cursor: pointer;
+  height: 5vh;
+  width: 3vw;
+}
+
+.switch-model-button.left {
+  left: 5vw;
+}
+
+.switch-model-button.right {
+  right: 5vw;
+}
+
+.switch-model-button.left svg {
+  transform: rotate(180deg);
+}
+
+.switch-model-button svg path {
+  stroke: white;
+  stroke-width: 5;
+  transition: 0.1s ease;
+}
+
+.switch-model-button:hover svg path {
+  stroke: #a1a1a1;
+}
+
+.model-heading {
+  position: absolute;
+  top: 7vh;
+  left: 10vw;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  pointer-events: none;
+}
+
+.model-heading span {
+  pointer-events: all;
+}
+
+@media (min-width: 768px) {
+  .model-heading {
+    width: 67%;
+  }
+}
+
+.model-name {
   font-family: "Bebas Neue", sans-serif;
+  color: white;
+  font-size: 7rem;
+  line-height: 7rem;
+  text-transform: uppercase;
 }
 
 /* the padding and display stuff is necessary because of the badely cropped font */
@@ -61,20 +109,52 @@ body {
   background-color: #ec6244;
   border-radius: 15px;
 }
-.arrow-hover {
-  transition: 0.1s ease;
+
+.model-description {
+  color: rgb(156, 163, 175);
+  line-height: 1.75rem;
 }
 
-.arrow:hover .arrow-hover {
-  stroke: #a1a1a1;
+.model-infos {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.5vh;
+  right: 12%;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-/* INFO NUMBERS */
+.model-infos .info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
 
-.number {
+.model-infos .info-label {
+  color: #AAAAAA;
+  font-size: 1.6vh;
+  font-weight: 500;
+}
+
+.model-infos .number {
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-style: italic;
+  color: white;
+  display: flex;
+  align-items: flex-end;
+}
+
+.model-infos .value {
+  font-size: 5vh;
+}
+
+.model-infos .unit {
+  font-size: 2.5vh;
+  margin-left: 0.5rem;
+  margin-bottom: 1vh;
 }
 
 /* SETTINGS PANEL */
@@ -86,14 +166,16 @@ body {
 .toggle-button-fill {
   fill: #696969;
 }
-svg.active .toggle-button-fill, svg.active.toggle-button-fill {
-  fill: #EC6244;
+svg.active .toggle-button-fill,
+svg.active.toggle-button-fill {
+  fill: #ec6244;
 }
 .toggle-button-stroke {
   stroke: #696969;
 }
-svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
-  stroke: #EC6244;
+svg.active .toggle-button-stroke,
+svg.active.toggle-button-stroke {
+  stroke: #ec6244;
 }
 
 /* PART SELECTION MENU */
@@ -202,6 +284,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   bottom: 5vh;
   left: 5vw;
   right: 5vw;
+  pointer-events: none;
 }
 
 .stepper-buttons .step-back-button-container,
@@ -209,6 +292,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  pointer-events: all;
 }
 
 .stepper-buttons .step-back-button-container.no-step,
@@ -220,7 +304,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
 .stepper-buttons .step-button {
   --step-button-size: 9vh;
 
-  background-color: #EC6244;
+  background-color: #ec6244;
   height: var(--step-button-size);
   min-height: 60px;
   min-width: max(60px, var(--step-button-size));
@@ -235,11 +319,11 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
 
 .stepper-buttons .step-button:hover {
   box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
-  background-color: #F27357;
+  background-color: #f27357;
 }
 
 .stepper-buttons .step-button h3 {
-  color: #141614; 
+  color: #141614;
   font-size: 3vh;
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
@@ -271,7 +355,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
 .price {
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
-  color: #EC6244;
+  color: #ec6244;
   font-size: 6vh;
 }
 
@@ -284,7 +368,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   .car-parts {
     display: none;
   }
-  #model-infos {
+  .model-infos {
     display: none;
   }
   #ui-options {
@@ -297,7 +381,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   #back-to-model-button {
     display: none !important;
   }
-  #car_description {
+  .model-description {
     display: none !important;
   }
   #select-model-button,
@@ -323,13 +407,13 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
   .cubemap {
     margin: 0 !important;
   }
-  #car_description {
+  .model-description {
     display: none !important;
   }
 }
 
 @media (max-width: 1024px) {
-  #car_name {
+  .model-name {
     font-size: 4rem;
     line-height: 4rem;
   }
@@ -337,7 +421,7 @@ svg.active .toggle-button-stroke, svg.active.toggle-button-stroke {
     height: 4.1rem !important;
     border-radius: 8px !important;
   }
-  #car_description {
+  .model-description {
     font-size: 0.8rem;
     line-height: 1.3rem;
   }
