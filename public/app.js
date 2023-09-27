@@ -356,6 +356,8 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   };
   /** @private @type {object | null} */
   environmentEntity = null;
+  /** @type {Record<string, object>} */
+  cachedMaterialAssetDescriptions = {};
 
   constructor() {
     // TODO: find way to initialize scene graph based on default settings
@@ -421,13 +423,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   /** @private */
-  async applySelectedMaterial() {
+  applySelectedMaterial() {
     const { selectedMaterial, selectedColor, selectedCarIndex } =
       CarConfiguratorStore.state;
-    const desc = await getAssetDescription(
-      "materials",
-      selectedMaterial.matUUID,
-    );
+    const desc = this.cachedMaterialAssetDescriptions[selectedMaterial.matUUID];
     desc.dataJson.albedo = selectedColor;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
       AppConfig.cars[selectedCarIndex].paintMaterialUUID,
@@ -448,26 +447,22 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   /** @private */
-  async applyLightsSetting() {
+  applyLightsSetting() {
     const { selectedCarIndex, lightsOn } = CarConfiguratorStore.state;
     const selectedCar = AppConfig.cars[selectedCarIndex];
 
     const intensity = lightsOn ? 100 : 0;
 
-    const desc1 = await getAssetDescription(
-      "materials",
-      selectedCar.headLightsMatUUID,
-    );
+    const desc1 =
+      this.cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID];
     desc1.dataJson.emissionIntensity = intensity;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
       selectedCar.headLightsMatUUID,
       desc1,
     );
 
-    const desc2 = await getAssetDescription(
-      "materials",
-      selectedCar.rearLightsMatUUID,
-    );
+    const desc2 =
+      this.cachedMaterialAssetDescriptions[selectedCar.rearLightsMatUUID];
     desc2.dataJson.emissionIntensity = intensity;
     SDK3DVerse.engineAPI.ftlAPI.updateMaterial(
       selectedCar.rearLightsMatUUID,
@@ -558,6 +553,22 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     this.environmentEntity = await SDK3DVerse.engineAPI
       .findEntitiesByNames("Env")
       .then(([entity]) => entity);
+
+    this.setSceneLoadingState("Caching materials...");
+
+    await Promise.all(
+      [
+        ...AppConfig.cars
+          .map(({ headLightsMatUUID, rearLightsMatUUID }) => {
+            return [headLightsMatUUID, rearLightsMatUUID];
+          })
+          .flat(),
+        ...AppConfig.materials.map(({ matUUID }) => matUUID),
+      ].map(async (materialUUID) => {
+        const desc = await getAssetDescription("materials", materialUUID);
+        this.cachedMaterialAssetDescriptions[materialUUID] = desc;
+      }),
+    );
 
     // TODO: after fetching I need to initialize state from entities
 
