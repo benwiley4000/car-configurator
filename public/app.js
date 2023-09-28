@@ -290,14 +290,6 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
   /** @private @type {[string[], () => void][]} */
   subscribers = [];
 
-  constructor() {
-    // TODO: find way to initialize scene graph based on default settings
-    // (or just hardcode those default settings in scene graph). For example
-    // there is no color by default.
-    // TODO: asynchronously initialize state from current scene graph
-    // TODO: update state when receiving scene graph updates from 3dverse
-  }
-
   /**
    * Should only be called from CarConfiguratorActions, not any of the Views!
    * @param {Partial<CarConfiguratorState>} value
