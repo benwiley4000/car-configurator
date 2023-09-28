@@ -52,6 +52,9 @@ async function initApp() {
           bloomStrength: 1,
           bloomThreshold: 50,
         });
+        CarConfiguratorActions.changeUserCameraLuminosity(
+          getCameraSettings().brightness,
+        );
       },
     },
   ];
@@ -141,14 +144,23 @@ async function changeCameraPosition(
   );
 }
 
+function getCamera() {
+  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
+  const viewport =
+    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
+  return viewport.getCamera();
+}
+
+function getCameraSettings() {
+  const camera = getCamera();
+  return camera.getComponent("camera").dataJSON;
+}
+
 /**
  * @param {Record<string, any>} settings
  */
 function setCameraSettings(settings) {
-  const cameraAPI = SDK3DVerse.engineAPI.cameraAPI;
-  const viewport =
-    cameraAPI.currentViewportEnabled || cameraAPI.getActiveViewports()[0];
-  const camera = viewport.getCamera();
+  const camera = getCamera();
   const cameraComponent = camera.getComponent("camera");
   Object.assign(cameraComponent.dataJSON, settings);
   camera.setComponent("camera", cameraComponent);
@@ -1241,20 +1253,29 @@ const CarOptionsBarView = new (class CarOptionsBarView {
     document
       .getElementById("light-toggle")
       .classList.toggle("active", CarConfiguratorStore.state.lightsOn);
+
     document
       .getElementById("rotate-toggle")
       .classList.toggle("active", CarConfiguratorStore.state.rotationOn);
+
     document
       .getElementById("settings-toggle")
       .classList.toggle("active", this.isSettingsPanelOpen);
+
     document
       .getElementById("settings-panel")
       .classList.toggle("hidden", !this.isSettingsPanelOpen);
+
     /** @type {HTMLInputElement} */ (
       document.getElementById("rgb-gradient")
     ).checked = CarConfiguratorStore.state.rgbGradientOn;
-    document.getElementById("luminosity-value").innerHTML =
+
+    const luminosityValue =
       CarConfiguratorStore.state.userCameraLuminosity.toString();
+    document.getElementById("luminosity-value").innerHTML = luminosityValue;
+    /** @type {HTMLInputElement} */ (
+      document.getElementById("luminosity-slider")
+    ).value = luminosityValue;
   };
 
   // UI EVENT HANDLERS:
