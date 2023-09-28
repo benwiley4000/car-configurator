@@ -8,9 +8,6 @@ const userToken = localStorage.getItem('3dverse-api-token');
 const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
   .SDK3DVerse;
 
-//--------------------------------------------------------------------------------------------------
-window.addEventListener("load", initApp);
-
 const PARTS_CATEGORY_MAPPING = {
   frontBumpers: "Front Bumper",
   rearBumpers: "Rear Bumper",
@@ -1443,3 +1440,5 @@ SDK3DVerse.engineAPI.editorAPI.on(
     }
   },
 );
+
+initApp();
