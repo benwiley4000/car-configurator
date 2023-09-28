@@ -4,8 +4,7 @@ A sample app built using the 3dverse Livelink SDK to manipulate a scene in 3dver
 This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars templates for data-driven HTML elements. The only external libraries it uses are Handlebars and the 3dverse Livelink SDK. But of course you can use whatever UI framework you prefer (React, Vue, Svelte, Angular, etc), to build your own 3dverse application.
 
 IMMEDIATE TODO
-4. implement sync for rotation and cubemap somehow
-4.5. implement sync for luminosity just at beginning
+4. implement sync for cubemap somehow
 5. implement user avatars
 6. Get rid of remaining tailwind classes
 7. Put in the button baptiste wanted
