@@ -390,6 +390,8 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   environmentEntity = null;
   /** @private @type {object | null} */
   gradientPlatformEntity = null;
+  /** @private @type {object | null} */
+  isAnimationActiveTokenEntity = null;
   /** @type {Record<string, object>} */
   cachedMaterialAssetDescriptions = {};
   /** @type {AssetEditorAPI[]} */
@@ -476,7 +478,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
           skyboxUUID
         );
       }),
-      // rotationOn: false,
+      rotationOn: this.isEntityVisible(this.isAnimationActiveTokenEntity),
       rgbGradientOn: this.isEntityVisible(this.gradientPlatformEntity),
     };
 
@@ -701,6 +703,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       .findEntitiesByNames("SM_StaticPlatform")
       .then(([entity]) => entity);
 
+    this.isAnimationActiveTokenEntity = await SDK3DVerse.engineAPI
+      .findEntitiesByNames("isAnimationActiveToken")
+      .then(([entity]) => entity);
+
     this.updateStateFromEntities();
     SDK3DVerse.notifier.on("onEntitiesUpdated", this.updateStateFromEntities);
     SDK3DVerse.notifier.on(
@@ -833,6 +839,15 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       ? "start_simulation"
       : "pause_simulation";
     SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+
+    // We are going to use a blank entity in the scene to track the
+    // rotation state until we have a way to query animation state
+    reparentEntities(
+      [this.isAnimationActiveTokenEntity],
+      CarConfiguratorStore.state.rotationOn
+        ? this.visibleEntitiesContainer
+        : this.hiddenEntitiesContainer,
+    );
   }
 
   async toggleRgbGradientOn() {
