@@ -550,8 +550,11 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     CarConfiguratorStore.setState(newState);
   };
 
-  /** @private */
-  updateStateFromMaterials = () => {
+  /**
+   * @private
+   * @param {string} [changedMaterialUUID]
+   */
+  updateStateFromMaterials = (changedMaterialUUID) => {
     const { selectedCarIndex } = CarConfiguratorStore.state;
     const selectedCar = AppConfig.cars[selectedCarIndex];
 
@@ -564,14 +567,19 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
      * >} StateSyncableFromMaterials
      */
 
-    /** @type {StateSyncableFromMaterials} */
-    const newState = {
-      selectedColor: AppConfig.colorChoices.find((color) => {
+    /** @type {Partial<StateSyncableFromMaterials>} */
+    const newState = {};
+
+    if (
+      !changedMaterialUUID ||
+      changedMaterialUUID === selectedCar.paintMaterialUUID
+    ) {
+      newState.selectedColor = AppConfig.colorChoices.find((color) => {
         return this.cachedMaterialAssetDescriptions[
           selectedCar.paintMaterialUUID
         ].dataJson.albedo.every((v, i) => color[i] === v);
-      }),
-      selectedMaterial: AppConfig.materials.find(({ matUUID }) => {
+      });
+      newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
         const cachedSourceMaterial =
           this.cachedMaterialAssetDescriptions[matUUID];
         const { clearCoatRoughness, clearCoatStrength } =
@@ -582,11 +590,17 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
             clearCoatRoughness &&
           cachedSourceMaterial.dataJson.clearCoatStrength === clearCoatStrength
         );
-      }),
-      lightsOn:
+      });
+    }
+
+    if (
+      !changedMaterialUUID ||
+      changedMaterialUUID === selectedCar.headLightsMatUUID
+    ) {
+      newState.lightsOn =
         this.cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID]
-          .dataJson.emissionIntensity > 0,
-    };
+          .dataJson.emissionIntensity > 0;
+    }
 
     CarConfiguratorStore.setState(newState);
   };
@@ -802,21 +816,21 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       return getAssetEditorAPIForMaterial(headLightsMatUUID, (event, desc) => {
         if (event !== "assetUpdated") return;
         this.cachedMaterialAssetDescriptions[headLightsMatUUID] = desc;
-        this.updateStateFromMaterials();
+        this.updateStateFromMaterials(headLightsMatUUID);
       });
     });
     this.rearlightAssetEditors = AppConfig.cars.map(({ rearLightsMatUUID }) => {
       return getAssetEditorAPIForMaterial(rearLightsMatUUID, (event, desc) => {
         if (event !== "assetUpdated") return;
         this.cachedMaterialAssetDescriptions[rearLightsMatUUID] = desc;
-        this.updateStateFromMaterials();
+        this.updateStateFromMaterials(rearLightsMatUUID);
       });
     });
     this.paintAssetEditors = AppConfig.cars.map(({ paintMaterialUUID }) => {
       return getAssetEditorAPIForMaterial(paintMaterialUUID, (event, desc) => {
         if (event !== "assetUpdated") return;
         this.cachedMaterialAssetDescriptions[paintMaterialUUID] = desc;
-        this.updateStateFromMaterials();
+        this.updateStateFromMaterials(paintMaterialUUID);
       });
     });
   }
