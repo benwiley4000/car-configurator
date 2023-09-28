@@ -1,4 +1,4 @@
-export default {
+window.AppConfig = {
   sceneUUID: "da5e1a59-4213-4015-b6c6-faa838c7367a",
   cubemaps: [
     {
