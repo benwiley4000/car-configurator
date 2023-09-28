@@ -57,11 +57,11 @@ export default class AssetEditorAPI {
   }
 
   updateAsset(description, doCommit = false) {
-    this.sendRequest("update-asset", { description, doCommit });
+    this.sendRequest("update-asset", { description, doCommit: true });
   }
 
   updateAssetAsync(description, doCommit = false) {
-    return this.sendRequestAsync("update-asset", { description, doCommit });
+    return this.sendRequestAsync("update-asset", { description, doCommit: true });
   }
 
   sendRequest(type, data = {}) {
