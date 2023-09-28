@@ -3,11 +3,10 @@ import AssetEditorAPI from "./AssetEditorAPI.js";
 // Include external library definitions to help with autocompletion
 /// <reference path="./vendor/handlebars.d.ts" />
 
-const userToken = SDK3DVerse.webAPI.userToken;
-
 // TODO: get rid of this and use real types
 const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
   .SDK3DVerse;
+const userToken = SDK3DVerse.webAPI.userToken;
 
 const PARTS_CATEGORY_MAPPING = {
   frontBumpers: "Front Bumper",
