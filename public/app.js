@@ -1,7 +1,7 @@
 import AppConfig from "./AppConfig.js";
-import { userToken } from "./secrets.js";
+// import { userToken } from "./secrets.js";
 import AssetEditorAPI from "./AssetEditorAPI.js";
-
+const userToken = localStorage.getItem('3dverse-api-token');
 // Include external library definitions to help with autocompletion
 /// <reference path="./vendor/handlebars.d.ts" />
 
