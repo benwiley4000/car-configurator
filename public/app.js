@@ -567,9 +567,15 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       changedMaterialUUID === selectedCar.paintMaterialUUID
     ) {
       newState.selectedColor = AppConfig.colorChoices.find((color) => {
-        return this.cachedMaterialAssetDescriptions[
-          selectedCar.paintMaterialUUID
-        ].dataJson.albedo.every((v, i) => color[i] === v);
+        return (
+          (
+            // albedo might be empty, defaults to 1,1,1,
+            // although if our scene is properly configured
+            // this should never happen.
+            this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
+              .dataJson.albedo || [1, 1, 1]
+          ).every((v, i) => color[i] === v)
+        );
       });
       newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
         const cachedSourceMaterial =
