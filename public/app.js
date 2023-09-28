@@ -97,6 +97,9 @@ async function initApp() {
   await CarConfiguratorActions.cacheMaterials();
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
+
+  await SDK3DVerse.installExtension(SDK3DVerse_ClientDisplay_Ext);
+
   setTimeout(() => CarConfiguratorActions.setSceneLoadingState(null), 500);
 }
 
