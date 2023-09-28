@@ -98,6 +98,7 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
 
+  await SDK3DVerse.installExtension(SDK3DVerse_ViewportDomOverlay_Ext);
   await SDK3DVerse.installExtension(SDK3DVerse_ClientDisplay_Ext);
 
   setTimeout(() => CarConfiguratorActions.setSceneLoadingState(null), 500);
