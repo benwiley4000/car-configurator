@@ -656,6 +656,8 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     const allPartsForSelectedCar =
       this.allCarPartEntities[CarConfiguratorStore.state.selectedCarIndex];
 
+    this.applySelectedMaterial();
+
     await this.changeParts({
       body: allPartsForSelectedCar.body,
       frontBumpers: allPartsForSelectedCar.frontBumpers[0] || null,
