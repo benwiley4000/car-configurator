@@ -409,53 +409,14 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     return entity.getParent().getID() === this.visibleEntitiesContainer.getID();
   }
 
-  /** @private */
-  updateStateFromEntities = () => {
-    // TODO: also sync luminosity setting for camera
-
+  /**
+   * @private
+   * @param  {...object} updatedEntities
+   */
+  updateStateFromEntities = (...updatedEntities) => {
     const selectedCarIndex = this.allCarPartEntities.findIndex(({ body }) => {
       return this.isEntityVisible(body);
     });
-    if (selectedCarIndex === -1) {
-      // intermediate state while switching cars, ignore
-      return;
-    }
-    const selectedFrontBumperIndex = Math.max(
-      this.allCarPartEntities[selectedCarIndex].frontBumpers.findIndex(
-        (entity) => {
-          return this.isEntityVisible(entity);
-        },
-      ),
-      0,
-    );
-    const selectedRearBumpersIndex = Math.max(
-      this.allCarPartEntities[selectedCarIndex].rearBumpers.findIndex(
-        (entity) => {
-          return this.isEntityVisible(entity);
-        },
-      ),
-      0,
-    );
-    const selectedSpoilersIndex = Math.max(
-      this.allCarPartEntities[selectedCarIndex].spoilers.findIndex((entity) => {
-        return this.isEntityVisible(entity);
-      }),
-      0,
-    );
-    /** @type {CarConfiguratorState['selectedParts']} */
-    const selectedParts =
-      CarConfiguratorStore.state.selectedParts.frontBumpers ===
-        selectedFrontBumperIndex &&
-      CarConfiguratorStore.state.selectedParts.rearBumpers ===
-        selectedRearBumpersIndex &&
-      CarConfiguratorStore.state.selectedParts.spoilers ===
-        selectedSpoilersIndex
-        ? CarConfiguratorStore.state.selectedParts
-        : {
-            frontBumpers: selectedFrontBumperIndex,
-            rearBumpers: selectedRearBumpersIndex,
-            spoilers: selectedSpoilersIndex,
-          };
 
     /**
      * @typedef {Pick<
@@ -468,19 +429,123 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
      * >} StateSyncableFromEntities
      */
 
-    /** @type {StateSyncableFromEntities} */
-    const newState = {
-      selectedCarIndex,
-      selectedParts,
-      selectedCubemap: AppConfig.cubemaps.find(({ skyboxUUID }) => {
+    // We might receive several entity updates in series,
+    // so in order to not undo optimistic UI updates,
+    // we should only update UI based on the entities
+    // passed into the function.
+
+    /** @type {(keyof StateSyncableFromEntities)[]} */
+    let updatedKeys = [];
+    if (updatedEntities.length === 0) {
+      // In this case we're doing the initial sync so we update everything.
+      updatedKeys = /** @type {typeof updatedKeys} */ (
+        Object.keys(CarConfiguratorStore.state)
+      );
+    } else {
+      const allNonBodyParts = [
+        ...this.allCarPartEntities
+          .map(({ frontBumpers }) => frontBumpers)
+          .flat(),
+        ...this.allCarPartEntities.map(({ rearBumpers }) => rearBumpers).flat(),
+        ...this.allCarPartEntities.map(({ spoilers }) => spoilers).flat(),
+      ];
+      for (const entity of updatedEntities) {
+        // For car and car parts changes, since we're swapping visibility of
+        // multiple entities, we need to make sure the changed part is currently
+        // visible - if we update in response to an entity becoming invisible we
+        // might accidentally undo an optimistically updated UI state.
+        if (selectedCarIndex !== -1) {
+          if (entity === this.allCarPartEntities[selectedCarIndex].body) {
+            updatedKeys.push("selectedCarIndex");
+          } else if (
+            allNonBodyParts.includes(entity) &&
+            this.isEntityVisible(entity)
+          ) {
+            updatedKeys.push("selectedParts");
+          }
+        }
+
+        // For other entity updates it's pretty simple to know if we should
+        // update.
+        if (entity === this.environmentEntity) {
+          updatedKeys.push("selectedCubemap");
+        }
+        if (entity === this.isAnimationActiveTokenEntity) {
+          updatedKeys.push("rotationOn");
+        }
+        if (entity === this.gradientPlatformEntity) {
+          updatedKeys.push("rgbGradientOn");
+        }
+      }
+    }
+
+    /** @type {Partial<StateSyncableFromEntities>} */
+    const newState = {};
+
+    if (updatedKeys.includes("selectedCarIndex")) {
+      newState.selectedCarIndex = selectedCarIndex;
+    }
+    if (updatedKeys.includes("selectedParts")) {
+      // if visibility on a car part is updated before its respective car body,
+      // we will go ahead and update the index respective to the correct car.
+      const selectedFrontBumperIndex = Math.max(
+        ...this.allCarPartEntities.map((_, carIndex) =>
+          this.allCarPartEntities[carIndex].frontBumpers.findIndex((entity) => {
+            return this.isEntityVisible(entity);
+          }),
+        ),
+        0,
+      );
+      const selectedRearBumpersIndex = Math.max(
+        ...this.allCarPartEntities.map((_, carIndex) =>
+          this.allCarPartEntities[carIndex].rearBumpers.findIndex((entity) => {
+            return this.isEntityVisible(entity);
+          }),
+        ),
+        0,
+      );
+      const selectedSpoilersIndex = Math.max(
+        ...this.allCarPartEntities.map((_, carIndex) =>
+          this.allCarPartEntities[carIndex].spoilers.findIndex((entity) => {
+            return this.isEntityVisible(entity);
+          }),
+        ),
+        0,
+      );
+      /** @type {CarConfiguratorState['selectedParts']} */
+      const selectedParts =
+        CarConfiguratorStore.state.selectedParts.frontBumpers ===
+          selectedFrontBumperIndex &&
+        CarConfiguratorStore.state.selectedParts.rearBumpers ===
+          selectedRearBumpersIndex &&
+        CarConfiguratorStore.state.selectedParts.spoilers ===
+          selectedSpoilersIndex
+          ? CarConfiguratorStore.state.selectedParts
+          : {
+              frontBumpers: selectedFrontBumperIndex,
+              rearBumpers: selectedRearBumpersIndex,
+              spoilers: selectedSpoilersIndex,
+            };
+      newState.selectedParts = selectedParts;
+    }
+    if (updatedKeys.includes("selectedCubemap")) {
+      newState.selectedCubemap = AppConfig.cubemaps.find(({ skyboxUUID }) => {
         return (
           this.environmentEntity.getComponent("environment").skyboxUUID ===
           skyboxUUID
         );
-      }),
-      rotationOn: this.isEntityVisible(this.isAnimationActiveTokenEntity),
-      rgbGradientOn: this.isEntityVisible(this.gradientPlatformEntity),
-    };
+      });
+    }
+    if (updatedKeys.includes("rotationOn")) {
+      newState.rotationOn = this.isEntityVisible(
+        this.isAnimationActiveTokenEntity,
+      );
+    }
+    if (updatedKeys.includes("rgbGradientOn")) {
+      newState.rgbGradientOn = this.isEntityVisible(
+        this.gradientPlatformEntity,
+      );
+    }
 
     CarConfiguratorStore.setState(newState);
   };
