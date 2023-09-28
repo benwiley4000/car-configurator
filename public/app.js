@@ -1,4 +1,3 @@
-import AppConfig from "./AppConfig.js";
 // import { userToken } from "./secrets.js";
 import AssetEditorAPI from "./AssetEditorAPI.js";
 const userToken = localStorage.getItem('3dverse-api-token');
