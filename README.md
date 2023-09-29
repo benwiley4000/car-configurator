@@ -5,37 +5,31 @@ This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars t
 
 IMMEDIATE TODO
 4. implement sync for cubemap somehow
-5. implement user avatars
-6. Get rid of remaining tailwind classes
-7. Put in the button baptiste wanted
+4.5. remaining code style refactors
+5. fix bugs
+6. implement features list
+7. 3dverse sdk changes
 
 ## Code style stuff
 10. heavy use of jsdoc typescript so autocomplete works well (remove object type as well)
 11. Remove useless html after cleaning up css/tailwind usage
 13. really enforce 80char col
 
-## We need the general update flow for every action to go:
-4. We need to init state from 3dverse and then subscribe to 3dverse changes as well.
-5. Then enable createOrJoinSession and test.
-
 ## Bugs
-3. audit rendering perf
-4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch)
-7. there's a bug with switching cars.. eventually you cannot do it anymore.
-8. Why did we stop waiting for connectionInfo.sessionCreated?
-10. Replace tailwind (after making a bunch of templates)
-11. Fix app in Safari and maybe firefox
-12. no client avatars?
+4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch). this could be maybe solved by using isVisible instead of reparenting. there is also a bug where sometimes the car switch just doesnt happen. i should document this change and share a repro before i switch to is visible.
+8. Why did we stop waiting for connectionInfo.sessionCreated? maybe remove this.
+9. make app work in safari and firefox.
 
 ## app changes
 - Add tooltips to UI (in form of title="")
+- implement user avatars
+- More obvious tab layout/hierarchy for toolbox part selection
+- better ui halo for colors
+- Put in the button baptiste wanted
 - Implement session timeout warning, and add UI for reconnecting after session is closed.
 - Randomize initial viewing angle to increase the chance that you can see others in the scene.
 - Add some UI to show others in the scene. Maybe we can publish the client list as an embeddable react component.
 - Find less shitty-looking skyboxes?
-- More obvious tab layout/hierarchy for toolbox part selection
-- and dont hide part selection on mobile
-- note in ui that luminosity is only for user
 
 ## 3dverse stuff
 1. In general I should do an audit to make sure all the used apis are public (e.g. FTL)
@@ -44,7 +38,9 @@ IMMEDIATE TODO
 
 ## SDK TODO
 - Make it so we don't throw an error whenever the session is closed (but preserve behavior that relies on this in collaborate.. figure out how to handle this differently).
-- Replace undocumented ftl API usage with something else
+- Replace undocumented asset api usage with something else
+- better api for starting a session
+- this needs to include setting up client avatars
 - Maybe repetitive routines?
 - Make sure clients show up with avatars and colors
 - Maybe make it possible to pass a set of scene changes along with createSession, or to precreate entities on the backend with preset entity visible states
