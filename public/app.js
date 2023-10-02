@@ -3,13 +3,6 @@ import AssetEditorAPI from "./AssetEditorAPI.js";
 // Include external library definitions to help with autocompletion
 /// <reference path="./vendor/handlebars.d.ts" />
 
-Object.defineProperty(window, 'userToken', {
-  get() {
-    return localStorage.getItem('3dverse-api-token')
-  },
-  set() {}
-})
-
 // TODO: get rid of this and use real types
 const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
   .SDK3DVerse;
@@ -31,8 +24,13 @@ const PARTS_CATEGORY_MAPPING = {
  * it's finished.
  */
 async function initApp() {
+  if (window.location.hostname.includes("localhost")) {
+    // set 3dverse-api-token in local storage
+    await import("./secrets.js");
+  }
+
   SDK3DVerse.setApiVersion("v1");
-  SDK3DVerse.webAPI.setUserToken(userToken);
+  SDK3DVerse.webAPI.setUserToken(getUserToken());
 
   const mediaQuery = window.matchMedia("(max-width: 768px)");
   mediaQuery.addEventListener("change", onMediaQueryChange);
@@ -98,10 +96,11 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
 
-  await SDK3DVerse.installExtension(SDK3DVerse_ViewportDomOverlay_Ext);
-  await SDK3DVerse.installExtension(SDK3DVerse_ClientDisplay_Ext);
-
   setTimeout(() => CarConfiguratorActions.setSceneLoadingState(null), 500);
+}
+
+function getUserToken() {
+  return localStorage.getItem("3dverse-api-token");
 }
 
 /**
@@ -225,7 +224,7 @@ async function getAssetDescription(assetType, assetUUID) {
     `https://api.3dverse.com/app/v1/assets/${assetType}/${assetUUID}/description`,
     {
       headers: {
-        User_token: userToken,
+        User_token: getUserToken(),
       },
     },
   );
@@ -336,7 +335,7 @@ const CarConfiguratorStore = new (class CarConfiguratorStore {
 })();
 
 function getAssetEditorAPIForMaterial(materialUUID, callback) {
-  const api = new AssetEditorAPI(userToken, callback);
+  const api = new AssetEditorAPI(getUserToken(), callback);
   api
     .connect("material", materialUUID)
     .then(({ description }) => callback("assetUpdated", description));
@@ -574,10 +573,10 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     ) {
       newState.selectedColor = AppConfig.colorChoices.find((color) => {
         return (
+          // albedo might be empty, defaults to 1,1,1,
+          // although if our scene is properly configured
+          // this should never happen.
           (
-            // albedo might be empty, defaults to 1,1,1,
-            // although if our scene is properly configured
-            // this should never happen.
             this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
               .dataJson.albedo || [1, 1, 1]
           ).every((v, i) => color[i] === v)
