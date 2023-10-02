@@ -1,1 +1,3 @@
-public/secrets.js
+secrets.js
+.prettierrc
+jsconfig.json

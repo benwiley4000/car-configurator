@@ -220,8 +220,9 @@ async function reparentEntities(entities, parentEntity) {
  * @returns
  */
 async function getAssetDescription(assetType, assetUUID) {
+  const apiUrl = "https://api.3dverse.com/app/v1";
   const res = await fetch(
-    `${AppConfig.apiUrl}/assets/${assetType}/${assetUUID}/description`,
+    `${apiUrl}/assets/${assetType}/${assetUUID}/description`,
     {
       headers: {
         User_token: getUserToken(),
