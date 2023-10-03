@@ -92,7 +92,7 @@ export default {
       asset_id: "d2de613c-9d0e-4612-b253-e8ea0740c960",
       asset_type: "material",
     },
-    MaterialUrusrRearlights: {
+    MaterialUrusRearlights: {
       asset_id: "ef8b7508-7ef3-47a9-9e5a-6ed6f039b62a",
       asset_type: "material",
     },
