@@ -460,8 +460,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     if (updatedKeys.includes("selectedParts")) {
       // if visibility on a car part is updated before its respective car body,
       // we will go ahead and update the index respective to the correct car.
-      /** @type {CarConfiguratorState['selectedParts']} */
-      const selectedParts = {};
+      const selectedParts = /** @type {CarConfiguratorState['selectedParts']} */ ({});
       for (const [key, entity] of Object.entries(this.carPartEntities)) {
         const partSceneUUID = entity.getComponent("scene_ref").value;
         selectedParts[key] = Math.max(
