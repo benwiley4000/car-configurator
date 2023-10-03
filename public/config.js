@@ -26,18 +26,21 @@ export const AppConfig = {
       skyboxUUID: assetIds.CubemapPureSkySkybox,
       radianceUUID: assetIds.CubemapPureSkyRadiance,
       irradianceUUID: assetIds.CubemapPureSkyIrradiance,
+      previewSrc: "./img/cubemap1.png",
     },
     {
       name: "Zwinger Night",
       skyboxUUID: assetIds.CubemapZwingerNightSkybox,
       radianceUUID: assetIds.CubemapZwingerNightRadiance,
       irradianceUUID: assetIds.CubemapZwingerNightIrradiance,
+      previewSrc: "./img/cubemap2.png",
     },
     {
       name: "Blouberg Sunrise",
       skyboxUUID: assetIds.CubemapBloubergSunriseSkybox,
       radianceUUID: assetIds.CubemapBloubergSunriseRadiance,
       irradianceUUID: assetIds.CubemapBloubergSunriseIrradiance,
+      previewSrc: "./img/cubemap3.png",
     },
   ],
   colorChoices: /** @type {[number, number, number][]} */ ([
