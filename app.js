@@ -528,27 +528,31 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       !changedMaterialUUID ||
       changedMaterialUUID === selectedCar.paintMaterialUUID
     ) {
-      newState.selectedColor = AppConfig.colorChoices.find((color) => {
-        return (
-          // albedo might be empty, defaults to 1,1,1,
-          // although if our scene is properly configured
-          // this should never happen.
-          (
-            this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
-              .dataJson.albedo || [1, 1, 1]
-          ).every((v, i) => color[i] === v)
-        );
-      });
+      const carPaintDataJson =
+        this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
+          .dataJson;
+      newState.selectedColor =
+        AppConfig.colorChoices.find((color) => {
+          return (
+            // albedo might be empty, defaults to 1,1,1,
+            // although if our scene is properly configured
+            // this should never happen.
+            (carPaintDataJson.albedo || [1, 1, 1]).every(
+              (v, i) => color[i] === v,
+            )
+          );
+        }) ||
+        // we shouldn't need to fall back but in case we changed the color
+        // in the scene to something we don't recognize, we want to store it
+        // so that this color is used when we switch cars or parts.
+        carPaintDataJson.albedo;
       newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
-        const cachedSourceMaterial =
-          this.cachedMaterialAssetDescriptions[matUUID];
-        const { clearCoatRoughness, clearCoatStrength } =
-          this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
-            .dataJson;
+        const sourceMaterialDataJson =
+          this.cachedMaterialAssetDescriptions[matUUID].dataJson;
+        const { clearCoatRoughness, clearCoatStrength } = carPaintDataJson;
         return (
-          cachedSourceMaterial.dataJson.clearCoatRoughness ===
-            clearCoatRoughness &&
-          cachedSourceMaterial.dataJson.clearCoatStrength === clearCoatStrength
+          sourceMaterialDataJson.clearCoatRoughness === clearCoatRoughness &&
+          sourceMaterialDataJson.clearCoatStrength === clearCoatStrength
         );
       });
     }
