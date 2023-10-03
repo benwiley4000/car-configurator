@@ -57,12 +57,12 @@ export const AppConfig = {
   },
   materials: [
     {
-      name: "Solid",
-      matUUID: assetIds.MaterialSolid,
-    },
-    {
       name: "Metallic",
       matUUID: assetIds.MaterialMetallic,
+    },
+    {
+      name: "Solid",
+      matUUID: assetIds.MaterialSolid,
     },
     {
       name: "Matte",

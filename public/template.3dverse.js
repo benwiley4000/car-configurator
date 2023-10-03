@@ -60,12 +60,12 @@ export default {
       asset_id: "5e5e1e23-66d6-46f7-a095-387001d568f6",
       asset_type: "scene",
     },
-    MaterialSolid: {
-      asset_id: "bd9dc4c5-20b7-404c-8a94-b84cf21de580",
-      asset_type: "material",
-    },
     MaterialMetallic: {
       asset_id: "e1357fe8-7a6f-4af5-83e0-b16643b98372",
+      asset_type: "material",
+    },
+    MaterialSolid: {
+      asset_id: "bd9dc4c5-20b7-404c-8a94-b84cf21de580",
       asset_type: "material",
     },
     MaterialMatte: {
