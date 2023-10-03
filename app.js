@@ -667,25 +667,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       this.updateStateFromEntities,
     );
     SDK3DVerse.notifier.on("onEntityReparent", this.updateStateFromEntities);
-
-    // TODO: won't have to do this once scene is restructured
-    const visibleEntitiesChildren =
-      await SDK3DVerse.engineAPI.getEntityChildren(
-        this.visibleEntitiesContainer,
-      );
-    // hide entities we're not tracking (e.g. the old app cached entities)
-    const thisMembersList = Object.values(this);
-    await reparentEntities(
-      visibleEntitiesChildren.filter(
-        (entity) => !thisMembersList.includes(entity),
-      ),
-      this.hiddenEntitiesContainer,
-    );
-    // show entities with swappable scene refs
-    await reparentEntities(
-      [this.bodyEntity, ...Object.values(this.carPartEntities)],
-      this.visibleEntitiesContainer,
-    );
   }
 
   async cacheMaterials() {
