@@ -603,6 +603,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
           selectedPartIndex
         ] || INVALID_UUID,
     });
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   /** @private */
