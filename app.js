@@ -1,3 +1,4 @@
+import { AppConfig } from "./config.js";
 import AssetEditorAPI from "./AssetEditorAPI.js";
 
 // Include external library definitions to help with autocompletion
@@ -12,6 +13,8 @@ const PARTS_CATEGORY_MAPPING = {
   rearBumpers: "Rear Bumper",
   spoilers: "Spoiler",
 };
+
+const INVALID_UUID = SDK3DVerse.utils.invalidUUID;
 
 /**
  * This sets up the canvas display, gets connected with 3dverse,
@@ -345,41 +348,31 @@ function getAssetEditorAPIForMaterial(materialUUID, callback) {
 
 const CarConfiguratorActions = new (class CarConfiguratorActions {
   /**
-   * The VISIBLE_ENTITIES container entity is where we put
+   * The visible entities container entity is where we put
    * car parts and other entities to show
    * @type {object | null}
    */
   visibleEntitiesContainer = null;
   /**
-   * We pre-instantiate entities in HIDDEN_ENTITIES
+   * We pre-instantiate entities in hidden entities
    * so we can show them later by moving them to
-   * VISIBLE_ENTITIES. HIDDEN_ENTITIES is technically
+   * visible entities. hidden entities is technically
    * visible but it is moved far away from the camera
    * so we never see it.
    * @type {object | null}
    */
   hiddenEntitiesContainer = null;
+  /** @private @type {object | null} */
+  bodyEntity = null;
   /**
    * @private
    * @type {{
-   *   body: object;
-   *   frontBumpers: object[];
-   *   rearBumpers: object[];
-   *   spoilers: object[];
-   * }[]}
-   */
-  allCarPartEntities = [];
-  /**
-   * @private
-   * @type {{
-   *   body: object | null;
    *   frontBumpers: object | null;
    *   rearBumpers: object | null;
    *   spoilers: object | null;
    * }}
    */
-  selectedCarPartEntities = {
-    body: null,
+  carPartEntities = {
     frontBumpers: null,
     rearBumpers: null,
     spoilers: null,
@@ -412,10 +405,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
    * @param  {...object} updatedEntities
    */
   updateStateFromEntities = (...updatedEntities) => {
-    const selectedCarIndex = this.allCarPartEntities.findIndex(({ body }) => {
-      return this.isEntityVisible(body);
-    });
-
     /**
      * @typedef {Pick<
      *   CarConfiguratorState,
@@ -440,31 +429,14 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
         Object.keys(CarConfiguratorStore.state)
       );
     } else {
-      const allNonBodyParts = [
-        ...this.allCarPartEntities
-          .map(({ frontBumpers }) => frontBumpers)
-          .flat(),
-        ...this.allCarPartEntities.map(({ rearBumpers }) => rearBumpers).flat(),
-        ...this.allCarPartEntities.map(({ spoilers }) => spoilers).flat(),
-      ];
+      const carPartEntitiesList = Object.values(this.carPartEntities);
       for (const entity of updatedEntities) {
-        // For car and car parts changes, since we're swapping visibility of
-        // multiple entities, we need to make sure the changed part is currently
-        // visible - if we update in response to an entity becoming invisible we
-        // might accidentally undo an optimistically updated UI state.
-        if (selectedCarIndex !== -1) {
-          if (entity === this.allCarPartEntities[selectedCarIndex].body) {
-            updatedKeys.push("selectedCarIndex");
-          } else if (
-            allNonBodyParts.includes(entity) &&
-            this.isEntityVisible(entity)
-          ) {
-            updatedKeys.push("selectedParts");
-          }
+        if (entity === this.bodyEntity) {
+          updatedKeys.push("selectedCarIndex");
         }
-
-        // For other entity updates it's pretty simple to know if we should
-        // update.
+        if (carPartEntitiesList.includes(entity)) {
+          updatedKeys.push("selectedParts");
+        }
         if (entity === this.environmentEntity) {
           updatedKeys.push("selectedCubemap");
         }
@@ -481,50 +453,34 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     const newState = {};
 
     if (updatedKeys.includes("selectedCarIndex")) {
-      newState.selectedCarIndex = selectedCarIndex;
+      newState.selectedCarIndex = AppConfig.cars.findIndex(({ sceneUUID }) => {
+        return this.bodyEntity.getComponent("scene_ref").value === sceneUUID;
+      });
     }
     if (updatedKeys.includes("selectedParts")) {
       // if visibility on a car part is updated before its respective car body,
       // we will go ahead and update the index respective to the correct car.
-      const selectedFrontBumperIndex = Math.max(
-        ...this.allCarPartEntities.map((_, carIndex) =>
-          this.allCarPartEntities[carIndex].frontBumpers.findIndex((entity) => {
-            return this.isEntityVisible(entity);
-          }),
-        ),
-        0,
-      );
-      const selectedRearBumpersIndex = Math.max(
-        ...this.allCarPartEntities.map((_, carIndex) =>
-          this.allCarPartEntities[carIndex].rearBumpers.findIndex((entity) => {
-            return this.isEntityVisible(entity);
-          }),
-        ),
-        0,
-      );
-      const selectedSpoilersIndex = Math.max(
-        ...this.allCarPartEntities.map((_, carIndex) =>
-          this.allCarPartEntities[carIndex].spoilers.findIndex((entity) => {
-            return this.isEntityVisible(entity);
-          }),
-        ),
-        0,
-      );
       /** @type {CarConfiguratorState['selectedParts']} */
-      const selectedParts =
-        CarConfiguratorStore.state.selectedParts.frontBumpers ===
-          selectedFrontBumperIndex &&
-        CarConfiguratorStore.state.selectedParts.rearBumpers ===
-          selectedRearBumpersIndex &&
-        CarConfiguratorStore.state.selectedParts.spoilers ===
-          selectedSpoilersIndex
-          ? CarConfiguratorStore.state.selectedParts
-          : {
-              frontBumpers: selectedFrontBumperIndex,
-              rearBumpers: selectedRearBumpersIndex,
-              spoilers: selectedSpoilersIndex,
-            };
-      newState.selectedParts = selectedParts;
+      const selectedParts = {};
+      for (const [key, entity] of Object.entries(this.carPartEntities)) {
+        const partSceneUUID = entity.getComponent("scene_ref").value;
+        selectedParts[key] = Math.max(
+          ...AppConfig.cars.map(({ frontBumpers }) =>
+            frontBumpers.findIndex((id) => partSceneUUID === id),
+          ),
+          0,
+        );
+      }
+      // only update object in state if the values are different (to avoid
+      // triggering unnecessary re-render).
+      /** @type {CarConfiguratorState['selectedParts']} */
+      if (
+        Object.entries(CarConfiguratorStore.state.selectedParts).some(
+          ([key, index]) => selectedParts[key] !== index,
+        )
+      ) {
+        newState.selectedParts = selectedParts;
+      }
     }
     if (updatedKeys.includes("selectedCubemap")) {
       newState.selectedCubemap = AppConfig.cubemaps.find(({ skyboxUUID }) => {
@@ -609,61 +565,18 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     CarConfiguratorStore.setState(newState);
   };
 
-  /**
-   * @private
-   * @param {Partial<typeof this.selectedCarPartEntities>} parts
-   */
-  async changeParts(parts) {
-    const partsEntries = Object.entries(parts);
-
-    // we will move multiple entities and we want this to
-    // happen all at once in the renderer.
-    await SDK3DVerse.engineAPI.batchOperations(
-      "swap-entities",
-      partsEntries
-        .map(([category, newPartEntity]) => {
-          return [
-            async () => {
-              // hide previous part for category
-              if (this.selectedCarPartEntities[category]) {
-                await reparentEntities(
-                  [this.selectedCarPartEntities[category]],
-                  this.hiddenEntitiesContainer,
-                );
-              }
-            },
-            async () => {
-              // make chosen part visible
-              if (newPartEntity) {
-                await reparentEntities(
-                  [newPartEntity],
-                  this.visibleEntitiesContainer,
-                );
-              }
-            },
-          ];
-        })
-        .flat(),
-    );
-
-    for (const [category, newPartEntity] of partsEntries) {
-      this.selectedCarPartEntities[category] = newPartEntity || null;
-    }
-  }
-
   /** @private */
-  async applySelectedCar() {
-    const allPartsForSelectedCar =
-      this.allCarPartEntities[CarConfiguratorStore.state.selectedCarIndex];
-
+  applySelectedCar() {
+    const selectedCar =
+      AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     this.applySelectedMaterial();
-
-    await this.changeParts({
-      body: allPartsForSelectedCar.body,
-      frontBumpers: allPartsForSelectedCar.frontBumpers[0] || null,
-      rearBumpers: allPartsForSelectedCar.rearBumpers[0] || null,
-      spoilers: allPartsForSelectedCar.spoilers[0] || null,
-    });
+    this.bodyEntity.setComponent("scene_ref", { value: selectedCar.sceneUUID });
+    for (const [key, entity] of Object.entries(this.carPartEntities)) {
+      entity.setComponent("scene_ref", {
+        value: selectedCar[key][0] || INVALID_UUID,
+      });
+    }
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   /** @private */
@@ -677,15 +590,16 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   /** @private */
-  async applySelectedPart() {
+  applySelectedPart() {
     const { selectedPartCategory, selectedParts, selectedCarIndex } =
       CarConfiguratorStore.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
-    const partEntity =
-      this.allCarPartEntities[selectedCarIndex][selectedPartCategory][
-        selectedPartIndex
-      ];
-    await this.changeParts({ [selectedPartCategory]: partEntity });
+    this.carPartEntities[selectedPartCategory].setComponent("scene_ref", {
+      value:
+        AppConfig.cars[selectedCarIndex][selectedPartCategory][
+          selectedPartIndex
+        ] || INVALID_UUID,
+    });
   }
 
   /** @private */
@@ -706,79 +620,29 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   async fetchSceneEntities() {
-    const [visibleEntitiesContainer, hiddenEntitiesContainer] =
-      await SDK3DVerse.engineAPI.findEntitiesByNames(
-        "VISIBLE_ENTITIES",
-        "HIDDEN_ENTITIES",
-      );
+    const [
+      visibleEntitiesContainer,
+      hiddenEntitiesContainer,
+      bodyEntity,
+      frontBumperEntity,
+      rearBumperEntity,
+      spoilerEntity,
+    ] = await SDK3DVerse.engineAPI.findEntitiesByNames(
+      AppConfig.visibleEntitiesContainerName,
+      AppConfig.hiddenEntitiesContainerName,
+      AppConfig.sceneRefEntityNames.body,
+      AppConfig.sceneRefEntityNames.frontBumpers,
+      AppConfig.sceneRefEntityNames.rearBumpers,
+      AppConfig.sceneRefEntityNames.spoilers,
+    );
     Object.assign(this, {
       visibleEntitiesContainer,
       hiddenEntitiesContainer,
+      bodyEntity,
     });
-    for (const {
-      name,
-      frontBumpers,
-      rearBumpers,
-      spoilers,
-    } of AppConfig.cars) {
-      const entitiesForCar = {
-        body: null,
-        frontBumpers: [],
-        rearBumpers: [],
-        spoilers: [],
-      };
-
-      await Promise.all([
-        (async () => {
-          const [body] = await SDK3DVerse.engineAPI.findEntitiesByNames(name);
-          entitiesForCar.body = body;
-          if (this.isEntityVisible(entitiesForCar.body)) {
-            this.selectedCarPartEntities.body = entitiesForCar.body;
-          }
-        })(),
-        (async () => {
-          if (!frontBumpers.length) {
-            return;
-          }
-          entitiesForCar.frontBumpers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...frontBumpers);
-          for (const frontBumper of entitiesForCar.frontBumpers) {
-            if (this.isEntityVisible(frontBumper)) {
-              this.selectedCarPartEntities.frontBumpers = frontBumper;
-              break;
-            }
-          }
-        })(),
-        (async () => {
-          if (!rearBumpers.length) {
-            return;
-          }
-          entitiesForCar.rearBumpers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...rearBumpers);
-          for (const rearBumper of entitiesForCar.rearBumpers) {
-            if (this.isEntityVisible(rearBumper)) {
-              this.selectedCarPartEntities.rearBumpers = rearBumper;
-              break;
-            }
-          }
-        })(),
-        (async () => {
-          if (!spoilers.length) {
-            return;
-          }
-          entitiesForCar.spoilers =
-            await SDK3DVerse.engineAPI.findEntitiesByNames(...spoilers);
-          for (const spoiler of entitiesForCar.spoilers) {
-            if (this.isEntityVisible(spoiler)) {
-              this.selectedCarPartEntities.spoilers = spoiler;
-              break;
-            }
-          }
-        })(),
-      ]);
-
-      this.allCarPartEntities.push(entitiesForCar);
-    }
+    this.carPartEntities.frontBumpers = frontBumperEntity;
+    this.carPartEntities.rearBumpers = rearBumperEntity;
+    this.carPartEntities.spoilers = spoilerEntity;
 
     this.environmentEntity = await SDK3DVerse.engineAPI
       .findEntitiesByNames("Env")
@@ -799,6 +663,25 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       this.updateStateFromEntities,
     );
     SDK3DVerse.notifier.on("onEntityReparent", this.updateStateFromEntities);
+
+    // TODO: won't have to do this once scene is restructured
+    const visibleEntitiesChildren =
+      await SDK3DVerse.engineAPI.getEntityChildren(
+        this.visibleEntitiesContainer,
+      );
+    // hide entities we're not tracking (e.g. the old app cached entities)
+    const thisMembersList = Object.values(this);
+    await reparentEntities(
+      visibleEntitiesChildren.filter(
+        (entity) => !thisMembersList.includes(entity),
+      ),
+      this.hiddenEntitiesContainer,
+    );
+    // show entities with swappable scene refs
+    await reparentEntities(
+      [this.bodyEntity, ...Object.values(this.carPartEntities)],
+      this.visibleEntitiesContainer,
+    );
   }
 
   async cacheMaterials() {
@@ -923,7 +806,7 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     const event = CarConfiguratorStore.state.rotationOn
       ? "start_simulation"
       : "pause_simulation";
-    SDK3DVerse.engineAPI.fireEvent(SDK3DVerse.utils.invalidUUID, event);
+    SDK3DVerse.engineAPI.fireEvent(INVALID_UUID, event);
 
     // We are going to use a blank entity in the scene to track the
     // rotation state until we have a way to query animation state
