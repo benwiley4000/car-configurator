@@ -1,4 +1,4 @@
-import templateJson from "./template.3dverse.js";
+import templateJson from "../template.3dverse.js";
 
 const assetIds = Object.entries(templateJson.assets).reduce(
   (assetIds, [name, { asset_id }]) => {

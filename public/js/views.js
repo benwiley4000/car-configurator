@@ -1,4 +1,3 @@
-// Include external library definitions to help with autocompletion
 /// <reference path="./vendor/handlebars.d.ts" />
 
 import { AppConfig } from "./config.js";
