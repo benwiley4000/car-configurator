@@ -203,21 +203,6 @@ function reconfigureResolution() {
 }
 
 /**
- * @param {object[]} entities
- * @param {object} parentEntity
- */
-async function reparentEntities(entities, parentEntity) {
-  const shouldKeepGlobalTransform = false;
-  const shouldCommit = false;
-  await SDK3DVerse.engineAPI.reparentEntities(
-    entities.map((entity) => entity.getID()),
-    parentEntity.getID(),
-    shouldKeepGlobalTransform,
-    shouldCommit,
-  );
-}
-
-/**
  * @param {string} assetType
  * @param {string} assetUUID
  * @returns
@@ -347,21 +332,6 @@ function getAssetEditorAPIForMaterial(materialUUID, callback) {
 }
 
 const CarConfiguratorActions = new (class CarConfiguratorActions {
-  /**
-   * The visible entities container entity is where we put
-   * car parts and other entities to show
-   * @type {object | null}
-   */
-  visibleEntitiesContainer = null;
-  /**
-   * We pre-instantiate entities in hidden entities
-   * so we can show them later by moving them to
-   * visible entities. hidden entities is technically
-   * visible but it is moved far away from the camera
-   * so we never see it.
-   * @type {object | null}
-   */
-  hiddenEntitiesContainer = null;
   /** @private @type {object | null} */
   bodyEntity = null;
   /**
@@ -380,6 +350,8 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   /** @private @type {object | null} */
   environmentEntity = null;
   /** @private @type {object | null} */
+  platformEntity = null;
+  /** @private @type {object | null} */
   gradientPlatformEntity = null;
   /** @private @type {object | null} */
   isAnimationActiveTokenEntity = null;
@@ -391,14 +363,6 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
   rearlightAssetEditors = [];
   /** @type {AssetEditorAPI[]} */
   paintAssetEditors = [];
-
-  /**
-   * @private
-   * @param {object} entity
-   */
-  isEntityVisible(entity) {
-    return entity.getParent().getID() === this.visibleEntitiesContainer.getID();
-  }
 
   /**
    * @private
@@ -460,7 +424,8 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
     if (updatedKeys.includes("selectedParts")) {
       // if visibility on a car part is updated before its respective car body,
       // we will go ahead and update the index respective to the correct car.
-      const selectedParts = /** @type {CarConfiguratorState['selectedParts']} */ ({});
+      const selectedParts =
+        /** @type {CarConfiguratorState['selectedParts']} */ ({});
       for (const [key, entity] of Object.entries(this.carPartEntities)) {
         const partSceneUUID = entity.getComponent("scene_ref").value;
         selectedParts[key] = Math.max(
@@ -490,14 +455,14 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
       });
     }
     if (updatedKeys.includes("rotationOn")) {
-      newState.rotationOn = this.isEntityVisible(
-        this.isAnimationActiveTokenEntity,
-      );
+      newState.rotationOn = this.isAnimationActiveTokenEntity
+        .getComponent("tags")
+        .value.includes("animationIsActive");
     }
     if (updatedKeys.includes("rgbGradientOn")) {
-      newState.rgbGradientOn = this.isEntityVisible(
-        this.gradientPlatformEntity,
-      );
+      newState.rgbGradientOn =
+        this.gradientPlatformEntity.getComponent("mesh_ref").value ===
+        this.platformEntity.getComponent("mesh_ref").value;
     }
 
     CarConfiguratorStore.setState(newState);
@@ -625,48 +590,37 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   async fetchSceneEntities() {
     const [
-      visibleEntitiesContainer,
-      hiddenEntitiesContainer,
+      environmentEntity,
+      platformEntity,
+      gradientPlatformEntity,
+      isAnimationActiveTokenEntity,
       bodyEntity,
       frontBumperEntity,
       rearBumperEntity,
       spoilerEntity,
     ] = await SDK3DVerse.engineAPI.findEntitiesByNames(
-      AppConfig.visibleEntitiesContainerName,
-      AppConfig.hiddenEntitiesContainerName,
+      AppConfig.environmentEntityName,
+      AppConfig.platformEntityName,
+      AppConfig.gradientPlatformEntityName,
+      AppConfig.isAnimationActiveTokenEntityName,
       AppConfig.sceneRefEntityNames.body,
       AppConfig.sceneRefEntityNames.frontBumpers,
       AppConfig.sceneRefEntityNames.rearBumpers,
       AppConfig.sceneRefEntityNames.spoilers,
     );
     Object.assign(this, {
-      visibleEntitiesContainer,
-      hiddenEntitiesContainer,
+      environmentEntity,
+      platformEntity,
+      gradientPlatformEntity,
+      isAnimationActiveTokenEntity,
       bodyEntity,
     });
     this.carPartEntities.frontBumpers = frontBumperEntity;
     this.carPartEntities.rearBumpers = rearBumperEntity;
     this.carPartEntities.spoilers = spoilerEntity;
 
-    this.environmentEntity = await SDK3DVerse.engineAPI
-      .findEntitiesByNames("Env")
-      .then(([entity]) => entity);
-
-    this.gradientPlatformEntity = await SDK3DVerse.engineAPI
-      .findEntitiesByNames("SM_StaticPlatform")
-      .then(([entity]) => entity);
-
-    this.isAnimationActiveTokenEntity = await SDK3DVerse.engineAPI
-      .findEntitiesByNames("isAnimationActiveToken")
-      .then(([entity]) => entity);
-
     this.updateStateFromEntities();
     SDK3DVerse.notifier.on("onEntitiesUpdated", this.updateStateFromEntities);
-    SDK3DVerse.notifier.on(
-      "onEntityVisibilityChanged",
-      this.updateStateFromEntities,
-    );
-    SDK3DVerse.notifier.on("onEntityReparent", this.updateStateFromEntities);
   }
 
   async cacheMaterials() {
@@ -795,29 +749,25 @@ const CarConfiguratorActions = new (class CarConfiguratorActions {
 
     // We are going to use a blank entity in the scene to track the
     // rotation state until we have a way to query animation state
-    reparentEntities(
-      [this.isAnimationActiveTokenEntity],
-      CarConfiguratorStore.state.rotationOn
-        ? this.visibleEntitiesContainer
-        : this.hiddenEntitiesContainer,
-    );
+    const tagsValue = CarConfiguratorStore.state.rotationOn
+      ? ["animationIsActive"]
+      : [];
+    this.isAnimationActiveTokenEntity.setComponent("tags", {
+      value: CarConfiguratorStore.state.rotationOn ? ["animationIsActive"] : [],
+    });
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   async toggleRgbGradientOn() {
     CarConfiguratorStore.setState({
       rgbGradientOn: !CarConfiguratorStore.state.rgbGradientOn,
     });
-    if (CarConfiguratorStore.state.rgbGradientOn) {
-      await reparentEntities(
-        [this.gradientPlatformEntity],
-        this.visibleEntitiesContainer,
-      );
-    } else {
-      await reparentEntities(
-        [this.gradientPlatformEntity],
-        this.hiddenEntitiesContainer,
-      );
-    }
+    this.gradientPlatformEntity.setComponent("mesh_ref", {
+      value: CarConfiguratorStore.state.rgbGradientOn
+        ? this.platformEntity.getComponent("mesh_ref").value
+        : INVALID_UUID,
+    });
+    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   /**

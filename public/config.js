@@ -10,8 +10,10 @@ const assetIds = Object.entries(templateJson.assets).reduce(
 
 export const AppConfig = {
   sceneUUID: assetIds.SceneCarConfigurator,
-  visibleEntitiesContainerName: "VISIBLE_ENTITIES",
-  hiddenEntitiesContainerName: "HIDDEN_ENTITIES",
+  environmentEntityName: "Env",
+  platformEntityName: "Platform",
+  gradientPlatformEntityName: "RGB Platform",
+  isAnimationActiveTokenEntityName: "isAnimationActiveToken",
   sceneRefEntityNames: {
     body: "Car Body",
     frontBumpers: "Car Front Bumper",
