@@ -50,6 +50,11 @@ export const AppConfig = {
     [0.58, 0.141, 0.506],
     [0.251, 0, 0],
   ]),
+  partCategoryNames: {
+    frontBumpers: "Front Bumper",
+    rearBumpers: "Rear Bumper",
+    spoilers: "Spoiler",
+  },
   materials: [
     {
       name: "Solid",
