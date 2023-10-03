@@ -4,6 +4,7 @@ A sample app built using the 3dverse Livelink SDK to manipulate a scene in 3dver
 This app is written with plain HTML, CSS and JavaScript, plus a few Handlebars templates for data-driven HTML elements. The only external libraries it uses are Handlebars and the 3dverse Livelink SDK. But of course you can use whatever UI framework you prefer (React, Vue, Svelte, Angular, etc), to build your own 3dverse application.
 
 IMMEDIATE TODO
+3. finish adapting code to new config
 4. implement sync for cubemap somehow
 4.5. remaining code style refactors
 5. fix bugs
