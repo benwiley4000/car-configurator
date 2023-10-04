@@ -72,6 +72,7 @@ async function initApp() {
 
   SDK3DVerse.setViewports(viewports);
   reconfigureResolution();
+  /** @type {number | null} */
   let debounceResizeTimeout = null;
   window.addEventListener("resize", () => {
     if (debounceResizeTimeout) {
@@ -88,7 +89,9 @@ async function initApp() {
     AppConfig.sceneUUID,
   );
 
-  const displayCanvas = document.getElementById("display_canvas");
+  const displayCanvas = /** @type {HTMLElement} */ (
+    document.getElementById("display_canvas")
+  );
   SDK3DVerse.setupDisplay(displayCanvas);
   // right click is used to zoom in and out so prevent default action
   displayCanvas.addEventListener("contextmenu", (e) => e.preventDefault());

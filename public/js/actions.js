@@ -16,43 +16,63 @@ const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
 const INVALID_UUID = SDK3DVerse.utils.invalidUUID;
 
 export const CarConfiguratorActions = new (class CarConfiguratorActions {
-  /** @private @type {object | null} */
-  bodyEntity = null;
   /**
-   * @private
-   * @type {{
-   *   frontBumpers: object | null;
-   *   rearBumpers: object | null;
-   *   spoilers: object | null;
-   * }}
+   * @typedef {{ getComponent: Function; setComponent: Function }} Entity
+   * @typedef {object} EntityMap
+   * @property {Entity} environment
+   * @property {Entity} platform
+   * @property {Entity} gradientPlatform
+   * @property {Entity} isAnimationActiveToken
+   * @property {Entity} body
+   * @property {{
+   *   frontBumpers: Entity;
+   *   rearBumpers: Entity;
+   *   spoilers: Entity;
+   * }} carParts
    */
-  carPartEntities = {
-    frontBumpers: null,
-    rearBumpers: null,
-    spoilers: null,
-  };
-  /** @private @type {object | null} */
-  environmentEntity = null;
-  /** @private @type {object | null} */
-  platformEntity = null;
-  /** @private @type {object | null} */
-  gradientPlatformEntity = null;
-  /** @private @type {object | null} */
-  isAnimationActiveTokenEntity = null;
-  /** @type {Record<string, object>} */
-  cachedMaterialAssetDescriptions = {};
-  /** @type {AssetEditorAPI[]} */
+  /** @private @type {EntityMap | null} */
+  entities = null;
+  /**
+   * @type {Record<string, import("./utils-3dverse.js").AssetDescription>
+   *   | null}
+   */
+  cachedMaterialAssetDescriptions = null;
+  /** @type {AssetEditorAPI[] | null} */
   headlightAssetEditors = [];
-  /** @type {AssetEditorAPI[]} */
+  /** @type {AssetEditorAPI[] | null} */
   rearlightAssetEditors = [];
-  /** @type {AssetEditorAPI[]} */
+  /** @type {AssetEditorAPI[] | null} */
   paintAssetEditors = [];
 
   /**
+   * Only reason to use this is to satisfy typescript for nullable variable
+   * access. Throws an error if the value is null.
    * @private
-   * @param  {...object} updatedEntities
+   * @template {'entities'
+   *   | 'cachedMaterialAssetDescriptions'
+   *   | 'headlightAssetEditors'
+   *   | 'rearlightAssetEditors'
+   *   | 'paintAssetEditors'
+   * } T
+   * @param {T} key
+   * @returns {NonNullable<(typeof this)[T]>}
+   */
+  safeGet(key) {
+    if (this[/** @type {keyof this} */ (key)] === null) {
+      throw new Error(
+        `Tried to access key ${/** @type {string} */ (key)} before definition`,
+      );
+    }
+    // @ts-ignore ts can't figure this one out, oh well
+    return this[/** @type {keyof this} */ (key)];
+  }
+
+  /**
+   * @private
+   * @param  {...Entity} updatedEntities
    */
   updateStateFromEntities = (...updatedEntities) => {
+    const entities = this.safeGet("entities");
     /**
      * @typedef {Pick<
      *   CarConfiguratorState,
@@ -77,21 +97,21 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         Object.keys(CarConfiguratorStore.state)
       );
     } else {
-      const carPartEntitiesList = Object.values(this.carPartEntities);
+      const carPartEntitiesList = Object.values(entities.carParts);
       for (const entity of updatedEntities) {
-        if (entity === this.bodyEntity) {
+        if (entity === entities.body) {
           updatedKeys.push("selectedCarIndex");
         }
         if (carPartEntitiesList.includes(entity)) {
           updatedKeys.push("selectedParts");
         }
-        if (entity === this.environmentEntity) {
+        if (entity === entities.environment) {
           updatedKeys.push("selectedCubemap");
         }
-        if (entity === this.isAnimationActiveTokenEntity) {
+        if (entity === entities.isAnimationActiveToken) {
           updatedKeys.push("rotationOn");
         }
-        if (entity === this.gradientPlatformEntity) {
+        if (entity === entities.gradientPlatform) {
           updatedKeys.push("rgbGradientOn");
         }
       }
@@ -102,7 +122,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
     if (updatedKeys.includes("selectedCarIndex")) {
       newState.selectedCarIndex = AppConfig.cars.findIndex(({ sceneUUID }) => {
-        return this.bodyEntity.getComponent("scene_ref").value === sceneUUID;
+        return entities.body.getComponent("scene_ref").value === sceneUUID;
       });
     }
     if (updatedKeys.includes("selectedParts")) {
@@ -110,9 +130,11 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       // we will go ahead and update the index respective to the correct car.
       const selectedParts =
         /** @type {CarConfiguratorState['selectedParts']} */ ({});
-      for (const [key, entity] of Object.entries(this.carPartEntities)) {
+      for (const [key, entity] of Object.entries(entities.carParts)) {
         const partSceneUUID = entity.getComponent("scene_ref").value;
-        selectedParts[key] = Math.max(
+        selectedParts[
+          /** @type {keyof CarConfiguratorState['selectedParts']} */ (key)
+        ] = Math.max(
           ...AppConfig.cars.map(({ frontBumpers }) =>
             frontBumpers.findIndex((id) => partSceneUUID === id),
           ),
@@ -124,7 +146,10 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       /** @type {CarConfiguratorState['selectedParts']} */
       if (
         Object.entries(CarConfiguratorStore.state.selectedParts).some(
-          ([key, index]) => selectedParts[key] !== index,
+          ([key, index]) =>
+            selectedParts[
+              /** @type {keyof CarConfiguratorState['selectedParts']} */ (key)
+            ] !== index,
         )
       ) {
         newState.selectedParts = selectedParts;
@@ -133,20 +158,20 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     if (updatedKeys.includes("selectedCubemap")) {
       newState.selectedCubemap = AppConfig.cubemaps.find(({ skyboxUUID }) => {
         return (
-          this.environmentEntity.getComponent("environment").skyboxUUID ===
+          entities.environment.getComponent("environment").skyboxUUID ===
           skyboxUUID
         );
       });
     }
     if (updatedKeys.includes("rotationOn")) {
-      newState.rotationOn = this.isAnimationActiveTokenEntity
+      newState.rotationOn = entities.isAnimationActiveToken
         .getComponent("tags")
         .value.includes("animationIsActive");
     }
     if (updatedKeys.includes("rgbGradientOn")) {
       newState.rgbGradientOn =
-        this.gradientPlatformEntity.getComponent("mesh_ref").value ===
-        this.platformEntity.getComponent("mesh_ref").value;
+        entities.gradientPlatform.getComponent("mesh_ref").value ===
+        entities.platform.getComponent("mesh_ref").value;
     }
 
     CarConfiguratorStore.setState(newState);
@@ -157,6 +182,9 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
    * @param {string} [changedMaterialUUID]
    */
   updateStateFromMaterials = (changedMaterialUUID) => {
+    const cachedMaterialAssetDescriptions = this.safeGet(
+      "cachedMaterialAssetDescriptions",
+    );
     const { selectedCarIndex } = CarConfiguratorStore.state;
     const selectedCar = AppConfig.cars[selectedCarIndex];
 
@@ -177,8 +205,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       changedMaterialUUID === selectedCar.paintMaterialUUID
     ) {
       const carPaintDataJson =
-        this.cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID]
-          .dataJson;
+        cachedMaterialAssetDescriptions[selectedCar.paintMaterialUUID].dataJson;
       newState.selectedColor =
         AppConfig.colorChoices.find((color) => {
           return (
@@ -196,7 +223,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         carPaintDataJson.albedo;
       newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
         const sourceMaterialDataJson =
-          this.cachedMaterialAssetDescriptions[matUUID].dataJson;
+          cachedMaterialAssetDescriptions[matUUID].dataJson;
         const { clearCoatRoughness, clearCoatStrength } = carPaintDataJson;
         return (
           sourceMaterialDataJson.clearCoatRoughness === clearCoatRoughness &&
@@ -210,8 +237,8 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       changedMaterialUUID === selectedCar.headLightsMatUUID
     ) {
       newState.lightsOn =
-        this.cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID]
-          .dataJson.emissionIntensity > 0;
+        (cachedMaterialAssetDescriptions[selectedCar.headLightsMatUUID].dataJson
+          .emissionIntensity || 0) > 0;
     }
 
     CarConfiguratorStore.setState(newState);
@@ -219,13 +246,17 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   applySelectedCar() {
+    const entities = this.safeGet("entities");
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     this.applySelectedMaterial();
-    this.bodyEntity.setComponent("scene_ref", { value: selectedCar.sceneUUID });
-    for (const [key, entity] of Object.entries(this.carPartEntities)) {
+    entities.body.setComponent("scene_ref", { value: selectedCar.sceneUUID });
+    for (const [key, entity] of Object.entries(entities.carParts)) {
       entity.setComponent("scene_ref", {
-        value: selectedCar[key][0] || INVALID_UUID,
+        value:
+          selectedCar[
+            /** @type {keyof (typeof entities.carParts)} */ (key)
+          ][0] || INVALID_UUID,
       });
     }
     SDK3DVerse.engineAPI.propagateChanges();
@@ -233,20 +264,25 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   applySelectedMaterial() {
+    const cachedMaterialAssetDescriptions = this.safeGet(
+      "cachedMaterialAssetDescriptions",
+    );
+    const paintAssetEditors = this.safeGet("paintAssetEditors");
     const { selectedMaterial, selectedColor } = CarConfiguratorStore.state;
-    const desc = this.cachedMaterialAssetDescriptions[selectedMaterial.matUUID];
+    const desc = cachedMaterialAssetDescriptions[selectedMaterial.matUUID];
     desc.dataJson.albedo = selectedColor;
     AppConfig.cars.forEach((_, i) => {
-      this.paintAssetEditors[i].updateAsset(desc);
+      paintAssetEditors[i].updateAsset(desc);
     });
   }
 
   /** @private */
   applySelectedPart() {
+    const entities = this.safeGet("entities");
     const { selectedPartCategory, selectedParts, selectedCarIndex } =
       CarConfiguratorStore.state;
     const selectedPartIndex = selectedParts[selectedPartCategory];
-    this.carPartEntities[selectedPartCategory].setComponent("scene_ref", {
+    entities.carParts[selectedPartCategory].setComponent("scene_ref", {
       value:
         AppConfig.cars[selectedCarIndex][selectedPartCategory][
           selectedPartIndex
@@ -257,18 +293,23 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @private */
   applyLightsSetting() {
+    const cachedMaterialAssetDescriptions = this.safeGet(
+      "cachedMaterialAssetDescriptions",
+    );
+    const headlightAssetEditors = this.safeGet("headlightAssetEditors");
+    const rearlightAssetEditors = this.safeGet("rearlightAssetEditors");
     const { lightsOn } = CarConfiguratorStore.state;
 
     const intensity = lightsOn ? 100 : 0;
 
     AppConfig.cars.forEach(({ headLightsMatUUID, rearLightsMatUUID }, i) => {
-      const desc1 = this.cachedMaterialAssetDescriptions[headLightsMatUUID];
+      const desc1 = cachedMaterialAssetDescriptions[headLightsMatUUID];
       desc1.dataJson.emissionIntensity = intensity;
-      this.headlightAssetEditors[i].updateAsset(desc1);
+      headlightAssetEditors[i].updateAsset(desc1);
 
-      const desc2 = this.cachedMaterialAssetDescriptions[rearLightsMatUUID];
+      const desc2 = cachedMaterialAssetDescriptions[rearLightsMatUUID];
       desc2.dataJson.emissionIntensity = intensity;
-      this.rearlightAssetEditors[i].updateAsset(desc2);
+      rearlightAssetEditors[i].updateAsset(desc2);
     });
   }
 
@@ -292,22 +333,26 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       AppConfig.sceneRefEntityNames.rearBumpers,
       AppConfig.sceneRefEntityNames.spoilers,
     );
-    Object.assign(this, {
-      environmentEntity,
-      platformEntity,
-      gradientPlatformEntity,
-      isAnimationActiveTokenEntity,
-      bodyEntity,
-    });
-    this.carPartEntities.frontBumpers = frontBumperEntity;
-    this.carPartEntities.rearBumpers = rearBumperEntity;
-    this.carPartEntities.spoilers = spoilerEntity;
+    this.entities = {
+      environment: environmentEntity,
+      platform: platformEntity,
+      gradientPlatform: gradientPlatformEntity,
+      isAnimationActiveToken: isAnimationActiveTokenEntity,
+      body: bodyEntity,
+      carParts: {
+        frontBumpers: frontBumperEntity,
+        rearBumpers: rearBumperEntity,
+        spoilers: spoilerEntity,
+      },
+    };
 
     this.updateStateFromEntities();
     SDK3DVerse.notifier.on("onEntitiesUpdated", this.updateStateFromEntities);
   }
 
   async cacheMaterials() {
+    /** @typedef {NonNullable<typeof this.cachedMaterialAssetDescriptions>} D */
+    const cachedMaterialAssetDescriptions = /** @type {D} */ ({});
     await Promise.all(
       [
         ...AppConfig.cars
@@ -320,30 +365,31 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         ...AppConfig.materials.map(({ matUUID }) => matUUID),
       ].map(async (materialUUID) => {
         const desc = await getAssetDescription("materials", materialUUID);
-        this.cachedMaterialAssetDescriptions[materialUUID] = desc;
+        cachedMaterialAssetDescriptions[materialUUID] = desc;
       }),
     );
+    this.cachedMaterialAssetDescriptions = cachedMaterialAssetDescriptions;
+
+    /** @param {string} materialUUID */
+    const hookUpAssetEditor = (materialUUID) => {
+      return getAssetEditorAPIForMaterial(materialUUID, (event, desc) => {
+        if (event !== "assetUpdated") return;
+        this.cachedMaterialAssetDescriptions = {
+          ...this.cachedMaterialAssetDescriptions,
+          [materialUUID]: desc,
+        };
+        this.updateStateFromMaterials(materialUUID);
+      });
+    };
 
     this.headlightAssetEditors = AppConfig.cars.map(({ headLightsMatUUID }) => {
-      return getAssetEditorAPIForMaterial(headLightsMatUUID, (event, desc) => {
-        if (event !== "assetUpdated") return;
-        this.cachedMaterialAssetDescriptions[headLightsMatUUID] = desc;
-        this.updateStateFromMaterials(headLightsMatUUID);
-      });
+      return hookUpAssetEditor(headLightsMatUUID);
     });
     this.rearlightAssetEditors = AppConfig.cars.map(({ rearLightsMatUUID }) => {
-      return getAssetEditorAPIForMaterial(rearLightsMatUUID, (event, desc) => {
-        if (event !== "assetUpdated") return;
-        this.cachedMaterialAssetDescriptions[rearLightsMatUUID] = desc;
-        this.updateStateFromMaterials(rearLightsMatUUID);
-      });
+      return hookUpAssetEditor(rearLightsMatUUID);
     });
     this.paintAssetEditors = AppConfig.cars.map(({ paintMaterialUUID }) => {
-      return getAssetEditorAPIForMaterial(paintMaterialUUID, (event, desc) => {
-        if (event !== "assetUpdated") return;
-        this.cachedMaterialAssetDescriptions[paintMaterialUUID] = desc;
-        this.updateStateFromMaterials(paintMaterialUUID);
-      });
+      return hookUpAssetEditor(paintMaterialUUID);
     });
   }
 
@@ -402,12 +448,13 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
    * @param {number} cubemapIndex
    */
   changeCubemap(cubemapIndex) {
+    const entities = this.safeGet("entities");
     CarConfiguratorStore.setState({
       selectedCubemap: AppConfig.cubemaps[cubemapIndex],
     });
     const { skyboxUUID, radianceUUID, irradianceUUID } =
       CarConfiguratorStore.state.selectedCubemap;
-    this.environmentEntity.setComponent("environment", {
+    entities.environment.setComponent("environment", {
       skyboxUUID,
       radianceUUID,
       irradianceUUID,
@@ -423,6 +470,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
   }
 
   toggleRotationOn() {
+    const entities = this.safeGet("entities");
     CarConfiguratorStore.setState({
       rotationOn: !CarConfiguratorStore.state.rotationOn,
     });
@@ -433,22 +481,20 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
     // We are going to use a blank entity in the scene to track the
     // rotation state until we have a way to query animation state
-    const tagsValue = CarConfiguratorStore.state.rotationOn
-      ? ["animationIsActive"]
-      : [];
-    this.isAnimationActiveTokenEntity.setComponent("tags", {
+    entities.isAnimationActiveToken.setComponent("tags", {
       value: CarConfiguratorStore.state.rotationOn ? ["animationIsActive"] : [],
     });
     SDK3DVerse.engineAPI.propagateChanges();
   }
 
   toggleRgbGradientOn() {
+    const entities = this.safeGet("entities");
     CarConfiguratorStore.setState({
       rgbGradientOn: !CarConfiguratorStore.state.rgbGradientOn,
     });
-    this.gradientPlatformEntity.setComponent("mesh_ref", {
+    entities.gradientPlatform.setComponent("mesh_ref", {
       value: CarConfiguratorStore.state.rgbGradientOn
-        ? this.platformEntity.getComponent("mesh_ref").value
+        ? entities.platform.getComponent("mesh_ref").value
         : INVALID_UUID,
     });
     SDK3DVerse.engineAPI.propagateChanges();

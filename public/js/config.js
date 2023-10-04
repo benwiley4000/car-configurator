@@ -1,11 +1,13 @@
 import templateJson from "../template.3dverse.js";
 
+/** @typedef {keyof (typeof templateJson.assets)} AssetKey */
+
 const assetIds = Object.entries(templateJson.assets).reduce(
   (assetIds, [name, { asset_id }]) => {
-    assetIds[name] = asset_id;
+    assetIds[/** @type {AssetKey} */ (name)] = asset_id;
     return assetIds;
   },
-  /** @type {Record<keyof (typeof templateJson.assets), string>} */ ({}),
+  /** @type {Record<AssetKey, string>} */ ({}),
 );
 
 export const AppConfig = {

@@ -8,7 +8,7 @@ import { AppConfig } from "./config.js";
  */
 function deepFreezeObject(obj) {
   if (obj && typeof obj === "object") {
-    for (const key of Reflect.ownKeys(obj)) {
+    for (const key of /** @type {(keyof T)[]} */ (Reflect.ownKeys(obj))) {
       deepFreezeObject(obj[key]);
     }
   }
@@ -46,9 +46,7 @@ export const CarConfiguratorStore = new (class CarConfiguratorStore {
       spoilers: 0,
     },
     selectedColor: AppConfig.colorChoices[0],
-    selectedMaterial: AppConfig.materials.find(
-      ({ name }) => name === "Metallic",
-    ),
+    selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],
     lightsOn: true,
     rotationOn: false,
@@ -70,9 +68,9 @@ export const CarConfiguratorStore = new (class CarConfiguratorStore {
       ...oldState,
       ...value,
     });
-    const changedKeys = Object.keys(this.internalState).filter(
-      (key) => this.internalState[key] !== oldState[key],
-    );
+    const changedKeys = /** @type {(keyof (typeof this.internalState))[]} */ (
+      Object.keys(this.internalState)
+    ).filter((key) => this.internalState[key] !== oldState[key]);
 
     // notify subscribers
     for (const [watchedKeys, handler] of this.subscribers) {

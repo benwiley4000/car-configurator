@@ -56,9 +56,9 @@ export function setCameraSettings(settings) {
  * 1920px then adapts the scale appropriately for the canvas size.
  */
 export function reconfigureResolution() {
-  const { width, height } = document
-    .getElementById("canvas_container")
-    .getBoundingClientRect();
+  const { width, height } = /** @type {HTMLElement} */ (
+    document.getElementById("canvas_container")
+  ).getBoundingClientRect();
 
   const largestDim = Math.max(width, height);
   const MAX_DIM = 1920;
@@ -89,7 +89,7 @@ export async function getAssetDescription(assetType, assetUUID) {
     `${apiUrl}/assets/${assetType}/${assetUUID}/description`,
     {
       headers: {
-        User_token: getUserToken(),
+        User_token: getUserToken() || "",
       },
     },
   );
@@ -100,6 +100,22 @@ export async function getAssetDescription(assetType, assetUUID) {
   return data;
 }
 
+/**
+ * @typedef {{
+ *   dataJson: {
+ *     albedo?: [number, number, number];
+ *     clearCoatRoughness?: number;
+ *     clearCoatStrength?: number;
+ *     emissionIntensity?: number;
+ *   };
+ * }} AssetDescription
+ */
+
+/**
+ * @param {string} materialUUID
+ * @param {(event: string, desc: AssetDescription) => void} callback
+ * @returns
+ */
 export function getAssetEditorAPIForMaterial(materialUUID, callback) {
   const api = new AssetEditorAPI(getUserToken(), callback);
   api

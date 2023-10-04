@@ -1,3 +1,6 @@
+// @ts-nocheck
+// (we will externalize this so no use spending time typing it right now)
+
 const baseUrl = `wss://api.3dverse.com/legacy`;
 
 export default class AssetEditorAPI {
