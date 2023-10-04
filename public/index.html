@@ -26,7 +26,7 @@
           class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid text-[#EC6244] border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
         ></div>
-        <div id="info" class="relative mt-10">
+        <div class="relative mt-10">
           <span id="info_span" class="text-white font-medium text-base"
             >Loading...</span
           >
@@ -81,10 +81,9 @@
 
       <!-- OPTIONS -->
       <div
-        id="ui-options"
         class="options absolute flex flex-col justify-end top-[7vh] right-[5vw] space-y-1"
       >
-        <div id="settings-icons" class="options flex space-x-3 justify-end">
+        <div class="options flex space-x-3 justify-end">
           <div
             class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
             onclick="CarOptionsBarView.handleToggleLightsOn()"
