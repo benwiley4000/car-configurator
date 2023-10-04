@@ -10,8 +10,6 @@ Here is the basic flow of this app:
 (This chart was created with [flowchart.fun](https://flowchart.fun/))
 
 IMMEDIATE TODO
-3. finish adapting code to new config
-4. implement sync for cubemap somehow
 4.5. remaining code style refactors
 5. fix bugs
 6. implement features list
@@ -19,14 +17,10 @@ fucking qr code
 7. 3dverse sdk changes
 
 ## Code style stuff
-10. heavy use of jsdoc typescript so autocomplete works well (remove object type as well)
 11. Remove useless html after cleaning up css/tailwind usage
-13. really enforce 80char col
 
 ## Bugs
-4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch). this could be maybe solved by using isVisible instead of reparenting. there is also a bug where sometimes the car switch just doesnt happen. i should document this change and share a repro before i switch to is visible.
-8. Why did we stop waiting for connectionInfo.sessionCreated? maybe remove this.
-9. make app work in safari and firefox.
+4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch). this could be maybe solved by using isVisible instead of reparenting. there is also a bug where sometimes the car switch just doesnt happen. i should document this change and share a repro before i switch to is visible. NOTE: don't try to fix this until after we are using the transient scene. This will maybe resolve issues.
 
 ## app changes
 - Add tooltips to UI (in form of title="")
@@ -41,8 +35,7 @@ fucking qr code
 
 ## 3dverse stuff
 1. In general I should do an audit to make sure all the used apis are public (e.g. FTL)
-2. I need to go and make sure we're taking advantage of best camera settings
-3. Try to see what I can do to minimize number of calls to SDK (maybe reparent everything under main container and use .isVisible?). Also talk to Alex to figure out why I always get problems when I switch cars. See if there's any other UI actions that also can cause this.
+2. I need to go and make sure we're taking advantage of best camera settings (talk to Rados)
 
 ## SDK TODO
 - Make it so we don't throw an error whenever the session is closed (but preserve behavior that relies on this in collaborate.. figure out how to handle this differently).
