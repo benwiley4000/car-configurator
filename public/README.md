@@ -13,7 +13,7 @@ IMMEDIATE TODO
 4.5. remaining code style refactors
 5. fix bugs
 6. implement features list
-fucking qr code
+qr code
 7. 3dverse sdk changes
 
 ## Code style stuff
