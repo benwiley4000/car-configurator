@@ -177,6 +177,38 @@
 
       <!---------------------------------- CUSTOMIZATION ----------------------------------------->
 
+      <!-- PARTS SELECTION CONTAINER -->
+      <div id="car-parts" class="car-parts"></div>
+      <!-- PARTS SELECTION TEMPLATE -->
+      <script id="car-parts-template" type="text/x-handlebars">
+        <!-- Switch between categories -->
+        <div class="categories">
+          {{#each availableCategories as | category |}}
+            <button
+              onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
+              class="tab {{#if category.isSelected}} active-tab {{/if}} transition"
+            >
+              {{category.displayName}}
+            </button>
+          {{/each}}
+        </div>
+
+        <!-- Display the data for the selected category -->
+        <div class="parts-for-category transition">
+          {{#each selectedCategoryData as | part |}}
+            <div
+              class="{{#if part.isSelected}} active-part {{/if}} part-item transition"
+              onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
+            >
+              <div>{{part.displayName}}</div>
+              <div class="check-circle">
+                <img src="./img/white-check.png" />
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </script>
+
       <!-- COLORS SELECTION CONTAINER -->
       <div
         id="color-selection"
@@ -234,38 +266,6 @@
           </svg>
         </div>
       </div>
-
-      <!-- PARTS SELECTION CONTAINER -->
-      <div id="car-parts" class="car-parts"></div>
-      <!-- PARTS SELECTION TEMPLATE -->
-      <script id="car-parts-template" type="text/x-handlebars">
-        <!-- Switch between categories -->
-        <div class="categories">
-          {{#each availableCategories as | category |}}
-            <button
-              onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
-              class="tab {{#if category.isSelected}} active-tab {{/if}} transition"
-            >
-              {{category.displayName}}
-            </button>
-          {{/each}}
-        </div>
-
-        <!-- Display the data for the selected category -->
-        <div class="parts-for-category transition">
-          {{#each selectedCategoryData as | part |}}
-            <div
-              class="{{#if part.isSelected}} active-part {{/if}} part-item transition"
-              onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
-            >
-              <div>{{part.displayName}}</div>
-              <div class="check-circle">
-                <img src="./img/white-check.png" />
-              </div>
-            </div>
-          {{/each}}
-        </div>
-      </script>
 
       <!-- CUBEMAP SELECTION CONTAINER -->
       <div
