@@ -3,7 +3,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
 
-*, ::after, ::before {
+*,
+::after,
+::before {
   box-sizing: border-box;
   border-width: 0;
 }
@@ -14,6 +16,16 @@ html {
   --default-transition: all var(--transition-duration)
     var(--transition-timing-function);
   --rounded-border-radius: 9999px;
+  --color-primary: #ec6244;
+  --color-primary-lightened: #f27357;
+  --dark-gray: #272727;
+  --less-dark-gray: #454642;
+  --toggle-off-color: #696969;
+  --medium-gray: #a1a1a1;
+  --more-off-white: #d1d5db;
+  --off-white: #efeeee;
+  --cubemap-checked-bg: rgba(0, 0, 0, 0.7);
+  --step-button-hover-box-shadow: rgba(210, 247, 90, 0.3);
 }
 
 body {
@@ -82,7 +94,7 @@ small {
   justify-content: center;
   align-items: center;
   gap: 2.5rem;
-  background-color: #010001;
+  background-color: black;
   width: 100%;
   height: 100%;
   opacity: 1;
@@ -105,14 +117,14 @@ small {
   height: 3rem;
   width: 3rem;
   border-radius: var(--rounded-border-radius);
-  border: 4px solid #ec6244;
+  border: 4px solid var(--color-primary);
   border-right-color: transparent;
   border-radius: var(--rounded-border-radius);
   animation: spin 1s linear infinite;
 }
 
 .loading-overlay .info-span {
-  color: white;
+  color: var(--off-white);
   font-weight: 500;
 }
 
@@ -138,13 +150,13 @@ small {
 }
 
 .model-selection .switch-model-button svg path {
-  stroke: white;
+  stroke: var(--off-white);
   stroke-width: 5;
   transition: 0.1s ease;
 }
 
 .model-selection .switch-model-button:hover svg path {
-  stroke: #a1a1a1;
+  stroke: var(--medium-gray);
 }
 
 .model-selection .model-heading {
@@ -163,7 +175,7 @@ small {
 
 .model-selection .model-name {
   font-family: "Bebas Neue", sans-serif;
-  color: white;
+  color: var(--off-white);
   font-size: 7rem;
   line-height: 7rem;
   text-transform: uppercase;
@@ -171,19 +183,19 @@ small {
 
 /* the padding and display stuff is necessary because of the badely cropped font */
 .model-selection .highlighted-word {
-  color: #141614 !important;
+  color: black;
   display: inline-block !important;
   height: 7rem;
   padding-left: 1vh !important;
   padding-right: 1vh !important;
   padding-top: 0.5vh !important;
   padding-bottom: 0.4vh !important;
-  background-color: #ec6244;
+  background-color: var(--color-primary);
   border-radius: 15px;
 }
 
 .model-selection .model-description {
-  color: rgb(156, 163, 175);
+  color: var(--medium-gray);
   line-height: 1.75rem;
 }
 
@@ -205,7 +217,7 @@ small {
 }
 
 .model-selection .model-infos .info-label {
-  color: #aaaaaa;
+  color: var(--medium-gray);
   font-size: 1.6vh;
   font-weight: 500;
 }
@@ -214,7 +226,7 @@ small {
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-style: italic;
-  color: white;
+  color: var(--off-white);
   display: flex;
   align-items: flex-end;
 }
@@ -263,7 +275,7 @@ small {
 }
 
 .options-container .option-button {
-  background-color: #272727;
+  background-color: var(--dark-gray);
   height: 5vh;
   width: 5vh;
   min-height: 40px;
@@ -280,24 +292,24 @@ small {
 }
 
 .options-container .toggle-button-fill {
-  fill: #696969;
+  fill: var(--toggle-off-color);
 }
 .options-container svg.active .toggle-button-fill,
 .options-container svg.active.toggle-button-fill {
-  fill: #ec6244;
+  fill: var(--color-primary);
 }
 .options-container .toggle-button-stroke {
-  stroke: #696969;
+  stroke: var(--toggle-off-color);
 }
 .options-container svg.active .toggle-button-stroke,
 .options-container svg.active.toggle-button-stroke {
-  stroke: #ec6244;
+  stroke: var(--color-primary);
 }
 
 .options-container .settings-panel {
   width: 300px;
-  background-color: #272727;
-  color: #dbdbdb;
+  background-color: var(--dark-gray);
+  color: var(--off-white);
   font-size: 0.9rem;
   border-radius: 13px;
   z-index: 10;
@@ -330,7 +342,7 @@ small {
   width: 2.75rem;
   height: 1.5rem;
   border-radius: var(--rounded-border-radius);
-  background-color: rgb(229 231 235);
+  background-color: var(--off-white);
   transition: background-color var(--transition-duration)
     var(--transition-timing-function);
 }
@@ -341,7 +353,7 @@ small {
   top: 3px;
   left: 3px;
   background-color: white;
-  border: 1px solid rgb(209 213 219);
+  border: 1px solid var(--more-off-white);
   border-radius: var(--rounded-border-radius);
   height: 18px;
   width: 18px;
@@ -353,7 +365,7 @@ small {
 }
 
 .options-container .rgb-gradient-setting input:checked + .switch-display {
-  background-color: #ec6244;
+  background-color: var(--color-primary);
 }
 
 .options-container
@@ -373,8 +385,8 @@ small {
 .options-container .luminosity-setting input {
   height: 0.5rem;
   width: 100%;
-  background-color: rgb(229 231 235);
-  accent-color: #ec6244;
+  background-color: var(--off-white);
+  accent-color: var(--color-primary);
   appearance: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -397,8 +409,8 @@ small {
 .car-parts .categories .tab {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
-  color: white;
-  background-color: #272727;
+  color: var(--off-white);
+  background-color: var(--dark-gray);
   opacity: 0.6;
   cursor: pointer;
   padding: 12px 20px;
@@ -408,20 +420,20 @@ small {
 
 .car-parts .categories .tab:not(.active-tab):hover {
   opacity: 0.75;
-  background-color: #454642;
+  background-color: var(--less-dark-gray);
 }
 
 .car-parts .categories .tab.active-tab {
-  background-color: #272727;
-  color: white;
+  background-color: var(--dark-gray);
+  color: var(--off-white);
   opacity: 1;
 }
 
 .car-parts .parts-for-category {
   border-bottom-left-radius: 0.75rem;
   border-bottom-right-radius: 0.75rem;
-  color: white;
-  background-color: #272727;
+  color: var(--off-white);
+  background-color: var(--dark-gray);
   font-weight: 500;
   padding: 1rem;
   width: 100%;
@@ -443,18 +455,18 @@ small {
 }
 
 .car-parts .part-item:hover {
-  background-color: #454642;
+  background-color: var(--less-dark-gray);
 }
 
 .car-parts .part-item.active-part {
-  background-color: #ec6244;
-  color: #22242a;
+  background-color: var(--color-primary);
+  color: var(--dark-gray);
   cursor: auto;
 }
 
 .car-parts .part-item .check-circle {
   border-radius: var(--rounded-border-radius);
-  background-color: #1e1e1e;
+  background-color: var(--dark-gray);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -469,7 +481,7 @@ small {
 }
 
 .car-parts .part-item.active-part .check-circle {
-  background-color: #272727;
+  background-color: var(--dark-gray);
 }
 
 .car-parts .part-item.active-part .check-circle img {
@@ -490,11 +502,12 @@ small {
 
 .color-selection .color {
   --color: black;
+  --color-size: 26px;
   background-color: var(--color);
   filter: brightness(2); /** actual color values look a bit muted */
   transition: var(--default-transition);
-  height: 26px;
-  width: 26px;
+  height: var(--color-size);
+  width: var(--color-size);
   border-radius: var(--rounded-border-radius);
   cursor: pointer;
 }
@@ -512,15 +525,20 @@ small {
 }
 
 .color-selection .color::after {
+  --border-width: 3px;
+  --border-space: 2px;
+  --selected-color-size: calc(
+    var(--color-size) + var(--border-width) * 2 + var(--border-space) * 2
+  );
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
+  width: var(--selected-color-size);
+  height: var(--selected-color-size);
   border-radius: var(--rounded-border-radius);
-  border: 3px solid white;
+  border: var(--border-width) solid var(--off-white);
   opacity: 0.6;
 }
 
@@ -547,36 +565,36 @@ small {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--off-white);
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  background-color: #272727;
+  background-color: var(--dark-gray);
   transition: var(--default-transition);
 }
 
 .material-selection .material-icon:hover {
-  background-color: #494949;
+  background-color: var(--less-dark-gray);
 }
 
 .material-selection .material-icon .stroke {
-  stroke: white;
+  stroke: var(--off-white);
 }
 
 .material-selection .material-icon .fill {
-  fill: white;
+  fill: var(--off-white);
 }
 
 .material-selection .material-icon.active-material {
-  background-color: #ec6244;
+  background-color: var(--color-primary);
 }
 
 .material-selection .material-icon.active-material .stroke {
-  stroke: #272727;
+  stroke: var(--dark-gray);
 }
 
 .material-selection .material-icon.active-material .fill {
-  fill: #272727;
+  fill: var(--dark-gray);
 }
 
 /* CUBEMAP SELECTION */
@@ -594,7 +612,7 @@ small {
 .cubemap-selection .cubemap {
   height: 90px;
   width: 90px;
-  background-color: #272727;
+  background-color: var(--dark-gray);
   cursor: pointer;
   border-radius: var(--rounded-border-radius);
   transition: var(--default-transition);
@@ -608,7 +626,7 @@ small {
 }
 
 .cubemap-selection .cubemap.active-cubemap {
-  background-color: #ec6244;
+  background-color: var(--color-primary);
   cursor: unset;
 }
 
@@ -621,7 +639,7 @@ small {
   height: 80px;
   width: 80px;
   position: absolute;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--cubemap-checked-bg);
   justify-content: center;
   align-items: center;
   border-radius: var(--rounded-border-radius);
@@ -672,7 +690,7 @@ small {
 .stepper-buttons .step-button {
   --step-button-size: 9vh;
 
-  background-color: #ec6244;
+  background-color: var(--color-primary);
   height: var(--step-button-size);
   min-height: 60px;
   min-width: max(60px, var(--step-button-size));
@@ -687,12 +705,12 @@ small {
 }
 
 .stepper-buttons .step-button:hover {
-  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
-  background-color: #f27357;
+  box-shadow: 0 0 30px 0 var(--step-button-hover-box-shadow);
+  background-color: var(--color-primary-lightened);
 }
 
 .stepper-buttons .step-button h3 {
-  color: #141614;
+  color: var(--dark-gray);
   font-size: 3vh;
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
@@ -715,7 +733,7 @@ small {
 }
 
 .stepper-buttons .step-button svg path {
-  stroke: #141614;
+  stroke: var(--dark-gray);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -724,7 +742,7 @@ small {
 .stepper-buttons .price {
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
-  color: #ec6244;
+  color: var(--color-primary);
   font-size: 6vh;
 }
 
