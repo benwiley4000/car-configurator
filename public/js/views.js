@@ -469,26 +469,27 @@ export const CarOptionsBarView = new (class CarOptionsBarView {
 
 /** @global */
 export const CarSceneLoadingView = new (class CarSceneLoadingView {
+  fadeoutTimeout = 0;
+
   constructor() {
     this.render();
-    CarConfiguratorStore.subscribe(["sceneLoadingState"], this.render);
+    CarConfiguratorStore.subscribe(
+      ["sceneLoadingState", "isSceneLoaded"],
+      this.render,
+    );
   }
 
   /** @private */
   render = () => {
-    const { sceneLoadingState } = CarConfiguratorStore.state;
+    const { sceneLoadingState, isSceneLoaded } = CarConfiguratorStore.state;
 
     const loader = /** @type {HTMLElement} */ (
       document.getElementById("loader")
     );
-    loader.classList.toggle("hidden", !sceneLoadingState);
-    loader.classList.toggle(
-      "opacity-0",
-      sceneLoadingState === "Loading complete.",
-    );
+    loader.classList.toggle('fadeout', isSceneLoaded);
 
     /** @type {HTMLElement} */ (
       document.getElementById("info_span")
-    ).innerHTML = sceneLoadingState || "";
+    ).innerHTML = sceneLoadingState;
   };
 })();

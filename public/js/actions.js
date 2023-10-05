@@ -508,10 +508,13 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     });
   }
 
-  /**
-   * @param {string | null} sceneLoadingState
-   */
+  /** @param {string} sceneLoadingState */
   setSceneLoadingState(sceneLoadingState) {
     CarConfiguratorStore.setState({ sceneLoadingState });
+  }
+
+  /** @param {boolean} isSceneLoaded */
+  setIsSceneLoaded(isSceneLoaded) {
+    CarConfiguratorStore.setState({ isSceneLoaded });
   }
 })();

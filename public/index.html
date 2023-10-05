@@ -18,19 +18,9 @@
       <canvas tabindex="1" id="display_canvas"></canvas>
 
       <!-------------------------------------- LOADER ------------------------------------------>
-      <div
-        id="loader"
-        class="absolute flex justify-center items-center h-screen bg-[#010001] w-screen flex-col transition duration-1000 z-50"
-      >
-        <div
-          class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid text-[#EC6244] border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-          role="status"
-        ></div>
-        <div class="relative mt-10">
-          <span id="info_span" class="text-white font-medium text-base"
-            >Loading...</span
-          >
-        </div>
+      <div id="loader" class="loading-overlay">
+        <div class="loading-spinner" role="status"></div>
+        <div id="info_span" class="info-span">Loading...</div>
       </div>
 
       <!-- MODEL SELECTION CONTAINER -->

@@ -109,8 +109,7 @@ async function initApp() {
   await CarConfiguratorActions.cacheMaterials();
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
-
-  setTimeout(() => CarConfiguratorActions.setSceneLoadingState(null), 500);
+  CarConfiguratorActions.setIsSceneLoaded(true);
 }
 
 /**
