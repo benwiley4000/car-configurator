@@ -204,6 +204,21 @@ body {
   margin-bottom: 1vh;
 }
 
+@media (max-width: 1024px) {
+  .model-selection .model-name {
+    font-size: 4rem;
+    line-height: 4rem;
+  }
+  .model-selection .highlighted-word {
+    height: 4.1rem;
+    border-radius: 8px;
+  }
+  .model-selection .model-description {
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+  }
+}
+
 /* OPTIONS / SETTINGS PANEL */
 
 .options-container {
@@ -681,77 +696,35 @@ body {
   stroke-linejoin: round;
 }
 
-.price {
+.stepper-buttons .price {
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
   color: #ec6244;
   font-size: 6vh;
 }
 
-/* MEDIA QUERIES */
+@media (max-width: 768px) {
+}
+
+/* HIDE SOME STUFF ON SMALL SCREEN */
 
 @media (max-width: 768px) {
-  .price {
+  .stepper-buttons .price {
     display: none;
   }
   .car-parts {
     display: none;
   }
-  .model-infos {
+  .model-selection .model-infos {
     display: none;
   }
-  #ui-options {
-    display: none !important;
+  .options-container {
+    display: none;
   }
-  .material-section {
-    display: none !important;
+  .material-selection {
+    display: none;
   }
-  #select-parts-button,
-  #back-to-model-button {
-    display: none !important;
-  }
-  .model-description {
-    display: none !important;
-  }
-  #select-model-button,
-  .hidden-button {
-    display: none !important;
-  }
-  #part-selection {
-    font-size: 12px !important;
-    top: 3vh;
-    left: auto;
-  }
-  #tab-panels {
-    font-size: 14px !important;
-  }
-  #cubemap {
-    flex-direction: row !important;
-    bottom: 17vh !important;
-    right: auto !important;
-    align-items: center !important;
-    width: 80% !important;
-    justify-content: space-between !important;
-  }
-  .cubemap {
-    margin: 0 !important;
-  }
-  .model-description {
-    display: none !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .model-name {
-    font-size: 4rem;
-    line-height: 4rem;
-  }
-  .highlighted-word {
-    height: 4.1rem !important;
-    border-radius: 8px !important;
-  }
-  .model-description {
-    font-size: 0.8rem;
-    line-height: 1.3rem;
+  .model-selection .model-description {
+    display: none;
   }
 }
