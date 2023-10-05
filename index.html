@@ -14,10 +14,10 @@
 
   <body>
     <div id="canvas-container" class="canvas-container">
-      <!-------------------------------------- CANVAS ------------------------------------------>
+      <!----------------------------- CANVAS --------------------------------->
       <canvas id="display-canvas" class="display-canvas"></canvas>
 
-      <!-------------------------------------- LOADER ------------------------------------------>
+      <!----------------------------- LOADER --------------------------------->
       <div id="loader" class="loading-overlay">
         <div class="loading-spinner" role="status"></div>
         <div id="info-span" class="info-span">Loading...</div>
@@ -164,7 +164,9 @@
             </label>
             <input
               id="luminosity-slider"
-              oninput="CarOptionsBarView.handleChangeUserCameraLuminosity({ target: this })"
+              oninput="CarOptionsBarView.handleChangeUserCameraLuminosity(
+                { target: this }
+              )"
               type="range"
               min="0"
               max="5"
@@ -185,7 +187,9 @@
         <div class="categories">
           {{#each availableCategories as | category |}}
             <button
-              onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
+              onclick="CarPartsView.handleChangeSelectedPartCategory(
+                '{{category.name}}'
+              )"
               class="tab {{#if category.isSelected}} active-tab {{/if}}"
             >
               {{category.displayName}}
