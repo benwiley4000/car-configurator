@@ -235,12 +235,14 @@ export const CarMaterialsView = new (class CarMaterialsView {
   /** @private */
   render = () => {
     const { selectedMaterial } = CarConfiguratorStore.state;
-    document.querySelectorAll(".material-icon").forEach((icon, i) => {
-      icon.classList.toggle(
-        "active-material",
-        AppConfig.materials.indexOf(selectedMaterial) === i,
-      );
-    });
+    document
+      .querySelectorAll("#materials-selection .material-icon")
+      .forEach((icon, i) => {
+        icon.classList.toggle(
+          "active-material",
+          AppConfig.materials.indexOf(selectedMaterial) === i,
+        );
+      });
   };
 
   // UI EVENT HANDLERS:
@@ -292,12 +294,14 @@ export const CarBackgroundView = new (class CarBackgroundView {
   /** @private */
   updateRender = () => {
     const { selectedCubemap } = CarConfiguratorStore.state;
-    document.querySelectorAll(".cubemap").forEach((cubemap, i) => {
-      cubemap.classList.toggle(
-        "active-cubemap",
-        AppConfig.cubemaps.indexOf(selectedCubemap) === i,
-      );
-    });
+    document
+      .querySelectorAll("#cubemap-selection .cubemap")
+      .forEach((cubemap, i) => {
+        cubemap.classList.toggle(
+          "active-cubemap",
+          AppConfig.cubemaps.indexOf(selectedCubemap) === i,
+        );
+      });
   };
 
   // UI EVENT HANDLERS:
@@ -471,7 +475,7 @@ export const CarSceneLoadingView = new (class CarSceneLoadingView {
     const loader = /** @type {HTMLElement} */ (
       document.getElementById("loader")
     );
-    loader.classList.toggle('fadeout', isSceneLoaded);
+    loader.classList.toggle("fadeout", isSceneLoaded);
 
     /** @type {HTMLElement} */ (
       document.getElementById("info-span")
