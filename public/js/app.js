@@ -112,10 +112,7 @@ async function initApp() {
   CarConfiguratorActions.setIsSceneLoaded(true);
 }
 
-/**
- *
- * @param {MediaQueryList | MediaQueryListEvent} mediaQuery
- */
+/** @param {MediaQueryList | MediaQueryListEvent} mediaQuery */
 function onMediaQueryChange(mediaQuery) {
   if (mediaQuery.matches) {
     changeCameraPosition(

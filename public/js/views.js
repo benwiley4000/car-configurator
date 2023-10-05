@@ -141,17 +141,12 @@ export const CarPartsView = new (class CarPartsView {
 
   // UI EVENT HANDLERS:
 
-  /**
-   *
-   * @param {CarConfiguratorState['selectedPartCategory']} category
-   */
+  /** @param {CarConfiguratorState['selectedPartCategory']} category */
   handleChangeSelectedPartCategory = (category) => {
     CarConfiguratorActions.changeSelectedPartCategory(category);
   };
 
-  /**
-   * @param {number} index
-   */
+  /** @param {number} index */
   handleChangeSelectedPart = (index) => {
     CarConfiguratorActions.changeSelectedPart(index);
   };
@@ -208,9 +203,7 @@ export const CarColorsView = new (class CarColorsView {
 
   // UI EVENT HANDLERS:
 
-  /**
-   * @param {string} cssColor
-   */
+  /** @param {string} cssColor */
   handleChangeSelectedColor(cssColor) {
     const newSelectedColor = this.cssToSdkColorChoicesMap.get(cssColor);
     if (newSelectedColor) {
@@ -252,9 +245,7 @@ export const CarMaterialsView = new (class CarMaterialsView {
 
   // UI EVENT HANDLERS:
 
-  /**
-   * @param {number} materialIndex
-   */
+  /** @param {number} materialIndex */
   handleChangeSelectedMaterial(materialIndex) {
     CarConfiguratorActions.changeSelectedMaterial(materialIndex);
   }
@@ -311,9 +302,7 @@ export const CarBackgroundView = new (class CarBackgroundView {
 
   // UI EVENT HANDLERS:
 
-  /**
-   * @param {number} cubemapIndex
-   */
+  /** @param {number} cubemapIndex */
   handleChangeCubemap(cubemapIndex) {
     CarConfiguratorActions.changeCubemap(cubemapIndex);
   }
@@ -372,9 +361,7 @@ export const CarConfigStepperView = new (class CarConfigStepperView {
     });
   };
 
-  /**
-   * @param {CarConfiguratorState['currentStep']} currentStep
-   */
+  /** @param {CarConfiguratorState['currentStep']} currentStep */
   handleChangeCurrentStep(currentStep) {
     CarConfiguratorActions.changeCurrentStep(currentStep);
   }
@@ -458,9 +445,7 @@ export const CarOptionsBarView = new (class CarOptionsBarView {
     CarConfiguratorActions.toggleRgbGradientOn();
   }
 
-  /**
-   * @param {{ target: HTMLInputElement }} e
-   */
+  /** @param {{ target: HTMLInputElement }} e */
   handleChangeUserCameraLuminosity(e) {
     const luminosity = Number(e.target.value);
     CarConfiguratorActions.changeUserCameraLuminosity(luminosity);

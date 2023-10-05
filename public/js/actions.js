@@ -436,9 +436,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     this.applySelectedPart();
   }
 
-  /**
-   * @param {number} cubemapIndex
-   */
+  /** @param {number} cubemapIndex */
   changeCubemap(cubemapIndex) {
     const entities = this.safeGet("entities");
     CarConfiguratorStore.setState({

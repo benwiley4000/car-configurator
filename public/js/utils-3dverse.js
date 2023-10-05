@@ -40,9 +40,7 @@ export function getCameraSettings() {
   return camera.getComponent("camera").dataJSON;
 }
 
-/**
- * @param {Record<string, any>} settings
- */
+/** @param {Record<string, any>} settings */
 export function setCameraSettings(settings) {
   const camera = getCamera();
   const cameraComponent = camera.getComponent("camera");
