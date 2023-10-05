@@ -122,18 +122,12 @@ body {
   left: 10vw;
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 67%;
   pointer-events: none;
 }
 
 .model-selection .model-heading span {
   pointer-events: all;
-}
-
-@media (min-width: 768px) {
-  .model-heading {
-    width: 67%;
-  }
 }
 
 .model-selection .model-name {
