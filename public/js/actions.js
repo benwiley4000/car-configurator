@@ -393,9 +393,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     });
   }
 
-  /**
-   * @param {number} selectedCarIndex
-   */
+  /** @param {number} selectedCarIndex */
   changeCar(selectedCarIndex) {
     CarConfiguratorStore.setState({
       selectedCarIndex,
@@ -405,17 +403,13 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     this.applySelectedCar();
   }
 
-  /**
-   * @param {[number, number, number]} selectedColor
-   */
+  /** @param {[number, number, number]} selectedColor */
   changeSelectedColor(selectedColor) {
     CarConfiguratorStore.setState({ selectedColor });
     this.applySelectedMaterial();
   }
 
-  /**
-   * @param {number} matIndex
-   */
+  /** @param {number} matIndex */
   changeSelectedMaterial(matIndex) {
     CarConfiguratorStore.setState({
       selectedMaterial: AppConfig.materials[matIndex],
@@ -430,9 +424,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     CarConfiguratorStore.setState({ selectedPartCategory });
   }
 
-  /**
-   * @param {number} partIndex
-   */
+  /** @param {number} partIndex */
   changeSelectedPart(partIndex) {
     const { selectedParts, selectedPartCategory } = CarConfiguratorStore.state;
     CarConfiguratorStore.setState({
@@ -500,9 +492,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     SDK3DVerse.engineAPI.propagateChanges();
   }
 
-  /**
-   * @param {number} userCameraLuminosity
-   */
+  /**  @param {number} userCameraLuminosity */
   changeUserCameraLuminosity(userCameraLuminosity) {
     CarConfiguratorStore.setState({ userCameraLuminosity });
     setCameraSettings({
@@ -510,9 +500,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     });
   }
 
-  /**
-   * @param {CarConfiguratorState['currentStep']} currentStep
-   */
+  /** @param {CarConfiguratorState['currentStep']} currentStep */
   changeCurrentStep(currentStep) {
     CarConfiguratorStore.setState({ currentStep });
     setCameraSettings({
