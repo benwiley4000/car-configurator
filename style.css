@@ -184,12 +184,12 @@ small {
 /* the padding and display stuff is necessary because of the badely cropped font */
 .model-selection .highlighted-word {
   color: black;
-  display: inline-block !important;
+  display: inline-block;
   height: 7rem;
-  padding-left: 1vh !important;
-  padding-right: 1vh !important;
-  padding-top: 0.5vh !important;
-  padding-bottom: 0.4vh !important;
+  padding-left: 1vh;
+  padding-right: 1vh;
+  padding-top: 0.5vh;
+  padding-bottom: 0.;
   background-color: var(--color-primary);
   border-radius: 15px;
 }
@@ -631,7 +631,7 @@ small {
 }
 
 .cubemap-selection .cubemap.active-cubemap:hover {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .cubemap-selection .cubemap-check {
