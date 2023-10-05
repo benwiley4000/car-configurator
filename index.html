@@ -299,11 +299,14 @@
       <!-- CUBEMAP SELECTION TEMPLATE -->
       <script id="stepper-buttons-template" type="text/x-handlebars">
         <div
-          class="step-back-button-container {{#unless prevStep}} no-step {{/unless}}"
+          class="step-back-button-container
+        {{#unless prevStep}} no-step {{/unless}}"
         >
           <div
             class="step-button"
-            onclick="CarConfigStepperView.handleChangeCurrentStep('{{prevStep}}')"
+            onclick="CarConfigStepperView.handleChangeCurrentStep(
+              '{{prevStep}}'
+            )"
           >
             <svg viewBox="0 0 30 32" fill="none">
               <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
@@ -311,12 +314,15 @@
           </div>
         </div>
         <div
-          class="step-forward-button-container {{#unless nextStep}} no-step {{/unless}}"
+          class="step-forward-button-container
+        {{#unless nextStep}} no-step {{/unless}}"
         >
           <h3 class="price">{{carPrice}}</h3>
           <div
             class="step-button"
-            onclick="CarConfigStepperView.handleChangeCurrentStep('{{nextStep}}')"
+            onclick="CarConfigStepperView.handleChangeCurrentStep(
+              '{{nextStep}}'
+            )"
           >
             <h3>{{nextStepName}}</h3>
             <svg viewBox="0 0 30 32" fill="none">
