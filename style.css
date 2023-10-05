@@ -128,38 +128,38 @@ small {
   font-weight: 500;
 }
 
-/* MODEL SELECTION */
+/* CAR SELECTION */
 
-.model-selection .switch-model-button {
+.car-selection .switch-car-button {
   position: absolute;
   cursor: pointer;
   height: 5vh;
   width: 3vw;
 }
 
-.model-selection .switch-model-button.left {
+.car-selection .switch-car-button.left {
   left: 5vw;
 }
 
-.model-selection .switch-model-button.right {
+.car-selection .switch-car-button.right {
   right: 5vw;
 }
 
-.model-selection .switch-model-button.left svg {
+.car-selection .switch-car-button.left svg {
   transform: rotate(180deg);
 }
 
-.model-selection .switch-model-button svg path {
+.car-selection .switch-car-button svg path {
   stroke: var(--off-white);
   stroke-width: 5;
   transition: 0.1s ease;
 }
 
-.model-selection .switch-model-button:hover svg path {
+.car-selection .switch-car-button:hover svg path {
   stroke: var(--medium-gray);
 }
 
-.model-selection .model-heading {
+.car-selection .car-heading {
   position: absolute;
   top: 7vh;
   left: 10vw;
@@ -169,11 +169,11 @@ small {
   pointer-events: none;
 }
 
-.model-selection .model-heading span {
+.car-selection .car-heading span {
   pointer-events: all;
 }
 
-.model-selection .model-name {
+.car-selection .car-name {
   font-family: "Bebas Neue", sans-serif;
   color: var(--off-white);
   font-size: 7rem;
@@ -182,7 +182,7 @@ small {
 }
 
 /* the padding and display stuff is necessary because of the badely cropped font */
-.model-selection .highlighted-word {
+.car-selection .highlighted-word {
   color: black;
   display: inline-block;
   height: 7rem;
@@ -194,12 +194,12 @@ small {
   border-radius: 15px;
 }
 
-.model-selection .model-description {
+.car-selection .car-description {
   color: var(--medium-gray);
   line-height: 1.75rem;
 }
 
-.model-selection .model-infos {
+.car-selection .car-infos {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -210,19 +210,19 @@ small {
   transform: translateY(-50%);
 }
 
-.model-selection .model-infos .info-item {
+.car-selection .car-infos .info-item {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.model-selection .model-infos .info-label {
+.car-selection .car-infos .info-label {
   color: var(--medium-gray);
   font-size: 1.6vh;
   font-weight: 500;
 }
 
-.model-selection .model-infos .number {
+.car-selection .car-infos .number {
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-style: italic;
@@ -231,26 +231,26 @@ small {
   align-items: flex-end;
 }
 
-.model-selection .model-infos .value {
+.car-selection .car-infos .value {
   font-size: 5vh;
 }
 
-.model-selection .model-infos .unit {
+.car-selection .car-infos .unit {
   font-size: 2.5vh;
   margin-left: 0.5rem;
   margin-bottom: 1vh;
 }
 
 @media (max-width: 1024px) {
-  .model-selection .model-name {
+  .car-selection .car-name {
     font-size: 4rem;
     line-height: 4rem;
   }
-  .model-selection .highlighted-word {
+  .car-selection .highlighted-word {
     height: 4.1rem;
     border-radius: 8px;
   }
-  .model-selection .model-description {
+  .car-selection .car-description {
     font-size: 0.8rem;
     line-height: 1.3rem;
   }
@@ -490,7 +490,7 @@ small {
 
 /* COLORS */
 
-.color-selection {
+.colors-selection {
   position: absolute;
   right: 10vw;
   display: flex;
@@ -500,7 +500,7 @@ small {
   gap: 40px;
 }
 
-.color-selection .color {
+.colors-selection .color {
   --color: black;
   --color-size: 26px;
   background-color: var(--color);
@@ -512,19 +512,19 @@ small {
   cursor: pointer;
 }
 
-.color-selection .color:hover {
+.colors-selection .color:hover {
   transform: scale(1.25);
 }
 
-.color-selection .color.active-color {
+.colors-selection .color.active-color {
   cursor: unset;
 }
 
-.color-selection .color.active-color:hover {
+.colors-selection .color.active-color:hover {
   transform: none;
 }
 
-.color-selection .color::after {
+.colors-selection .color::after {
   --border-width: 3px;
   --border-space: 2px;
   --selected-color-size: calc(
@@ -542,7 +542,7 @@ small {
   opacity: 0.6;
 }
 
-.color-selection .active-color::after {
+.colors-selection .active-color::after {
   opacity: 1;
 }
 
@@ -662,7 +662,7 @@ small {
 
 /** STEPPER BUTTONS */
 
-.stepper-buttons {
+.config-stepper {
   display: flex;
   justify-content: space-between;
   position: absolute;
@@ -673,21 +673,21 @@ small {
   pointer-events: none;
 }
 
-.stepper-buttons .step-back-button-container,
-.stepper-buttons .step-forward-button-container {
+.config-stepper .step-back-button-container,
+.config-stepper .step-forward-button-container {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
   pointer-events: all;
 }
 
-.stepper-buttons .step-back-button-container.no-step,
-.stepper-buttons .step-forward-button-container.no-step {
+.config-stepper .step-back-button-container.no-step,
+.config-stepper .step-forward-button-container.no-step {
   visibility: hidden;
   pointer-events: none;
 }
 
-.stepper-buttons .step-button {
+.config-stepper .step-button {
   --step-button-size: 9vh;
 
   background-color: var(--color-primary);
@@ -704,12 +704,12 @@ small {
   transition: var(--default-transition);
 }
 
-.stepper-buttons .step-button:hover {
+.config-stepper .step-button:hover {
   box-shadow: 0 0 30px 0 var(--step-button-hover-box-shadow);
   background-color: var(--color-primary-lightened);
 }
 
-.stepper-buttons .step-button h3 {
+.config-stepper .step-button h3 {
   color: var(--dark-gray);
   font-size: 3vh;
   font-family: "Montserrat", sans-serif;
@@ -718,12 +718,12 @@ small {
 }
 
 @media (max-width: 450px) {
-  .stepper-buttons .step-button h3 {
+  .config-stepper .step-button h3 {
     font-size: 1rem;
   }
 }
 
-.stepper-buttons .step-button svg {
+.config-stepper .step-button svg {
   width: calc(0.3 * var(--step-button-size));
   height: calc(0.3 * var(--step-button-size));
 }
@@ -732,14 +732,14 @@ small {
   transform: rotate(180deg);
 }
 
-.stepper-buttons .step-button svg path {
+.config-stepper .step-button svg path {
   stroke: var(--dark-gray);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.stepper-buttons .price {
+.config-stepper .price {
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
   color: var(--color-primary);
@@ -752,13 +752,13 @@ small {
 /* HIDE SOME STUFF ON SMALL SCREEN */
 
 @media (max-width: 768px) {
-  .stepper-buttons .price {
+  .config-stepper .price {
     display: none;
   }
   .car-parts {
     display: none;
   }
-  .model-selection .model-infos {
+  .car-selection .car-infos {
     display: none;
   }
   .options-container {
@@ -767,7 +767,7 @@ small {
   .material-selection {
     display: none;
   }
-  .model-selection .model-description {
+  .car-selection .car-description {
     display: none;
   }
 }

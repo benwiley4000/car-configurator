@@ -1,13 +1,13 @@
 import { AppConfig } from "./config.js";
 import { CarConfiguratorActions } from "./actions.js";
 import {
-  CarSceneLoadingView,
+  CarLoadingOverlayView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
   CarMaterialsView,
-  CarBackgroundView,
-  CarOptionsBarView,
+  CarCubemapView,
+  CarOptionsView,
   CarConfigStepperView,
 } from "./views.js";
 import {
@@ -138,13 +138,13 @@ function onMediaQueryChange(mediaQuery) {
 // Expose views as globals so their public
 // methods can be used as UI event handlers
 Object.assign(window, {
-  CarSceneLoadingView,
+  CarLoadingOverlayView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
   CarMaterialsView,
-  CarBackgroundView,
-  CarOptionsBarView,
+  CarCubemapView,
+  CarOptionsView,
   CarConfigStepperView,
 });
 

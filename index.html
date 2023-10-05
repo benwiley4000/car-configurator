@@ -12,19 +12,19 @@
       <!-- CANVAS -->
       <canvas id="display-canvas" class="display-canvas"></canvas>
 
-      <!-- LOADER -->
-      <div id="loader" class="loading-overlay">
+      <!-- LOADING OVERLAY -->
+      <div id="loading-overlay" class="loading-overlay">
         <div class="loading-spinner" role="status"></div>
         <div id="info-span" class="info-span">Loading...</div>
       </div>
 
-      <!-- MODEL SELECTION CONTAINER -->
-      <div id="model-selection" class="model-selection"></div>
-      <!-- MODEL SELECTION TEMPLATE -->
-      <script id="model-selection-template" type="text/x-handlebars">
+      <!-- CAR SELECTION CONTAINER -->
+      <div id="car-selection" class="car-selection"></div>
+      <!-- CAR SELECTION TEMPLATE -->
+      <script id="car-selection-template" type="text/x-handlebars">
         {{#each arrows as | arrow |}}
           <div
-            class="switch-model-button {{arrow.direction}}"
+            class="switch-car-button {{arrow.direction}}"
             onclick="CarSelectionView.handlePreviousCar()"
           >
             <svg
@@ -38,19 +38,19 @@
           </div>
         {{/each}}
 
-        <div class="model-heading">
-          <h2 class="model-name">
+        <div class="car-heading">
+          <h2 class="car-name">
             <span>
               <span class="highlighted-word">{{firstWord}}</span>
               {{afterFirstWord}}
             </span>
           </h2>
-          <p class="model-description">
+          <p class="car-description">
             <span>{{description}}</span>
           </p>
         </div>
 
-        <div class="model-infos">
+        <div class="car-infos">
           {{#each stats as | stat |}}
             <div class="info-item">
               <h3 class="info-label">{{stat.label}}</h3>
@@ -65,9 +65,9 @@
 
       <!-- CUSTOMIZATION -->
 
-      <!-- PARTS SELECTION CONTAINER -->
+      <!-- CAR PARTS CONTAINER -->
       <div id="car-parts" class="car-parts"></div>
-      <!-- PARTS SELECTION TEMPLATE -->
+      <!-- CAR PARTS TEMPLATE -->
       <script id="car-parts-template" type="text/x-handlebars">
         <!-- Switch between categories -->
         <div class="categories">
@@ -100,9 +100,9 @@
       </script>
 
       <!-- COLORS SELECTION CONTAINER -->
-      <div id="color-selection" class="color-selection"></div>
+      <div id="colors-selection" class="colors-selection"></div>
       <!-- COLOR SELECTION TEMPLATE -->
-      <script id="color-selection-template" type="text/x-handlebars">
+      <script id="colors-selection-template" type="text/x-handlebars">
         {{#each colors as | color |}}
           <div
             style="--color: {{color.cssColor}}"
@@ -160,7 +160,7 @@
         {{#each cubemaps as | cubemap |}}
           <div
             class="cubemap"
-            onclick="CarBackgroundView.handleChangeCubemap({{@index}})"
+            onclick="CarCubemapView.handleChangeCubemap({{@index}})"
           >
             <div
               class="cubemap-check"
@@ -185,7 +185,7 @@
         <div class="options">
           <div
             class="option-button"
-            onclick="CarOptionsBarView.handleToggleLightsOn()"
+            onclick="CarOptionsView.handleToggleLightsOn()"
           >
             <svg
               id="light-toggle"
@@ -221,7 +221,7 @@
 
           <div
             class="option-button"
-            onclick="CarOptionsBarView.handleToggleRotationOn()"
+            onclick="CarOptionsView.handleToggleRotationOn()"
           >
             <svg
               id="rotate-toggle"
@@ -240,7 +240,7 @@
           </div>
           <div
             class="option-button"
-            onclick="CarOptionsBarView.handleToggleSettingsPanel()"
+            onclick="CarOptionsView.handleToggleSettingsPanel()"
           >
             <svg
               id="settings-toggle"
@@ -264,7 +264,7 @@
               <input
                 id="rgb-gradient"
                 type="checkbox"
-                onclick="CarOptionsBarView.handleToggleRgbGradientOn()"
+                onclick="CarOptionsView.handleToggleRgbGradientOn()"
               />
               <div class="switch-display"></div>
             </div>
@@ -276,7 +276,7 @@
             </label>
             <input
               id="luminosity-slider"
-              oninput="CarOptionsBarView.handleChangeUserCameraLuminosity(
+              oninput="CarOptionsView.handleChangeUserCameraLuminosity(
                 { target: this }
               )"
               type="range"
@@ -290,9 +290,8 @@
       </div>
 
       <!-- STEPPER BUTTONS CONTAINER -->
-      <div id="stepper-buttons" class="stepper-buttons"></div>
-      <!-- CUBEMAP SELECTION TEMPLATE -->
-      <script id="stepper-buttons-template" type="text/x-handlebars">
+      <div id="config-stepper" class="config-stepper"></div>
+      <script id="config-stepper-template" type="text/x-handlebars">
         <div
           class="step-back-button-container
         {{#unless prevStep}} no-step {{/unless}}"

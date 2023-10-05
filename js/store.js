@@ -27,7 +27,7 @@ function deepFreezeObject(obj) {
  *   rotationOn: boolean;
  *   rgbGradientOn: boolean;
  *   userCameraLuminosity: number;
- *   currentStep: 'modelSelection' | 'customization' | 'review';
+ *   currentStep: 'carSelection' | 'customization' | 'review';
  *   sceneLoadingState: string;
  *   isSceneLoaded: boolean;
  * }} CarConfiguratorState
@@ -53,7 +53,7 @@ export const CarConfiguratorStore = new (class CarConfiguratorStore {
     rotationOn: false,
     rgbGradientOn: false,
     userCameraLuminosity: 1.5,
-    currentStep: "modelSelection",
+    currentStep: "carSelection",
     sceneLoadingState: "Loading...",
     isSceneLoaded: false,
   });

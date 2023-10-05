@@ -7,7 +7,7 @@ import { CarConfiguratorActions } from "./actions.js";
 /** @typedef {import('./store.js').CarConfiguratorState} CarConfiguratorState */
 
 /** @global */
-export const CarSceneLoadingView = new (class CarSceneLoadingView {
+export const CarLoadingOverlayView = new (class CarLoadingOverlayView {
   fadeoutTimeout = 0;
 
   constructor() {
@@ -23,7 +23,7 @@ export const CarSceneLoadingView = new (class CarSceneLoadingView {
     const { sceneLoadingState, isSceneLoaded } = CarConfiguratorStore.state;
 
     const loader = /** @type {HTMLElement} */ (
-      document.getElementById("loader")
+      document.getElementById("loading-overlay")
     );
     loader.classList.toggle("fadeout", isSceneLoaded);
 
@@ -37,7 +37,7 @@ export const CarSceneLoadingView = new (class CarSceneLoadingView {
 export const CarSelectionView = new (class CarSelectionView {
   template = Handlebars.compile(
     /** @type {HTMLElement} */ (
-      document.getElementById("model-selection-template")
+      document.getElementById("car-selection-template")
     ).innerHTML,
   );
 
@@ -51,10 +51,10 @@ export const CarSelectionView = new (class CarSelectionView {
   /** @private */
   updateVisibility = () => {
     /** @type {HTMLElement} */ (
-      document.getElementById("model-selection")
+      document.getElementById("car-selection")
     ).classList.toggle(
       "hidden",
-      CarConfiguratorStore.state.currentStep !== "modelSelection",
+      CarConfiguratorStore.state.currentStep !== "carSelection",
     );
   };
 
@@ -64,7 +64,7 @@ export const CarSelectionView = new (class CarSelectionView {
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
     /** @type {HTMLElement} */ (
-      document.getElementById("model-selection")
+      document.getElementById("car-selection")
     ).innerHTML = this.template({
       arrows: [{ direction: "left" }, { direction: "right" }],
       firstWord,
@@ -183,7 +183,7 @@ export const CarPartsView = new (class CarPartsView {
 export const CarColorsView = new (class CarColorsView {
   template = Handlebars.compile(
     /** @type {HTMLElement} */ (
-      document.getElementById("color-selection-template")
+      document.getElementById("colors-selection-template")
     ).innerHTML,
   );
   cssToSdkColorChoicesMap = AppConfig.colorChoices.reduce(
@@ -206,7 +206,7 @@ export const CarColorsView = new (class CarColorsView {
   /** @private */
   updateVisibility = () => {
     /** @type {HTMLElement} */ (
-      document.getElementById("color-selection")
+      document.getElementById("colors-selection")
     ).classList.toggle(
       "hidden",
       CarConfiguratorStore.state.currentStep !== "customization",
@@ -217,7 +217,7 @@ export const CarColorsView = new (class CarColorsView {
   render = () => {
     const { selectedColor } = CarConfiguratorStore.state;
     /** @type {HTMLElement} */ (
-      document.getElementById("color-selection")
+      document.getElementById("colors-selection")
     ).innerHTML = this.template({
       colors: [...this.cssToSdkColorChoicesMap.entries()].map(
         ([cssColor, sdkColor]) => ({
@@ -281,7 +281,7 @@ export const CarMaterialsView = new (class CarMaterialsView {
 })();
 
 /** @global */
-export const CarBackgroundView = new (class CarBackgroundView {
+export const CarCubemapView = new (class CarCubemapView {
   template = Handlebars.compile(
     /** @type {HTMLElement} */ (
       document.getElementById("cubemap-selection-template")
@@ -340,7 +340,7 @@ export const CarBackgroundView = new (class CarBackgroundView {
 })();
 
 /** @global */
-export const CarOptionsBarView = new (class CarOptionsBarView {
+export const CarOptionsView = new (class CarOptionsView {
   isSettingsPanelOpen = false;
 
   constructor() {
@@ -428,7 +428,7 @@ export const CarOptionsBarView = new (class CarOptionsBarView {
 export const CarConfigStepperView = new (class CarConfigStepperView {
   template = Handlebars.compile(
     /** @type {HTMLElement} */ (
-      document.getElementById("stepper-buttons-template")
+      document.getElementById("config-stepper-template")
     ).innerHTML,
   );
 
@@ -447,14 +447,14 @@ export const CarConfigStepperView = new (class CarConfigStepperView {
 
     /** @type {typeof currentStep | null} */
     const prevStep =
-      currentStep === "modelSelection"
+      currentStep === "carSelection"
         ? null
         : currentStep === "customization"
-        ? "modelSelection"
+        ? "carSelection"
         : "customization";
     /** @type {typeof currentStep | null} */
     const nextStep =
-      currentStep === "modelSelection"
+      currentStep === "carSelection"
         ? "customization"
         : currentStep === "customization"
         ? "review"
@@ -468,7 +468,7 @@ export const CarConfigStepperView = new (class CarConfigStepperView {
     const carPrice = selectedCar.price;
 
     /** @type {HTMLElement} */ (
-      document.getElementById("stepper-buttons")
+      document.getElementById("config-stepper")
     ).innerHTML = this.template({
       prevStep,
       nextStep,
