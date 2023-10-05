@@ -214,17 +214,16 @@
       </script>
 
       <!-- COLORS SELECTION CONTAINER -->
-      <div
-        id="color-selection"
-        class="customization color-section absolute right-[10vw] space-y-[40px] flex align-center justify-center flex-col"
-      ></div>
+      <div id="color-selection" class="color-selection"></div>
       <!-- COLOR SELECTION TEMPLATE -->
       <script id="color-selection-template" type="text/x-handlebars">
         {{#each colors as | color |}}
           <div
-            style="background-color: {{color.cssColor}}"
-            onclick="CarColorsView.handleChangeSelectedColor('{{color.cssColor}}')"
-            class="{{#if color.isActive}} active-color {{/if}} color h-[36px] w-[36px] rounded-full hover:cursor-pointer hover:scale-125"
+            style="--color: {{color.cssColor}}"
+            onclick="CarColorsView.handleChangeSelectedColor(
+              '{{color.cssColor}}'
+            )"
+            class="color {{#if color.isActive}} active-color {{/if}}"
           ></div>
         {{/each}}
       </script>
