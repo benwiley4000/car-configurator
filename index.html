@@ -220,7 +220,7 @@
           <div
             style="background-color: {{color.cssColor}}"
             onclick="CarColorsView.handleChangeSelectedColor('{{color.cssColor}}')"
-            class="{{#if color.isActive}} active-color {{/if}} color h-[36px] w-[36px] rounded-full hover:cursor-pointer transition hover:scale-125"
+            class="{{#if color.isActive}} active-color {{/if}} color h-[36px] w-[36px] rounded-full hover:cursor-pointer hover:scale-125"
           ></div>
         {{/each}}
       </script>
@@ -231,7 +231,7 @@
         class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col"
       >
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
@@ -239,7 +239,7 @@
           </svg>
         </div>
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer active-material"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
@@ -251,7 +251,7 @@
           </svg>
         </div>
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
+          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
@@ -277,7 +277,7 @@
         {{#each cubemaps as | cubemap |}}
           <div
             onclick="CarBackgroundView.handleChangeCubemap({{@index}})"
-            class="cubemap rounded-full hover:cursor-pointer transition hover:opacity-70 flex justify-center items-center"
+            class="cubemap rounded-full hover:cursor-pointer hover:opacity-70 flex justify-center items-center"
           >
             <div
               class="cubemap-check absolute bg-black bg-opacity-70 rounded-full justify-center items-center"
@@ -305,7 +305,7 @@
           class="step-back-button-container {{#unless prevStep}} no-step {{/unless}}"
         >
           <div
-            class="step-button transition"
+            class="step-button"
             onclick="CarConfigStepperView.handleChangeCurrentStep('{{prevStep}}')"
           >
             <svg viewBox="0 0 30 32" fill="none">
@@ -318,7 +318,7 @@
         >
           <h3 class="price">{{carPrice}}</h3>
           <div
-            class="step-button transition"
+            class="step-button"
             onclick="CarConfigStepperView.handleChangeCurrentStep('{{nextStep}}')"
           >
             <h3>{{nextStepName}}</h3>

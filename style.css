@@ -440,6 +440,7 @@ body {
 
 .color {
   filter: brightness(2); /** actual color values look a bit muted */
+  transition: var(--default-transition);
 }
 
 .active-color {
@@ -454,6 +455,7 @@ body {
 
 .material-icon {
   background-color: #272727;
+  transition: var(--default-transition);
 }
 
 .material-icon .stroke {
@@ -489,6 +491,7 @@ body {
   height: 90px;
   width: 90px;
   background-color: #272727;
+  transition: var(--default-transition);
 }
 .cubemap-check {
   height: 80px;
@@ -548,6 +551,7 @@ body {
   gap: 1rem;
   padding: 0 1rem;
   cursor: pointer;
+  transition: var(--default-transition);
 }
 
 .stepper-buttons .step-button:hover {
