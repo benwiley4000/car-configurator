@@ -37,7 +37,6 @@
               height="100%"
               viewBox="0 0 27 47"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path d="M2 2L23 23.5L2 45" />
             </svg>
@@ -70,12 +69,10 @@
       </script>
 
       <!-- OPTIONS -->
-      <div
-        class="options absolute flex flex-col justify-end top-[7vh] right-[5vw] space-y-1"
-      >
-        <div class="options flex space-x-3 justify-end">
+      <div class="options-container">
+        <div class="options">
           <div
-            class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
+            class="option-button"
             onclick="CarOptionsBarView.handleToggleLightsOn()"
           >
             <svg
@@ -84,8 +81,6 @@
               width="60%"
               viewBox="0 0 128 92"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="group-hover:opacity-50"
             >
               <path
                 d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z"
@@ -113,7 +108,7 @@
           </div>
 
           <div
-            class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group toggled-lights"
+            class="option-button"
             onclick="CarOptionsBarView.handleToggleRotationOn()"
           >
             <svg
@@ -121,12 +116,7 @@
               class="toggle-button-fill"
               height="55%"
               width="55%"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              class="group-hover:opacity-50"
               viewBox="0 0 214.367 214.367"
-              xml:space="preserve"
             >
               <path
                 d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
@@ -137,14 +127,12 @@
             </svg>
           </div>
           <div
-            class="bg-[#272727] h-[5vh] w-[5vh] min-h-[40px] min-w-[40px] rounded-[25%] flex items-center justify-center cursor-pointer group"
+            class="option-button"
             onclick="CarOptionsBarView.handleToggleSettingsPanel()"
           >
             <svg
               id="settings-toggle"
-              xmlns="http://www.w3.org/2000/svg"
               class="toggle-button-fill"
-              class="group-hover:opacity-50"
               viewBox="0 0 50 50"
               height="55%"
               width="55%"
@@ -230,7 +218,6 @@
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
             <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
           </svg>
@@ -244,7 +231,6 @@
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
             <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
             <path
@@ -262,7 +248,6 @@
             height="50%"
             viewBox="0 0 130 130"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
             <circle cx="65" cy="65" r="61" class="stroke" stroke-width="8" />
             <circle
@@ -349,7 +334,7 @@
             class="step-button transition"
             onclick="CarConfigStepperView.handleChangeCurrentStep('{{prevStep}}')"
           >
-            <svg viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 30 32" fill="none">
               <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
             </svg>
           </div>
@@ -363,7 +348,7 @@
             onclick="CarConfigStepperView.handleChangeCurrentStep('{{nextStep}}')"
           >
             <h3>{{nextStepName}}</h3>
-            <svg viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 30 32" fill="none">
               <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
             </svg>
           </div>

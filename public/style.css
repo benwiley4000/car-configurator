@@ -7,10 +7,6 @@ html {
   --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.example::-webkit-scrollbar {
-  display: none;
-}
-
 body {
   width: 100vw;
   height: 100vh;
@@ -204,7 +200,40 @@ body {
   margin-bottom: 1vh;
 }
 
-/* SETTINGS PANEL */
+/* OPTIONS / SETTINGS PANEL */
+
+.options-container {
+  position: absolute;
+  top: 7vh;
+  right: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.option-button {
+  background-color: #272727;
+  height: 5vh;
+  width: 5vh;
+  min-height: 40px;
+  min-width: 40px;
+  border-radius: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.option-button:hover svg {
+  opacity: 0.5;
+}
 
 .settings-line {
   justify-content: space-between;
