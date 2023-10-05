@@ -7,6 +7,33 @@ import { CarConfiguratorActions } from "./actions.js";
 /** @typedef {import('./store.js').CarConfiguratorState} CarConfiguratorState */
 
 /** @global */
+export const CarSceneLoadingView = new (class CarSceneLoadingView {
+  fadeoutTimeout = 0;
+
+  constructor() {
+    this.render();
+    CarConfiguratorStore.subscribe(
+      ["sceneLoadingState", "isSceneLoaded"],
+      this.render,
+    );
+  }
+
+  /** @private */
+  render = () => {
+    const { sceneLoadingState, isSceneLoaded } = CarConfiguratorStore.state;
+
+    const loader = /** @type {HTMLElement} */ (
+      document.getElementById("loader")
+    );
+    loader.classList.toggle("fadeout", isSceneLoaded);
+
+    /** @type {HTMLElement} */ (
+      document.getElementById("info-span")
+    ).innerHTML = sceneLoadingState;
+  };
+})();
+
+/** @global */
 export const CarSelectionView = new (class CarSelectionView {
   template = Handlebars.compile(
     /** @type {HTMLElement} */ (
@@ -313,65 +340,6 @@ export const CarBackgroundView = new (class CarBackgroundView {
 })();
 
 /** @global */
-export const CarConfigStepperView = new (class CarConfigStepperView {
-  template = Handlebars.compile(
-    /** @type {HTMLElement} */ (
-      document.getElementById("stepper-buttons-template")
-    ).innerHTML,
-  );
-
-  constructor() {
-    this.render();
-    CarConfiguratorStore.subscribe(
-      ["currentStep", "selectedCarIndex"],
-      this.render,
-    );
-  }
-
-  /** @private */
-  render = () => {
-    const { currentStep, selectedCarIndex } = CarConfiguratorStore.state;
-    const selectedCar = AppConfig.cars[selectedCarIndex];
-
-    /** @type {typeof currentStep | null} */
-    const prevStep =
-      currentStep === "modelSelection"
-        ? null
-        : currentStep === "customization"
-        ? "modelSelection"
-        : "customization";
-    /** @type {typeof currentStep | null} */
-    const nextStep =
-      currentStep === "modelSelection"
-        ? "customization"
-        : currentStep === "customization"
-        ? "review"
-        : null;
-    const nextStepName =
-      nextStep === "customization"
-        ? "Customize"
-        : nextStep === "review"
-        ? "Confirm & Review"
-        : null;
-    const carPrice = selectedCar.price;
-
-    /** @type {HTMLElement} */ (
-      document.getElementById("stepper-buttons")
-    ).innerHTML = this.template({
-      prevStep,
-      nextStep,
-      nextStepName,
-      carPrice,
-    });
-  };
-
-  /** @param {CarConfiguratorState['currentStep']} currentStep */
-  handleChangeCurrentStep(currentStep) {
-    CarConfiguratorActions.changeCurrentStep(currentStep);
-  }
-})();
-
-/** @global */
 export const CarOptionsBarView = new (class CarOptionsBarView {
   isSettingsPanelOpen = false;
 
@@ -457,28 +425,60 @@ export const CarOptionsBarView = new (class CarOptionsBarView {
 })();
 
 /** @global */
-export const CarSceneLoadingView = new (class CarSceneLoadingView {
-  fadeoutTimeout = 0;
+export const CarConfigStepperView = new (class CarConfigStepperView {
+  template = Handlebars.compile(
+    /** @type {HTMLElement} */ (
+      document.getElementById("stepper-buttons-template")
+    ).innerHTML,
+  );
 
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(
-      ["sceneLoadingState", "isSceneLoaded"],
+      ["currentStep", "selectedCarIndex"],
       this.render,
     );
   }
 
   /** @private */
   render = () => {
-    const { sceneLoadingState, isSceneLoaded } = CarConfiguratorStore.state;
+    const { currentStep, selectedCarIndex } = CarConfiguratorStore.state;
+    const selectedCar = AppConfig.cars[selectedCarIndex];
 
-    const loader = /** @type {HTMLElement} */ (
-      document.getElementById("loader")
-    );
-    loader.classList.toggle("fadeout", isSceneLoaded);
+    /** @type {typeof currentStep | null} */
+    const prevStep =
+      currentStep === "modelSelection"
+        ? null
+        : currentStep === "customization"
+        ? "modelSelection"
+        : "customization";
+    /** @type {typeof currentStep | null} */
+    const nextStep =
+      currentStep === "modelSelection"
+        ? "customization"
+        : currentStep === "customization"
+        ? "review"
+        : null;
+    const nextStepName =
+      nextStep === "customization"
+        ? "Customize"
+        : nextStep === "review"
+        ? "Confirm & Review"
+        : null;
+    const carPrice = selectedCar.price;
 
     /** @type {HTMLElement} */ (
-      document.getElementById("info-span")
-    ).innerHTML = sceneLoadingState;
+      document.getElementById("stepper-buttons")
+    ).innerHTML = this.template({
+      prevStep,
+      nextStep,
+      nextStepName,
+      carPrice,
+    });
   };
+
+  /** @param {CarConfiguratorState['currentStep']} currentStep */
+  handleChangeCurrentStep(currentStep) {
+    CarConfiguratorActions.changeCurrentStep(currentStep);
+  }
 })();

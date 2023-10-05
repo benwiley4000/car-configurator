@@ -1,14 +1,14 @@
 import { AppConfig } from "./config.js";
 import { CarConfiguratorActions } from "./actions.js";
 import {
+  CarSceneLoadingView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
   CarMaterialsView,
   CarBackgroundView,
-  CarConfigStepperView,
   CarOptionsBarView,
-  CarSceneLoadingView,
+  CarConfigStepperView,
 } from "./views.js";
 import {
   getUserToken,
@@ -138,14 +138,14 @@ function onMediaQueryChange(mediaQuery) {
 // Expose views as globals so their public
 // methods can be used as UI event handlers
 Object.assign(window, {
+  CarSceneLoadingView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
   CarMaterialsView,
   CarBackgroundView,
-  CarConfigStepperView,
   CarOptionsBarView,
-  CarSceneLoadingView,
+  CarConfigStepperView,
 });
 
 SDK3DVerse.engineAPI.editorAPI.on(
