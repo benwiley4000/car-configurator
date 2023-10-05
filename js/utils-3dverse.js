@@ -55,7 +55,7 @@ export function setCameraSettings(settings) {
  */
 export function reconfigureResolution() {
   const { width, height } = /** @type {HTMLElement} */ (
-    document.getElementById("canvas_container")
+    document.getElementById("canvas-container")
   ).getBoundingClientRect();
 
   const largestDim = Math.max(width, height);

@@ -474,7 +474,7 @@ export const CarSceneLoadingView = new (class CarSceneLoadingView {
     loader.classList.toggle('fadeout', isSceneLoaded);
 
     /** @type {HTMLElement} */ (
-      document.getElementById("info_span")
+      document.getElementById("info-span")
     ).innerHTML = sceneLoadingState;
   };
 })();

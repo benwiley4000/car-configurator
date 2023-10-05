@@ -90,7 +90,7 @@ async function initApp() {
   );
 
   const displayCanvas = /** @type {HTMLElement} */ (
-    document.getElementById("display_canvas")
+    document.getElementById("display-canvas")
   );
   SDK3DVerse.setupDisplay(displayCanvas);
   // right click is used to zoom in and out so prevent default action
