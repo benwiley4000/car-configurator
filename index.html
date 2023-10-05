@@ -268,19 +268,16 @@
       </div>
 
       <!-- CUBEMAP SELECTION CONTAINER -->
-      <div
-        id="cubemap-selection"
-        class="absolute right-[7vw] space-y-[40px] flex align-center justify-center flex-col"
-      ></div>
+      <div id="cubemap-selection" class="cubemap-selection"></div>
       <!-- CUBEMAP SELECTION TEMPLATE -->
       <script id="cubemap-selection-template" type="text/x-handlebars">
         {{#each cubemaps as | cubemap |}}
           <div
+            class="cubemap"
             onclick="CarBackgroundView.handleChangeCubemap({{@index}})"
-            class="cubemap rounded-full hover:cursor-pointer hover:opacity-70 flex justify-center items-center"
           >
             <div
-              class="cubemap-check absolute bg-black bg-opacity-70 rounded-full justify-center items-center"
+              class="cubemap-check"
             >
               <img
                 src="./img/orange-check.png"
@@ -291,7 +288,7 @@
             <img
               src="{{cubemap.previewSrc}}"
               alt="{{cubemap.displayName}}"
-              class="rounded-full cubemap-bg"
+              class="cubemap-bg"
             />
           </div>
         {{/each}}

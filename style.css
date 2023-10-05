@@ -541,34 +541,65 @@ body {
 
 /* CUBEMAP SELECTION */
 
-.active-cubemap {
-  background-color: #ec6244 !important;
-  cursor: auto !important;
+.cubemap-selection {
+  position: absolute;
+  right: 7vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
 }
-.active-cubemap:hover {
-  opacity: 100% !important;
-}
-.cubemap {
+
+.cubemap-selection .cubemap {
   height: 90px;
   width: 90px;
   background-color: #272727;
+  cursor: pointer;
+  border-radius: var(--rounded-border-radius);
   transition: var(--default-transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.cubemap-check {
+
+.cubemap-selection .cubemap:hover {
+  opacity: 0.7;
+}
+
+.cubemap-selection .cubemap.active-cubemap {
+  background-color: #ec6244;
+  cursor: unset;
+}
+
+.cubemap-selection .cubemap.active-cubemap:hover {
+  opacity: 1 !important;
+}
+
+.cubemap-selection .cubemap-check {
+  display: none;
   height: 80px;
   width: 80px;
-  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--rounded-border-radius);
 }
-.active-cubemap .cubemap-check {
+
+.cubemap-selection .cubemap.active-cubemap .cubemap-check {
   display: flex;
 }
-.cubemap-check-icon {
+
+.cubemap-selection .cubemap-check-icon {
   height: 40%;
   width: 40%;
 }
-.cubemap-bg {
+
+.cubemap-selection .cubemap-bg {
   height: 80px;
   width: 80px;
+  border-radius: var(--rounded-border-radius);
 }
 
 /** STEPPER BUTTONS */
