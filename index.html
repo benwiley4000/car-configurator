@@ -145,33 +145,23 @@
         </div>
 
         <!-- SETTINGS PANEL -->
-        <div
-          id="settings-panel"
-          class="w-[300px] bg-[#272727] rounded-[13px] z-10 p-7 space-y-5 hidden"
-        >
-          <div
-            class="settings-line flex text-[#dbdbdb] font-basic text-[0.9rem] space-x-90"
-          >
-            <h4 class="align-middle">RGB Gradient</h4>
-            <label class="relative inline-flex items-center cursor-pointer">
+        <div id="settings-panel" class="settings-panel hidden">
+          <label class="settings-line rgb-gradient-setting">
+            <h4>RGB Gradient</h4>
+            <div class="switch-container">
               <input
                 id="rgb-gradient"
                 type="checkbox"
-                class="sr-only peer"
                 onclick="CarOptionsBarView.handleToggleRgbGradientOn()"
               />
-              <div
-                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all dark:border-gray-600 peer-checked:bg-[#EC6244]"
-              ></div>
-            </label>
-          </div>
-          <div
-            class="settings-line flex flex-col text-[#dbdbdb] font-basic text-[0.9rem] space-y-3"
-          >
-            <div class="flex flex-row space-x-90 w-full settings-line">
+              <div class="switch-display"></div>
+            </div>
+          </label>
+          <div class="luminosity-setting">
+            <label class="settings-line">
               <h4>Luminosity</h4>
               <h4 id="luminosity-value"></h4>
-            </div>
+            </label>
             <input
               id="luminosity-slider"
               oninput="CarOptionsBarView.handleChangeUserCameraLuminosity({ target: this })"
@@ -179,7 +169,6 @@
               min="0"
               max="5"
               step="0.1"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 align-middle accent-[#EC6244]"
             />
             <small>Only your render is affected by this setting.</small>
           </div>
@@ -213,12 +202,7 @@
           class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
         >
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-          >
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
             <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
           </svg>
         </div>
@@ -226,12 +210,7 @@
           class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer active-material"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
         >
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-          >
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
             <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
             <path
               d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
@@ -243,12 +222,7 @@
           class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] transition hover:bg-[#494949] cursor-pointer"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
         >
-          <svg
-            width="50%"
-            height="50%"
-            viewBox="0 0 130 130"
-            fill="none"
-          >
+          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
             <circle cx="65" cy="65" r="61" class="stroke" stroke-width="8" />
             <circle
               cx="65"

@@ -4,7 +4,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
 
 html {
+  --transition-duration: 150ms;
   --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --rounded-border-radius: 9999px;
 }
 
 body {
@@ -35,7 +37,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 /* LOADING OVERLAY */
@@ -69,10 +71,10 @@ body {
 .loading-overlay .loading-spinner {
   height: 3rem;
   width: 3rem;
-  border-radius: 50%;
+  border-radius: var(--rounded-border-radius);
   border: 4px solid #ec6244;
   border-right-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--rounded-border-radius);
   animation: spin 1s linear infinite;
 }
 
@@ -235,10 +237,6 @@ body {
   opacity: 0.5;
 }
 
-.options-container .settings-line {
-  justify-content: space-between;
-}
-
 .options-container .toggle-button-fill {
   fill: #696969;
 }
@@ -252,6 +250,92 @@ body {
 .options-container svg.active .toggle-button-stroke,
 .options-container svg.active.toggle-button-stroke {
   stroke: #ec6244;
+}
+
+.options-container .settings-panel {
+  width: 300px;
+  background-color: #272727;
+  color: #dbdbdb;
+  font-size: 0.9rem;
+  border-radius: 13px;
+  z-index: 10;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.options-container .settings-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.options-container .rgb-gradient-setting .switch-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.options-container .rgb-gradient-setting input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.options-container .rgb-gradient-setting .switch-display {
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: var(--rounded-border-radius);
+  background-color: rgb(229 231 235);
+  transition: background-color var(--transition-duration)
+    var(--transition-timing-function);
+}
+
+.options-container .rgb-gradient-setting .switch-display::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  background-color: white;
+  border: 1px solid rgb(209 213 219);
+  border-radius: var(--rounded-border-radius);
+  height: 18px;
+  width: 18px;
+  transition: all var(--transition-duration) var(--transition-timing-function);
+}
+
+.options-container .rgb-gradient-setting input:focus + .switch-display {
+  outline: none;
+}
+
+.options-container .rgb-gradient-setting input:checked + .switch-display {
+  background-color: #ec6244;
+}
+
+.options-container
+  .rgb-gradient-setting
+  input:checked
+  + .switch-display::after {
+  transform: translateX(100%);
+  border-color: white;
+}
+
+.options-container .luminosity-setting {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.options-container .luminosity-setting input {
+  height: 0.5rem;
+  width: 100%;
+  background-color: rgb(229 231 235);
+  accent-color: #ec6244;
+  appearance: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
 }
 
 /* PART SELECTION MENU */
@@ -323,7 +407,7 @@ body {
 }
 
 .car-parts .part-item .check-circle {
-  border-radius: 50%;
+  border-radius: var(--rounded-border-radius);
   background-color: #1e1e1e;
   display: flex;
   align-items: center;
