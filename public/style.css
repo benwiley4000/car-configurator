@@ -21,7 +21,7 @@ body {
   overflow: hidden;
 }
 
-#canvas_container {
+.canvas-container {
   width: 100vw;
   height: 100vh;
   align-items: center;
@@ -30,11 +30,11 @@ body {
   position: relative;
 }
 
-#display_canvas:hover {
+.display-canvas:hover {
   cursor: grab;
 }
 
-#display_canvas:active {
+.display-canvas:active {
   cursor: grabbing;
 }
 
