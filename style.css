@@ -6,6 +6,8 @@
 html {
   --transition-duration: 150ms;
   --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-transition: all var(--transition-duration)
+    var(--transition-timing-function);
   --rounded-border-radius: 9999px;
 }
 
@@ -303,7 +305,7 @@ body {
   border-radius: var(--rounded-border-radius);
   height: 18px;
   width: 18px;
-  transition: all var(--transition-duration) var(--transition-timing-function);
+  transition: var(--default-transition);
 }
 
 .options-container .rgb-gradient-setting input:focus + .switch-display {
@@ -353,29 +355,31 @@ body {
 }
 
 .car-parts .categories .tab {
-  border-radius: 0.75rem;
-  color: #6d6d6d;
-  background-color: #22242a;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  color: white;
+  background-color: #272727;
+  opacity: 0.6;
   cursor: pointer;
   padding: 12px 20px;
   width: 100%;
+  transition: var(--default-transition);
 }
 
-.car-parts .categories .tab:hover {
-  background-color: #2e2f31;
+.car-parts .categories .tab:not(.active-tab):hover {
+  opacity: 0.75;
+  background-color: #454642;
 }
 
 .car-parts .categories .tab.active-tab {
   background-color: #272727;
   color: white;
-}
-
-.car-parts .categories .tab.active-tab:hover {
-  color: #acacac;
+  opacity: 1;
 }
 
 .car-parts .parts-for-category {
-  border-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
   color: white;
   background-color: #272727;
   font-weight: 500;
@@ -384,6 +388,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  transition: var(--default-transition);
 }
 
 .car-parts .part-item {
@@ -394,6 +399,7 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
+  transition: var(--default-transition);
 }
 
 .car-parts .part-item:hover {

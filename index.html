@@ -186,7 +186,7 @@
           {{#each availableCategories as | category |}}
             <button
               onclick="CarPartsView.handleChangeSelectedPartCategory('{{category.name}}')"
-              class="tab {{#if category.isSelected}} active-tab {{/if}} transition"
+              class="tab {{#if category.isSelected}} active-tab {{/if}}"
             >
               {{category.displayName}}
             </button>
@@ -194,10 +194,10 @@
         </div>
 
         <!-- Display the data for the selected category -->
-        <div class="parts-for-category transition">
+        <div class="parts-for-category">
           {{#each selectedCategoryData as | part |}}
             <div
-              class="{{#if part.isSelected}} active-part {{/if}} part-item transition"
+              class="{{#if part.isSelected}} active-part {{/if}} part-item"
               onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
             >
               <div>{{part.displayName}}</div>
