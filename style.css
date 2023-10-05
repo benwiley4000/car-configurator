@@ -1,0 +1,571 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
+
+html {
+  --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  margin: auto;
+  display: flex;
+  font-family: "Inter", sans-serif;
+  overflow: hidden;
+}
+
+.canvas-container {
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.display-canvas:hover {
+  cursor: grab;
+}
+
+.display-canvas:active {
+  cursor: grabbing;
+}
+
+.hidden {
+  display: none;
+}
+
+/* LOADING OVERLAY */
+
+.loading-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  background-color: #010001;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 1s var(--transition-timing-function);
+  z-index: 50;
+}
+
+.loading-overlay.fadeout {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  border: 4px solid #ec6244;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.info-span {
+  color: white;
+  font-weight: 500;
+}
+
+/* MODEL SELECTION */
+
+.switch-model-button {
+  position: absolute;
+  cursor: pointer;
+  height: 5vh;
+  width: 3vw;
+}
+
+.switch-model-button.left {
+  left: 5vw;
+}
+
+.switch-model-button.right {
+  right: 5vw;
+}
+
+.switch-model-button.left svg {
+  transform: rotate(180deg);
+}
+
+.switch-model-button svg path {
+  stroke: white;
+  stroke-width: 5;
+  transition: 0.1s ease;
+}
+
+.switch-model-button:hover svg path {
+  stroke: #a1a1a1;
+}
+
+.model-heading {
+  position: absolute;
+  top: 7vh;
+  left: 10vw;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  pointer-events: none;
+}
+
+.model-heading span {
+  pointer-events: all;
+}
+
+@media (min-width: 768px) {
+  .model-heading {
+    width: 67%;
+  }
+}
+
+.model-name {
+  font-family: "Bebas Neue", sans-serif;
+  color: white;
+  font-size: 7rem;
+  line-height: 7rem;
+  text-transform: uppercase;
+}
+
+/* the padding and display stuff is necessary because of the badely cropped font */
+.highlighted-word {
+  color: #141614 !important;
+  display: inline-block !important;
+  height: 7rem;
+  padding-left: 1vh !important;
+  padding-right: 1vh !important;
+  padding-top: 0.5vh !important;
+  padding-bottom: 0.4vh !important;
+  background-color: #ec6244;
+  border-radius: 15px;
+}
+
+.model-description {
+  color: rgb(156, 163, 175);
+  line-height: 1.75rem;
+}
+
+.model-infos {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.5vh;
+  right: 12%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.model-infos .info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.model-infos .info-label {
+  color: #aaaaaa;
+  font-size: 1.6vh;
+  font-weight: 500;
+}
+
+.model-infos .number {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  color: white;
+  display: flex;
+  align-items: flex-end;
+}
+
+.model-infos .value {
+  font-size: 5vh;
+}
+
+.model-infos .unit {
+  font-size: 2.5vh;
+  margin-left: 0.5rem;
+  margin-bottom: 1vh;
+}
+
+/* OPTIONS / SETTINGS PANEL */
+
+.options-container {
+  position: absolute;
+  top: 7vh;
+  right: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.option-button {
+  background-color: #272727;
+  height: 5vh;
+  width: 5vh;
+  min-height: 40px;
+  min-width: 40px;
+  border-radius: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.option-button:hover svg {
+  opacity: 0.5;
+}
+
+.settings-line {
+  justify-content: space-between;
+}
+
+.toggle-button-fill {
+  fill: #696969;
+}
+svg.active .toggle-button-fill,
+svg.active.toggle-button-fill {
+  fill: #ec6244;
+}
+.toggle-button-stroke {
+  stroke: #696969;
+}
+svg.active .toggle-button-stroke,
+svg.active.toggle-button-stroke {
+  stroke: #ec6244;
+}
+
+/* PART SELECTION MENU */
+
+.car-parts {
+  position: absolute;
+  top: 7vh;
+  left: 5vw;
+  width: 450px;
+  font-weight: 600;
+}
+
+.car-parts .categories {
+  display: flex;
+}
+
+.car-parts .categories .tab {
+  border-radius: 0.75rem;
+  color: #6d6d6d;
+  background-color: #22242a;
+  cursor: pointer;
+  padding: 12px 20px;
+  width: 100%;
+}
+
+.car-parts .categories .tab:hover {
+  background-color: #2e2f31;
+}
+
+.car-parts .categories .tab.active-tab {
+  background-color: #272727;
+  color: white;
+}
+
+.car-parts .categories .tab.active-tab:hover {
+  color: #acacac;
+}
+
+.car-parts .parts-for-category {
+  border-radius: 0.75rem;
+  color: white;
+  background-color: #272727;
+  font-weight: 500;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.car-parts .part-item {
+  justify-content: space-between;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  padding: 1.25rem 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.car-parts .part-item:hover {
+  background-color: #454642;
+}
+
+.car-parts .part-item.active-part {
+  background-color: #ec6244;
+  color: #22242a;
+  cursor: auto;
+}
+
+.car-parts .part-item .check-circle {
+  border-radius: 50%;
+  background-color: #1e1e1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.car-parts .part-item .check-circle img {
+  display: none;
+  width: 50%;
+  height: 50%;
+}
+
+.car-parts .part-item.active-part .check-circle {
+  background-color: #272727;
+}
+
+.car-parts .part-item.active-part .check-circle img {
+  display: unset;
+}
+
+/* COLORS */
+
+.color {
+  filter: brightness(2); /** actual color values look a bit muted */
+}
+
+.active-color {
+  border: 4px solid #3c3c3c !important;
+  cursor: auto !important;
+}
+.active-color:hover {
+  transform: none !important;
+}
+
+/* MATERIALS */
+
+.material-icon {
+  background-color: #272727;
+}
+
+.material-icon .stroke {
+  stroke: white;
+}
+
+.material-icon .fill {
+  fill: white;
+}
+
+.material-icon.active-material {
+  background-color: #ec6244;
+}
+
+.material-icon.active-material .stroke {
+  stroke: #272727;
+}
+
+.material-icon.active-material .fill {
+  fill: #272727;
+}
+
+/* CUBEMAP SELECTION */
+
+.active-cubemap {
+  background-color: #ec6244 !important;
+  cursor: auto !important;
+}
+.active-cubemap:hover {
+  opacity: 100% !important;
+}
+.cubemap {
+  height: 90px;
+  width: 90px;
+  background-color: #272727;
+}
+.cubemap-check {
+  height: 80px;
+  width: 80px;
+  display: none;
+}
+.active-cubemap .cubemap-check {
+  display: flex;
+}
+.cubemap-check-icon {
+  height: 40%;
+  width: 40%;
+}
+.cubemap-bg {
+  height: 80px;
+  width: 80px;
+}
+
+/** STEPPER BUTTONS */
+
+.stepper-buttons {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  align-items: flex-start;
+  bottom: 5vh;
+  left: 5vw;
+  right: 5vw;
+  pointer-events: none;
+}
+
+.stepper-buttons .step-back-button-container,
+.stepper-buttons .step-forward-button-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  pointer-events: all;
+}
+
+.stepper-buttons .step-back-button-container.no-step,
+.stepper-buttons .step-forward-button-container.no-step {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.stepper-buttons .step-button {
+  --step-button-size: 9vh;
+
+  background-color: #ec6244;
+  height: var(--step-button-size);
+  min-height: 60px;
+  min-width: max(60px, var(--step-button-size));
+  border-radius: calc(0.25 * var(--step-button-size));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+
+.stepper-buttons .step-button:hover {
+  box-shadow: 0 0 30px 0 rgba(210, 247, 90, 0.3);
+  background-color: #f27357;
+}
+
+.stepper-buttons .step-button h3 {
+  color: #141614;
+  font-size: 3vh;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 450px) {
+  .stepper-buttons .step-button h3 {
+    font-size: 1rem;
+  }
+}
+
+.stepper-buttons .step-button svg {
+  width: calc(0.3 * var(--step-button-size));
+  height: calc(0.3 * var(--step-button-size));
+}
+
+.step-back-button-container .step-button svg {
+  transform: rotate(180deg);
+}
+
+.stepper-buttons .step-button svg path {
+  stroke: #141614;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.price {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  color: #ec6244;
+  font-size: 6vh;
+}
+
+/* MEDIA QUERIES */
+
+@media (max-width: 768px) {
+  .price {
+    display: none;
+  }
+  .car-parts {
+    display: none;
+  }
+  .model-infos {
+    display: none;
+  }
+  #ui-options {
+    display: none !important;
+  }
+  .material-section {
+    display: none !important;
+  }
+  #select-parts-button,
+  #back-to-model-button {
+    display: none !important;
+  }
+  .model-description {
+    display: none !important;
+  }
+  #select-model-button,
+  .hidden-button {
+    display: none !important;
+  }
+  #part-selection {
+    font-size: 12px !important;
+    top: 3vh;
+    left: auto;
+  }
+  #tab-panels {
+    font-size: 14px !important;
+  }
+  #cubemap {
+    flex-direction: row !important;
+    bottom: 17vh !important;
+    right: auto !important;
+    align-items: center !important;
+    width: 80% !important;
+    justify-content: space-between !important;
+  }
+  .cubemap {
+    margin: 0 !important;
+  }
+  .model-description {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .model-name {
+    font-size: 4rem;
+    line-height: 4rem;
+  }
+  .highlighted-word {
+    height: 4.1rem !important;
+    border-radius: 8px !important;
+  }
+  .model-description {
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+  }
+}
