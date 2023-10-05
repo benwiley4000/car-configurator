@@ -490,28 +490,52 @@ body {
 
 /* MATERIALS */
 
-.material-icon {
+.material-selection {
+  position: absolute;
+  right: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.material-selection .material-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
   background-color: #272727;
   transition: var(--default-transition);
 }
 
-.material-icon .stroke {
+.material-selection .material-icon:hover {
+  background-color: #494949;
+}
+
+.material-selection .material-icon .stroke {
   stroke: white;
 }
 
-.material-icon .fill {
+.material-selection .material-icon .fill {
   fill: white;
 }
 
-.material-icon.active-material {
+.material-selection .material-icon.active-material {
   background-color: #ec6244;
 }
 
-.material-icon.active-material .stroke {
+.material-selection .material-icon.active-material .stroke {
   stroke: #272727;
 }
 
-.material-icon.active-material .fill {
+.material-selection .material-icon.active-material .fill {
   fill: #272727;
 }
 

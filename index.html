@@ -229,12 +229,9 @@
       </script>
 
       <!-- MATERIALS SELECTION -->
-      <div
-        id="materials-selection"
-        class="material-section absolute right-[5vw] space-y-[40px] flex align-center justify-center flex-col"
-      >
+      <div id="materials-selection" class="material-selection">
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer"
+          class="material-icon"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
@@ -242,7 +239,7 @@
           </svg>
         </div>
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer active-material"
+          class="material-icon"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
@@ -254,7 +251,7 @@
           </svg>
         </div>
         <div
-          class="h-[32px] w-[32px] rounded-lg material-icon flex justify-center items-center text-white font-bold text-[14px] hover:bg-[#494949] cursor-pointer"
+          class="material-icon"
           onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
         >
           <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
