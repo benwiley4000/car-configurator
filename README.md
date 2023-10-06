@@ -10,25 +10,16 @@ Here is the basic flow of this app:
 (This chart was created with [flowchart.fun](https://flowchart.fun/))
 
 IMMEDIATE TODO
-4.5. remaining code style refactors
 5. fix bugs
 6. implement features list
 qr code
 7. 3dverse sdk changes
 
-## Code style stuff
-11. Remove useless html after cleaning up css/tailwind usage
-
 ## Bugs
 4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch). this could be maybe solved by using isVisible instead of reparenting. there is also a bug where sometimes the car switch just doesnt happen. i should document this change and share a repro before i switch to is visible. NOTE: don't try to fix this until after we are using the transient scene. This will maybe resolve issues.
 
 ## app changes
-- Add tooltips to UI (in form of title="")
-- implement user avatars
-- More obvious tab layout/hierarchy for toolbox part selection
-- better ui halo for colors
 - Put in the button baptiste wanted
-- Implement session timeout warning, and add UI for reconnecting after session is closed.
 - Randomize initial viewing angle to increase the chance that you can see others in the scene.
 - Add some UI to show others in the scene. Maybe we can publish the client list as an embeddable react component.
 - Find less shitty-looking skyboxes?
