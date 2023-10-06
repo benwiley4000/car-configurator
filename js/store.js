@@ -30,6 +30,8 @@ function deepFreezeObject(obj) {
  *   currentStep: 'carSelection' | 'customization' | 'review';
  *   sceneLoadingState: string;
  *   isSceneLoaded: boolean;
+ *   isUserInactive: boolean;
+ *   wasDisconnected: boolean;
  * }} CarConfiguratorState
  */
 
@@ -56,6 +58,8 @@ export const CarConfiguratorStore = new (class CarConfiguratorStore {
     currentStep: "carSelection",
     sceneLoadingState: "Loading...",
     isSceneLoaded: false,
+    isUserInactive: false,
+    wasDisconnected: false,
   });
   /** @private @type {[string[], () => void][]} */
   subscribers = [];

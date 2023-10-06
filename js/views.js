@@ -7,7 +7,7 @@ import { CarConfiguratorActions } from "./actions.js";
 /** @typedef {import('./store.js').CarConfiguratorState} CarConfiguratorState */
 
 /** @global */
-export const CarLoadingOverlayView = new (class CarLoadingOverlayView {
+export const LoadingOverlayView = new (class LoadingOverlayView {
   fadeoutTimeout = 0;
 
   constructor() {
@@ -31,6 +31,39 @@ export const CarLoadingOverlayView = new (class CarLoadingOverlayView {
       document.getElementById("info-span")
     ).innerHTML = sceneLoadingState;
   };
+})();
+
+/** @global */
+export const TimeoutOverlayView = new (class TimeoutOverlayView {
+  constructor() {
+    this.render();
+    CarConfiguratorStore.subscribe(
+      ["isUserInactive", "wasDisconnected"],
+      this.render,
+    );
+  }
+
+  /** @private */
+  render = () => {
+    const { isUserInactive, wasDisconnected } = CarConfiguratorStore.state;
+    const timeoutOverlay = /** @type {HTMLElement} */ (
+      document.getElementById("timeout-overlay")
+    );
+    timeoutOverlay.classList.toggle(
+      "hidden",
+      !isUserInactive && !wasDisconnected,
+    );
+    /** @type {HTMLElement} */ (
+      timeoutOverlay.querySelector(".inactive-message")
+    ).classList.toggle("hidden", !isUserInactive);
+    /** @type {HTMLElement} */ (
+      timeoutOverlay.querySelector(".disconnected-message")
+    ).classList.toggle("hidden", !wasDisconnected);
+  };
+
+  stayConnected() {
+    CarConfiguratorActions.setUserIsActiveAgain();
+  }
 })();
 
 /** @global */

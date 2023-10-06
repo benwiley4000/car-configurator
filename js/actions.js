@@ -43,6 +43,8 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
   rearlightAssetEditors = [];
   /** @type {AssetEditorAPI[] | null} */
   paintAssetEditors = [];
+  /** @type {(() => void) | null} */
+  resumeCallback = null;
 
   /**
    * Only reason to use this is to satisfy typescript for nullable variable
@@ -514,5 +516,25 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
   /** @param {boolean} isSceneLoaded */
   setIsSceneLoaded(isSceneLoaded) {
     CarConfiguratorStore.setState({ isSceneLoaded });
+  }
+
+  /** @param {() => void} resumeCallback */
+  setUserIsInactive(resumeCallback) {
+    CarConfiguratorStore.setState({ isUserInactive: true });
+    this.resumeCallback = resumeCallback;
+  }
+
+  setUserIsActiveAgain() {
+    CarConfiguratorStore.setState({ isUserInactive: false });
+    if (this.resumeCallback) {
+      this.resumeCallback();
+    }
+  }
+
+  signalDisconnected() {
+    CarConfiguratorStore.setState({
+      wasDisconnected: true,
+      isUserInactive: false,
+    });
   }
 })();

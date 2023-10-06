@@ -18,6 +18,18 @@
         <div id="info-span" class="info-span">Loading...</div>
       </div>
 
+      <!-- TIMEOUT OVERLAY -->
+      <div id="timeout-overlay" class="timeout-overlay">
+        <div class="inactive-message">
+          <h2>Are you still there?</h2>
+          <button onclick="TimeoutOverlayView.stayConnected()">Yes</button>
+        </div>
+        <div class="disconnected-message">
+          <h2>You were disconnected.</h2>
+          <button onclick="window.location.reload()">Reconnect</button>
+        </div>
+      </div>
+
       <!-- CAR SELECTION CONTAINER -->
       <div id="car-selection" class="car-selection"></div>
       <!-- CAR SELECTION TEMPLATE -->
@@ -257,7 +269,7 @@
         </div>
 
         <!-- SETTINGS PANEL -->
-        <div id="settings-panel" class="settings-panel hidden">
+        <div id="settings-panel" class="settings-panel">
           <label class="settings-line rgb-gradient-setting">
             <h4>RGB Gradient</h4>
             <div class="switch-container">

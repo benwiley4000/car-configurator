@@ -128,6 +128,39 @@ small {
   font-weight: 500;
 }
 
+/* TIMEOUT OVERLAY */
+
+.timeout-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--off-white);
+  z-index: 50;
+}
+
+.timeout-overlay .inactive-message,
+.timeout-overlay .disconnected-message {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.timeout-overlay button {
+  background-color: var(--color-primary);
+  color: var(--dark-gray);
+  font-weight: bold;
+  padding: 1rem 2.5rem;
+  border-radius: var(--rounded-border-radius);
+  cursor: pointer;
+}
+
 /* CAR SELECTION */
 
 .car-selection .switch-car-button {
@@ -189,7 +222,7 @@ small {
   padding-left: 1vh;
   padding-right: 1vh;
   padding-top: 0.5vh;
-  padding-bottom: 0.;
+  padding-bottom: 0;
   background-color: var(--color-primary);
   border-radius: 15px;
 }

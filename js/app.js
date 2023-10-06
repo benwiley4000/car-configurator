@@ -1,7 +1,8 @@
 import { AppConfig } from "./config.js";
 import { CarConfiguratorActions } from "./actions.js";
 import {
-  CarLoadingOverlayView,
+  LoadingOverlayView,
+  TimeoutOverlayView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
@@ -110,6 +111,15 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
   CarConfiguratorActions.setIsSceneLoaded(true);
+
+  // @ts-ignore
+  SDK3DVerse.setInactivityCallback((resumeCallback) => {
+    CarConfiguratorActions.setUserIsInactive(resumeCallback);
+  });
+
+  SDK3DVerse.notifier.on("onConnectionClosed", () => {
+    CarConfiguratorActions.signalDisconnected();
+  });
 }
 
 /** @param {MediaQueryList | MediaQueryListEvent} mediaQuery */
@@ -138,7 +148,8 @@ function onMediaQueryChange(mediaQuery) {
 // Expose views as globals so their public
 // methods can be used as UI event handlers
 Object.assign(window, {
-  CarLoadingOverlayView,
+  LoadingOverlayView,
+  TimeoutOverlayView,
   CarSelectionView,
   CarPartsView,
   CarColorsView,
