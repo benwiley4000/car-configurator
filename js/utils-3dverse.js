@@ -121,3 +121,64 @@ export function getAssetEditorAPIForMaterial(materialUUID, callback) {
     .then(({ description }) => callback("assetUpdated", description));
   return api;
 }
+
+export async function showClientAvatars() {
+  const clientDisplayEX = await SDK3DVerse.installExtension(
+    SDK3DVerse_ClientDisplay_Ext,
+  );
+
+  const clientAvatarContent = await fetch("img/client-avatar.svg").then((res) =>
+    res.text(),
+  );
+
+  const getClientAvatarSvgUrl = (id, color) => {
+    const svgContent = clientAvatarContent
+      .replaceAll("FG_COLOR", color)
+      .replaceAll("BG_COLOR", "#ffffff");
+    const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
+    return url;
+  };
+
+  const knownClientUUIDS = new Set();
+
+  const registerUser = (user) => {
+    if (knownClientUUIDS.has(user.clientUUID)) return;
+    knownClientUUIDS.add(user.clientUUID);
+    const displayName = `User ${Number(Math.random().toString().slice(2)).toString(16).slice(0, 5)}`;
+    const color = `#${
+      SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID]
+    }`;
+    const image = getClientAvatarSvgUrl(user.clientUUID, color);
+    clientDisplayEX.registerClient({
+      ...user,
+      displayName,
+      color,
+      image,
+    });
+  };
+
+  const sessionKey = SDK3DVerse.streamer.config.connectionInfo.sessionKey;
+
+  const socket = new WebSocket(
+    `wss://api.3dverse.com/legacy/session/notifyWs?sessionKey=${sessionKey}&token=${getUserToken()}`,
+  );
+
+  socket.onerror = console.error;
+
+  socket.onmessage = async (event) => {
+    const message = JSON.parse(event.data);
+    const user = message.data;
+    switch (message.eventType) {
+      case "all-users":
+        user
+          .filter((u) => u.clientUUID !== SDK3DVerse.streamer.clientUUID)
+          .forEach(registerUser);
+        break;
+      case "user-joined":
+        if (message.data.clientUUID !== SDK3DVerse.streamer.clientUUID) {
+          registerUser(message.data);
+        }
+        break;
+    }
+  };
+}

@@ -17,6 +17,7 @@ import {
   setCameraSettings,
   changeCameraPosition,
   reconfigureResolution,
+  showClientAvatars,
 } from "./utils-3dverse.js";
 
 /** @typedef {import('./store.js').CarConfiguratorState} CarConfiguratorState */
@@ -111,6 +112,8 @@ async function initApp() {
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
   CarConfiguratorActions.setIsSceneLoaded(true);
+
+  await showClientAvatars();
 
   // @ts-ignore
   SDK3DVerse.setInactivityCallback((resumeCallback) => {
