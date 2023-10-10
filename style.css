@@ -99,7 +99,7 @@ small {
   height: 100%;
   opacity: 1;
   transition: opacity 1s var(--transition-timing-function);
-  z-index: 50;
+  z-index: 51;
 }
 
 .loading-overlay.fadeout {
