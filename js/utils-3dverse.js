@@ -144,7 +144,10 @@ export async function showClientAvatars() {
     const colorCss = `#${color}`;
     client.color = colorCss;
     client.image = getClientAvatarSvgUrl(client.clientUUID, colorCss);
-  }
+    if (client.avatar) {
+      client.avatar.src = client.image;
+    }
+  };
 
   const knownClients = new Map();
 
@@ -154,7 +157,10 @@ export async function showClientAvatars() {
       .toString(16)
       .slice(0, 5)}`;
     const client = { ...user, displayName };
-    updateColorForClient(client, SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID]);
+    updateColorForClient(
+      client,
+      SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID],
+    );
     clientDisplayEX.registerClient(client);
     knownClients.set(user.clientUUID, client);
   };
