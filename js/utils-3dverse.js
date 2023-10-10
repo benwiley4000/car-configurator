@@ -126,35 +126,37 @@ export async function showClientAvatars() {
   const clientDisplayEX = await SDK3DVerse.installExtension(
     SDK3DVerse_ClientDisplay_Ext,
   );
+  clientDisplayEX.setClientsRadius(80);
 
   const clientAvatarContent = await fetch("img/client-avatar.svg").then((res) =>
     res.text(),
   );
 
-  const getClientAvatarSvgUrl = (id, color) => {
+  const getClientAvatarSvgUrl = (id, colorCss) => {
     const svgContent = clientAvatarContent
-      .replaceAll("FG_COLOR", color)
+      .replaceAll("FG_COLOR", colorCss)
       .replaceAll("BG_COLOR", "#ffffff");
     const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
     return url;
   };
 
-  const knownClientUUIDS = new Set();
+  const updateColorForClient = (client, color) => {
+    const colorCss = `#${color}`;
+    client.color = colorCss;
+    client.image = getClientAvatarSvgUrl(client.clientUUID, colorCss);
+  }
+
+  const knownClients = new Map();
 
   const registerUser = (user) => {
-    if (knownClientUUIDS.has(user.clientUUID)) return;
-    knownClientUUIDS.add(user.clientUUID);
-    const displayName = `User ${Number(Math.random().toString().slice(2)).toString(16).slice(0, 5)}`;
-    const color = `#${
-      SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID]
-    }`;
-    const image = getClientAvatarSvgUrl(user.clientUUID, color);
-    clientDisplayEX.registerClient({
-      ...user,
-      displayName,
-      color,
-      image,
-    });
+    if (knownClients.has(user.clientUUID)) return;
+    const displayName = `User ${Number(Math.random().toString().slice(2))
+      .toString(16)
+      .slice(0, 5)}`;
+    const client = { ...user, displayName };
+    updateColorForClient(client, SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID]);
+    clientDisplayEX.registerClient(client);
+    knownClients.set(user.clientUUID, client);
   };
 
   const sessionKey = SDK3DVerse.streamer.config.connectionInfo.sessionKey;
@@ -181,4 +183,11 @@ export async function showClientAvatars() {
         break;
     }
   };
+
+  SDK3DVerse.engineAPI.editorAPI.on("client-color", (client) => {
+    const knownClient = knownClients.get(client.clientUUID);
+    if (knownClient) {
+      updateColorForClient(knownClient, client.color);
+    }
+  });
 }
