@@ -122,28 +122,26 @@ export function getAssetEditorAPIForMaterial(materialUUID, callback) {
   return api;
 }
 
-export async function showClientAvatars() {
+/**
+ * @param {{
+ *   radius: number;
+ *   getClientAvatarSrc(clientAvatarOpts: {
+ *     client: { clientUUID: string };
+ *     color: string;
+ *   }): string;
+ *   getClientDisplayName(client: { clientUUID: string }): string;
+ * }} opts
+ */
+export async function showClientAvatars({ radius, getClientAvatarSrc, getClientDisplayName }) {
   const clientDisplayEX = await SDK3DVerse.installExtension(
     SDK3DVerse_ClientDisplay_Ext,
   );
-  clientDisplayEX.setClientsRadius(80);
-
-  const clientAvatarContent = await fetch("img/client-avatar.svg").then((res) =>
-    res.text(),
-  );
-
-  const getClientAvatarSvgUrl = (id, colorCss) => {
-    const svgContent = clientAvatarContent
-      .replaceAll("FG_COLOR", colorCss)
-      .replaceAll("BG_COLOR", "#ffffff");
-    const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-    return url;
-  };
+  clientDisplayEX.setClientsRadius(radius);
 
   const updateColorForClient = (client, color) => {
     const colorCss = `#${color}`;
     client.color = colorCss;
-    client.image = getClientAvatarSvgUrl(client.clientUUID, colorCss);
+    client.image = getClientAvatarSrc({ client, color: colorCss });
     if (client.avatar) {
       client.avatar.src = client.image;
     }
@@ -153,10 +151,7 @@ export async function showClientAvatars() {
 
   const registerUser = (user) => {
     if (knownClients.has(user.clientUUID)) return;
-    const displayName = `User ${Number(Math.random().toString().slice(2))
-      .toString(16)
-      .slice(0, 5)}`;
-    const client = { ...user, displayName };
+    const client = { ...user, displayName: getClientDisplayName(user) };
     updateColorForClient(
       client,
       SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID],
