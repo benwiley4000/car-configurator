@@ -139,10 +139,14 @@ export async function showClientAvatars() {
       const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
       return url;
     },
-    getClientDisplayName() {
-      return `User ${Number(Math.random().toString().slice(2))
-        .toString(16)
-        .slice(0, 5)}`;
+    getClientDisplayName({ clientUUID }) {
+      // Convert the UUID to something that looks sort of like a word
+      const name = [...clientUUID]
+        .filter((s) => /[a-zA-Z]/.test(s))
+        .slice(0, 5)
+        .join("");
+      const nameCapitalized = `${name[0].toUpperCase()}${name.slice(1)}`;
+      return `User ${nameCapitalized}`;
     },
   });
 }
