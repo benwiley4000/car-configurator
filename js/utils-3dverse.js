@@ -122,73 +122,27 @@ export function getAssetEditorAPIForMaterial(materialUUID, callback) {
   return api;
 }
 
-/**
- * @param {{
- *   radius: number;
- *   getClientAvatarSrc(clientAvatarOpts: {
- *     client: { clientUUID: string };
- *     color: string;
- *   }): string;
- *   getClientDisplayName(client: { clientUUID: string }): string;
- * }} opts
- */
-export async function showClientAvatars({ radius, getClientAvatarSrc, getClientDisplayName }) {
+export async function showClientAvatars() {
   const clientDisplayEX = await SDK3DVerse.installExtension(
     SDK3DVerse_ClientDisplay_Ext,
   );
-  clientDisplayEX.setClientsRadius(radius);
-
-  const updateColorForClient = (client, color) => {
-    const colorCss = `#${color}`;
-    client.color = colorCss;
-    client.image = getClientAvatarSrc({ client, color: colorCss });
-    if (client.avatar) {
-      client.avatar.src = client.image;
-    }
-  };
-
-  const knownClients = new Map();
-
-  const registerUser = (user) => {
-    if (knownClients.has(user.clientUUID)) return;
-    const client = { ...user, displayName: getClientDisplayName(user) };
-    updateColorForClient(
-      client,
-      SDK3DVerse.engineAPI.editorAPI.clientColors[user.clientUUID],
-    );
-    clientDisplayEX.registerClient(client);
-    knownClients.set(user.clientUUID, client);
-  };
-
-  const sessionKey = SDK3DVerse.streamer.config.connectionInfo.sessionKey;
-
-  const socket = new WebSocket(
-    `wss://api.3dverse.com/legacy/session/notifyWs?sessionKey=${sessionKey}&token=${getUserToken()}`,
+  const clientAvatarContent = await fetch("img/client-avatar.svg").then((res) =>
+    res.text(),
   );
-
-  socket.onerror = console.error;
-
-  socket.onmessage = async (event) => {
-    const message = JSON.parse(event.data);
-    const user = message.data;
-    switch (message.eventType) {
-      case "all-users":
-        user
-          .filter((u) => u.clientUUID !== SDK3DVerse.streamer.clientUUID)
-          .forEach(registerUser);
-        break;
-      case "user-joined":
-        if (message.data.clientUUID !== SDK3DVerse.streamer.clientUUID) {
-          registerUser(message.data);
-        }
-        break;
-    }
-  };
-
-  SDK3DVerse.engineAPI.editorAPI.on("client-color", (client) => {
-    const knownClient = knownClients.get(client.clientUUID);
-    if (knownClient) {
-      updateColorForClient(knownClient, client.color);
-    }
+  clientDisplayEX.showClientAvatars({
+    // depending on the size of your scene you might want to adjust the radius
+    radius: 80,
+    getClientAvatarSrc({ color }) {
+      const svgContent = clientAvatarContent
+        .replace(/FG_COLOR/g, color)
+        .replace(/BG_COLOR/g, "#ffffff");
+      const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
+      return url;
+    },
+    getClientDisplayName() {
+      return `User ${Number(Math.random().toString().slice(2))
+        .toString(16)
+        .slice(0, 5)}`;
+    },
   });
 }

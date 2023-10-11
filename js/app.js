@@ -113,25 +113,7 @@ async function initApp() {
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
   CarConfiguratorActions.setIsSceneLoaded(true);
 
-  const clientAvatarContent = await fetch("img/client-avatar.svg").then((res) =>
-    res.text(),
-  );
-
-  await showClientAvatars({
-    radius: 80,
-    getClientAvatarSrc({ color }) {
-      const svgContent = clientAvatarContent
-        .replace(/FG_COLOR/g, color)
-        .replace(/BG_COLOR/g, "#ffffff");
-      const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-      return url;
-    },
-    getClientDisplayName() {
-      return `User ${Number(Math.random().toString().slice(2))
-        .toString(16)
-        .slice(0, 5)}`;
-    },
-  });
+  await showClientAvatars();
 
   // @ts-ignore
   SDK3DVerse.setInactivityCallback((resumeCallback) => {
