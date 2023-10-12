@@ -21,11 +21,13 @@ html {
   --dark-gray: #272727;
   --less-dark-gray: #454642;
   --toggle-off-color: #696969;
-  --medium-gray: #a1a1a1;
   --more-off-white: #d1d5db;
   --off-white: #efeeee;
-  --cubemap-checked-bg: rgba(0, 0, 0, 0.7);
+  --cubemap-checked-bg: rgba(0, 0, 0, 0.3);
   --step-button-hover-box-shadow: rgba(210, 247, 90, 0.3);
+  --button-size: 42px;
+  --spacing: 2.5rem;
+  --spacing-sm: 1.5rem;
 }
 
 body {
@@ -64,6 +66,10 @@ small {
   font-size: 80%;
 }
 
+img {
+  user-select: none;
+}
+
 .canvas-container {
   width: 100vw;
   height: 100vh;
@@ -93,7 +99,7 @@ small {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--spacing);
   background-color: black;
   width: 100%;
   height: 100%;
@@ -148,7 +154,7 @@ small {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--spacing);
   background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -161,64 +167,87 @@ small {
   cursor: pointer;
 }
 
-/* CAR SELECTION */
+/* MAIN UI LAYOUT */
 
-.car-selection .switch-car-button {
+.main-ui-layout {
   position: absolute;
-  cursor: pointer;
-  height: 5vh;
-  width: 3vw;
-}
-
-.car-selection .switch-car-button.left {
-  left: 5vw;
-}
-
-.car-selection .switch-car-button.right {
-  right: 5vw;
-}
-
-.car-selection .switch-car-button.left svg {
-  transform: rotate(180deg);
-}
-
-.car-selection .switch-car-button svg path {
-  stroke: var(--off-white);
-  stroke-width: 5;
-  transition: 0.1s ease;
-}
-
-.car-selection .switch-car-button:hover svg path {
-  stroke: var(--medium-gray);
-}
-
-.car-selection .car-heading {
-  position: absolute;
-  top: 7vh;
-  left: 10vw;
+  top: var(--spacing);
+  bottom: var(--spacing);
+  left: var(--spacing);
+  right: var(--spacing);
+  pointer-events: none;
   display: flex;
   flex-direction: column;
-  width: 67%;
-  pointer-events: none;
+  gap: var(--spacing);
 }
 
-.car-selection .car-heading span {
+.main-ui-layout .top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing);
+}
+
+.main-ui-layout .top-row .ui-right {
+  position: relative;
+}
+
+.main-ui-layout .top-row .ui-right .material-and-color {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--spacing);
+  display: flex;
+  gap: var(--spacing);
+}
+
+.main-ui-layout .lower-content {
+  position: relative;
+  flex-grow: 1;
+}
+
+.main-ui-layout .bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* CAR HEADING */
+
+.car-heading {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  padding: var(--spacing-sm);
+  border-radius: 1rem;
+  max-width: 650px;
+  gap: 1rem;
+}
+
+.car-heading span {
   pointer-events: all;
 }
 
-.car-selection .car-name {
+.car-heading .car-name {
   font-family: "Bebas Neue", sans-serif;
   color: var(--off-white);
-  font-size: 7rem;
-  line-height: 7rem;
+  font-size: 5rem;
+  line-height: 5rem;
   text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+  gap: var(--spacing);
 }
 
 /* the padding and display stuff is necessary because of the badely cropped font */
-.car-selection .highlighted-word {
+.car-heading .highlighted-word {
   color: black;
   display: inline-block;
-  height: 7rem;
+  height: 5rem;
   padding-left: 1vh;
   padding-right: 1vh;
   padding-top: 0.5vh;
@@ -227,119 +256,47 @@ small {
   border-radius: 15px;
 }
 
-.car-selection .car-description {
-  color: var(--medium-gray);
+.car-heading .car-description {
+  color: var(--off-white);
   line-height: 1.75rem;
 }
 
-.car-selection .car-infos {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1.5vh;
-  right: 12%;
-  top: 50%;
-  transform: translateY(-50%);
+.car-heading .car-name .switch-car-button {
+  cursor: pointer;
+  height: 5vh;
+  width: 3vw;
+  pointer-events: all;
+  flex-shrink: 0;
 }
 
-.car-selection .car-infos .info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+.car-heading .switch-car-button svg path {
+  stroke: var(--off-white);
+  stroke-width: 5;
+  transition: 0.1s ease;
 }
 
-.car-selection .car-infos .info-label {
-  color: var(--medium-gray);
-  font-size: 1.6vh;
-  font-weight: 500;
-}
-
-.car-selection .car-infos .number {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 700;
-  font-style: italic;
-  color: var(--off-white);
-  display: flex;
-  align-items: flex-end;
-}
-
-.car-selection .car-infos .value {
-  font-size: 5vh;
-}
-
-.car-selection .car-infos .unit {
-  font-size: 2.5vh;
-  margin-left: 0.5rem;
-  margin-bottom: 1vh;
+.car-heading .switch-car-button:hover svg path {
+  stroke: var(--more-off-white);
 }
 
 @media (max-width: 1024px) {
-  .car-selection .car-name {
+  .car-heading .car-name {
     font-size: 4rem;
     line-height: 4rem;
   }
-  .car-selection .highlighted-word {
+  .car-heading .highlighted-word {
     height: 4.1rem;
     border-radius: 8px;
   }
-  .car-selection .car-description {
+  .car-heading .car-description {
     font-size: 0.8rem;
     line-height: 1.3rem;
   }
 }
 
-/* OPTIONS / SETTINGS PANEL */
+/* SETTINGS PANEL */
 
-.options-container {
-  position: absolute;
-  top: 7vh;
-  right: 5vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.options-container .options {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.options-container .option-button {
-  background-color: var(--dark-gray);
-  height: 5vh;
-  width: 5vh;
-  min-height: 40px;
-  min-width: 40px;
-  border-radius: 25%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.options-container .option-button:hover svg {
-  opacity: 0.5;
-}
-
-.options-container .toggle-button-fill {
-  fill: var(--toggle-off-color);
-}
-.options-container svg.active .toggle-button-fill,
-.options-container svg.active.toggle-button-fill {
-  fill: var(--color-primary);
-}
-.options-container .toggle-button-stroke {
-  stroke: var(--toggle-off-color);
-}
-.options-container svg.active .toggle-button-stroke,
-.options-container svg.active.toggle-button-stroke {
-  stroke: var(--color-primary);
-}
-
-.options-container .settings-panel {
+.settings-panel {
   width: 300px;
   background-color: var(--dark-gray);
   color: var(--off-white);
@@ -350,28 +307,29 @@ small {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  pointer-events: all;
 }
 
-.options-container .settings-line {
+.settings-panel .settings-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.options-container .rgb-gradient-setting .switch-container {
+.settings-panel .rgb-gradient-setting .switch-container {
   position: relative;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
 
-.options-container .rgb-gradient-setting input {
+.settings-panel .rgb-gradient-setting input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-.options-container .rgb-gradient-setting .switch-display {
+.settings-panel .rgb-gradient-setting .switch-display {
   width: 2.75rem;
   height: 1.5rem;
   border-radius: var(--rounded-border-radius);
@@ -380,7 +338,7 @@ small {
     var(--transition-timing-function);
 }
 
-.options-container .rgb-gradient-setting .switch-display::after {
+.settings-panel .rgb-gradient-setting .switch-display::after {
   content: "";
   position: absolute;
   top: 3px;
@@ -393,29 +351,26 @@ small {
   transition: var(--default-transition);
 }
 
-.options-container .rgb-gradient-setting input:focus + .switch-display {
+.settings-panel .rgb-gradient-setting input:focus + .switch-display {
   outline: none;
 }
 
-.options-container .rgb-gradient-setting input:checked + .switch-display {
+.settings-panel .rgb-gradient-setting input:checked + .switch-display {
   background-color: var(--color-primary);
 }
 
-.options-container
-  .rgb-gradient-setting
-  input:checked
-  + .switch-display::after {
+.settings-panel .rgb-gradient-setting input:checked + .switch-display::after {
   transform: translateX(100%);
   border-color: white;
 }
 
-.options-container .luminosity-setting {
+.settings-panel .luminosity-setting {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.options-container .luminosity-setting input {
+.settings-panel .luminosity-setting input {
   height: 0.5rem;
   width: 100%;
   background-color: var(--off-white);
@@ -425,117 +380,25 @@ small {
   cursor: pointer;
 }
 
-/* PART SELECTION MENU */
-
-.car-parts {
-  position: absolute;
-  top: 7vh;
-  left: 5vw;
-  width: 450px;
-  font-weight: 600;
-}
-
-.car-parts .categories {
-  display: flex;
-}
-
-.car-parts .categories .tab {
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  color: var(--off-white);
-  background-color: var(--dark-gray);
-  opacity: 0.6;
-  cursor: pointer;
-  padding: 12px 20px;
-  width: 100%;
-  transition: var(--default-transition);
-}
-
-.car-parts .categories .tab:not(.active-tab):hover {
-  opacity: 0.75;
-  background-color: var(--less-dark-gray);
-}
-
-.car-parts .categories .tab.active-tab {
-  background-color: var(--dark-gray);
-  color: var(--off-white);
-  opacity: 1;
-}
-
-.car-parts .parts-for-category {
-  border-bottom-left-radius: 0.75rem;
-  border-bottom-right-radius: 0.75rem;
-  color: var(--off-white);
-  background-color: var(--dark-gray);
-  font-weight: 500;
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: var(--default-transition);
-}
-
-.car-parts .part-item {
-  justify-content: space-between;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  padding: 1.25rem 1rem;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  transition: var(--default-transition);
-}
-
-.car-parts .part-item:hover {
-  background-color: var(--less-dark-gray);
-}
-
-.car-parts .part-item.active-part {
-  background-color: var(--color-primary);
-  color: var(--dark-gray);
-  cursor: auto;
-}
-
-.car-parts .part-item .check-circle {
-  border-radius: var(--rounded-border-radius);
-  background-color: var(--dark-gray);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.car-parts .part-item .check-circle img {
-  display: none;
-  width: 50%;
-  height: 50%;
-}
-
-.car-parts .part-item.active-part .check-circle {
-  background-color: var(--dark-gray);
-}
-
-.car-parts .part-item.active-part .check-circle img {
-  display: unset;
-}
-
 /* COLORS */
 
 .colors-selection {
-  position: absolute;
-  right: 10vw;
+  --border-width: 3px;
+  --border-space: -3px;
+  --color-size: var(--button-size);
+  --selected-color-size: calc(
+    var(--color-size) + var(--border-width) * 2 + var(--border-space) * 2
+  );
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: var(--spacing-sm);
 }
 
 .colors-selection .color {
   --color: black;
-  --color-size: 26px;
+  --border-color: var(--off-white);
+  --check-brightness: 1000;
   background-color: var(--color);
   filter: brightness(2); /** actual color values look a bit muted */
   transition: var(--default-transition);
@@ -543,6 +406,7 @@ small {
   width: var(--color-size);
   border-radius: var(--rounded-border-radius);
   cursor: pointer;
+  pointer-events: all;
 }
 
 .colors-selection .color:hover {
@@ -551,49 +415,36 @@ small {
 
 .colors-selection .color.active-color {
   cursor: unset;
+  border: 3px solid var(--border-color);
 }
 
-.colors-selection .color.active-color:hover {
-  transform: none;
-}
-
-.colors-selection .color::after {
-  --border-width: 3px;
-  --border-space: 2px;
-  --selected-color-size: calc(
-    var(--color-size) + var(--border-width) * 2 + var(--border-space) * 2
-  );
-  content: "";
+.colors-selection .color .check-icon {
+  display: none;
+  width: 24px;
+  height: 24px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: var(--selected-color-size);
-  height: var(--selected-color-size);
-  border-radius: var(--rounded-border-radius);
-  border: var(--border-width) solid var(--off-white);
-  opacity: 0.6;
+  filter: brightness(var(--check-brightness));
 }
 
-.colors-selection .active-color::after {
-  opacity: 1;
+.colors-selection .color.active-color .check-icon {
+  display: unset;
 }
 
 /* MATERIALS */
 
 .material-selection {
-  position: absolute;
-  right: 5vw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: var(--spacing-sm);
 }
 
 .material-selection .material-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--button-size);
+  height: var(--button-size);
   border-radius: 0.5rem;
   display: flex;
   justify-content: center;
@@ -604,6 +455,7 @@ small {
   cursor: pointer;
   background-color: var(--dark-gray);
   transition: var(--default-transition);
+  pointer-events: all;
 }
 
 .material-selection .material-icon:hover {
@@ -618,28 +470,21 @@ small {
   fill: var(--off-white);
 }
 
-.material-selection .material-icon.active-material {
-  background-color: var(--color-primary);
-}
-
 .material-selection .material-icon.active-material .stroke {
-  stroke: var(--dark-gray);
+  stroke: var(--color-primary);
 }
 
 .material-selection .material-icon.active-material .fill {
-  fill: var(--dark-gray);
+  fill: var(--color-primary);
 }
 
 /* CUBEMAP SELECTION */
 
 .cubemap-selection {
-  position: absolute;
-  right: 7vw;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: var(--spacing-sm);
 }
 
 .cubemap-selection .cubemap {
@@ -652,6 +497,7 @@ small {
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: all;
 }
 
 .cubemap-selection .cubemap:hover {
@@ -683,8 +529,8 @@ small {
 }
 
 .cubemap-selection .cubemap-check-icon {
-  height: 40%;
-  width: 40%;
+  height: 32px;
+  width: 32px;
 }
 
 .cubemap-selection .cubemap-bg {
@@ -693,114 +539,46 @@ small {
   border-radius: var(--rounded-border-radius);
 }
 
-/** STEPPER BUTTONS */
+/* OPTIONS */
 
-.config-stepper {
-  display: flex;
-  justify-content: space-between;
+.options {
   position: absolute;
-  align-items: flex-start;
-  bottom: 5vh;
-  left: 5vw;
-  right: 5vw;
-  pointer-events: none;
-}
-
-.config-stepper .step-back-button-container,
-.config-stepper .step-forward-button-container {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: var(--spacing);
   display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  pointer-events: all;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
 }
 
-.config-stepper .step-back-button-container.no-step,
-.config-stepper .step-forward-button-container.no-step {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.config-stepper .step-button {
-  --step-button-size: 9vh;
-
-  background-color: var(--color-primary);
-  height: var(--step-button-size);
-  min-height: 60px;
-  min-width: max(60px, var(--step-button-size));
-  border-radius: calc(0.25 * var(--step-button-size));
+.options .option-button {
+  background-color: var(--dark-gray);
+  height: var(--button-size);
+  width: var(--button-size);
+  border-radius: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  padding: 0 1rem;
   cursor: pointer;
-  transition: var(--default-transition);
+  pointer-events: all;
 }
 
-.config-stepper .step-button:hover {
-  box-shadow: 0 0 30px 0 var(--step-button-hover-box-shadow);
-  background-color: var(--color-primary-lightened);
+.options .option-button:hover svg {
+  opacity: 0.5;
 }
 
-.config-stepper .step-button h3 {
-  color: var(--dark-gray);
-  font-size: 3vh;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 800;
-  white-space: nowrap;
+.options .toggle-button-fill {
+  fill: var(--toggle-off-color);
 }
-
-@media (max-width: 450px) {
-  .config-stepper .step-button h3 {
-    font-size: 1rem;
-  }
+.options svg.active .toggle-button-fill,
+.options svg.active.toggle-button-fill {
+  fill: var(--color-primary);
 }
-
-.config-stepper .step-button svg {
-  width: calc(0.3 * var(--step-button-size));
-  height: calc(0.3 * var(--step-button-size));
+.options .toggle-button-stroke {
+  stroke: var(--toggle-off-color);
 }
-
-.step-back-button-container .step-button svg {
-  transform: rotate(180deg);
-}
-
-.config-stepper .step-button svg path {
-  stroke: var(--dark-gray);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.config-stepper .price {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 800;
-  color: var(--color-primary);
-  font-size: 6vh;
-}
-
-@media (max-width: 768px) {
-}
-
-/* HIDE SOME STUFF ON SMALL SCREEN */
-
-@media (max-width: 768px) {
-  .config-stepper .price {
-    display: none;
-  }
-  .car-parts {
-    display: none;
-  }
-  .car-selection .car-infos {
-    display: none;
-  }
-  .options-container {
-    display: none;
-  }
-  .material-selection {
-    display: none;
-  }
-  .car-selection .car-description {
-    display: none;
-  }
+.options svg.active .toggle-button-stroke,
+.options svg.active.toggle-button-stroke {
+  stroke: var(--color-primary);
 }

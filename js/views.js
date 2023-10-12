@@ -69,27 +69,14 @@ export const TimeoutOverlayView = new (class TimeoutOverlayView {
 /** @global */
 export const CarSelectionView = new (class CarSelectionView {
   template = Handlebars.compile(
-    /** @type {HTMLElement} */ (
-      document.getElementById("car-selection-template")
-    ).innerHTML,
+    /** @type {HTMLElement} */ (document.getElementById("car-heading-template"))
+      .innerHTML,
   );
 
   constructor() {
     this.render();
-    this.updateVisibility();
     CarConfiguratorStore.subscribe(["selectedCarIndex"], this.render);
-    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
-
-  /** @private */
-  updateVisibility = () => {
-    /** @type {HTMLElement} */ (
-      document.getElementById("car-selection")
-    ).classList.toggle(
-      "hidden",
-      CarConfiguratorStore.state.currentStep !== "carSelection",
-    );
-  };
 
   /** @private */
   render = () => {
@@ -97,27 +84,11 @@ export const CarSelectionView = new (class CarSelectionView {
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     var [firstWord, ...otherWords] = selectedCar.name.split(" ");
     /** @type {HTMLElement} */ (
-      document.getElementById("car-selection")
+      document.getElementById("car-heading")
     ).innerHTML = this.template({
-      arrows: [{ direction: "left" }, { direction: "right" }],
       firstWord,
       afterFirstWord: otherWords.join(" "),
       description: selectedCar.description,
-      stats: [
-        { label: "Maximum Speed", unit: "KPH", value: selectedCar.maxSpeed },
-        { label: "0-100kph", unit: "S", value: selectedCar.acceleration },
-        { label: "Maximum Power", unit: "PS", value: selectedCar.maximumPower },
-        {
-          label: "Maximum Torque",
-          unit: "NM",
-          value: selectedCar.maximumTorque,
-        },
-        {
-          label: "Engine Capacity",
-          unit: "CC",
-          value: selectedCar.engineCapacity,
-        },
-      ],
     });
   };
 
@@ -129,87 +100,6 @@ export const CarSelectionView = new (class CarSelectionView {
       (selectedCarIndex + 1) % AppConfig.cars.length,
     );
   }
-
-  handlePreviousCar() {
-    const { selectedCarIndex } = CarConfiguratorStore.state;
-    CarConfiguratorActions.changeCar(
-      selectedCarIndex === 0 ? AppConfig.cars.length - 1 : selectedCarIndex - 1,
-    );
-  }
-})();
-
-/** @global */
-export const CarPartsView = new (class CarPartsView {
-  /** @private */
-  template = Handlebars.compile(
-    /** @type {HTMLElement} */ (document.getElementById("car-parts-template"))
-      .innerHTML,
-  );
-
-  constructor() {
-    this.render();
-    this.updateVisibility();
-    CarConfiguratorStore.subscribe(
-      ["selectedPartCategory", "selectedParts", "selectedCarIndex"],
-      this.render,
-    );
-    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
-  }
-
-  /** @private */
-  updateVisibility = () => {
-    /** @type {HTMLElement} */ (
-      document.getElementById("car-parts")
-    ).classList.toggle(
-      "hidden",
-      CarConfiguratorStore.state.currentStep !== "customization",
-    );
-  };
-
-  /** @private */
-  render = () => {
-    const { selectedPartCategory, selectedParts, selectedCarIndex } =
-      CarConfiguratorStore.state;
-
-    const selectedPartIndex = selectedParts[selectedPartCategory];
-
-    /** @type {HTMLElement} */ (
-      document.getElementById("car-parts")
-    ).innerHTML = this.template({
-      availableCategories:
-        /** @type {(keyof (typeof AppConfig.partCategoryNames))[]} */ (
-          Object.keys(AppConfig.partCategoryNames)
-        )
-          .filter(
-            (category) => AppConfig.cars[selectedCarIndex][category].length,
-          )
-          .map((name) => ({
-            name,
-            displayName: AppConfig.partCategoryNames[name],
-            isSelected: selectedPartCategory === name,
-          })),
-      selectedCategoryData: AppConfig.cars[selectedCarIndex][
-        selectedPartCategory
-      ].map((_, i) => ({
-        displayName: `${AppConfig.partCategoryNames[selectedPartCategory]} ${
-          i + 1
-        }`,
-        isSelected: selectedPartIndex === i,
-      })),
-    });
-  };
-
-  // UI EVENT HANDLERS:
-
-  /** @param {CarConfiguratorState['selectedPartCategory']} category */
-  handleChangeSelectedPartCategory = (category) => {
-    CarConfiguratorActions.changeSelectedPartCategory(category);
-  };
-
-  /** @param {number} index */
-  handleChangeSelectedPart = (index) => {
-    CarConfiguratorActions.changeSelectedPart(index);
-  };
 })();
 
 /** @global */
@@ -231,20 +121,8 @@ export const CarColorsView = new (class CarColorsView {
 
   constructor() {
     this.render();
-    this.updateVisibility();
     CarConfiguratorStore.subscribe(["selectedColor"], this.render);
-    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
-
-  /** @private */
-  updateVisibility = () => {
-    /** @type {HTMLElement} */ (
-      document.getElementById("colors-selection")
-    ).classList.toggle(
-      "hidden",
-      CarConfiguratorStore.state.currentStep !== "customization",
-    );
-  };
 
   /** @private */
   render = () => {
@@ -253,10 +131,19 @@ export const CarColorsView = new (class CarColorsView {
       document.getElementById("colors-selection")
     ).innerHTML = this.template({
       colors: [...this.cssToSdkColorChoicesMap.entries()].map(
-        ([cssColor, sdkColor]) => ({
-          cssColor,
-          isActive: sdkColor === selectedColor,
-        }),
+        ([cssColor, sdkColor]) => {
+          const averageRgb =
+            sdkColor.reduce((total, value) => total + value, 0) / 3;
+          // All the colors are pretty dark but we display them in the menu
+          // with double brightness, so we want to check if their average is
+          // above 0.25, not 0.5.
+          const useDarkAccent = averageRgb > 0.25;
+          return {
+            cssColor,
+            isActive: sdkColor === selectedColor,
+            useDarkAccent,
+          };
+        },
       ),
     });
   };
@@ -277,20 +164,8 @@ export const CarColorsView = new (class CarColorsView {
 export const CarMaterialsView = new (class CarMaterialsView {
   constructor() {
     this.render();
-    this.updateVisibility();
     CarConfiguratorStore.subscribe(["selectedMaterial"], this.render);
-    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
-
-  /** @private */
-  updateVisibility = () => {
-    /** @type {HTMLElement} */ (
-      document.getElementById("materials-selection")
-    ).classList.toggle(
-      "hidden",
-      CarConfiguratorStore.state.currentStep !== "customization",
-    );
-  };
 
   /** @private */
   render = () => {
@@ -323,9 +198,7 @@ export const CarCubemapView = new (class CarCubemapView {
 
   constructor() {
     this.initialRender();
-    this.updateVisibility();
     CarConfiguratorStore.subscribe(["selectedCubemap"], this.updateRender);
-    CarConfiguratorStore.subscribe(["currentStep"], this.updateVisibility);
   }
 
   /** @private */
@@ -340,16 +213,6 @@ export const CarCubemapView = new (class CarCubemapView {
     });
     this.updateRender();
   }
-
-  /** @private */
-  updateVisibility = () => {
-    /** @type {HTMLElement} */ (
-      document.getElementById("cubemap-selection")
-    ).classList.toggle(
-      "hidden",
-      CarConfiguratorStore.state.currentStep !== "review",
-    );
-  };
 
   /** @private */
   updateRender = () => {
@@ -374,29 +237,12 @@ export const CarCubemapView = new (class CarCubemapView {
 
 /** @global */
 export const CarOptionsView = new (class CarOptionsView {
-  isSettingsPanelOpen = false;
-
   constructor() {
     this.render();
     CarConfiguratorStore.subscribe(
       ["lightsOn", "rotationOn", "rgbGradientOn", "userCameraLuminosity"],
       this.render,
     );
-    window.addEventListener("click", (e) => {
-      const settingsToggle = /** @type {HTMLElement} */ (
-        document.getElementById("settings-toggle")
-      );
-      const settingsPanel = /** @type {HTMLElement} */ (
-        document.getElementById("settings-panel")
-      );
-      if (
-        !settingsToggle.contains(/** @type {Node} */ (e.target)) &&
-        !settingsPanel.contains(/** @type {Node} */ (e.target))
-      ) {
-        this.isSettingsPanelOpen = false;
-        this.render();
-      }
-    });
   }
 
   /** @private */
@@ -408,14 +254,6 @@ export const CarOptionsView = new (class CarOptionsView {
     /** @type {HTMLElement} */ (
       document.getElementById("rotate-toggle")
     ).classList.toggle("active", CarConfiguratorStore.state.rotationOn);
-
-    /** @type {HTMLElement} */ (
-      document.getElementById("settings-toggle")
-    ).classList.toggle("active", this.isSettingsPanelOpen);
-
-    /** @type {HTMLElement} */ (
-      document.getElementById("settings-panel")
-    ).classList.toggle("hidden", !this.isSettingsPanelOpen);
 
     /** @type {HTMLInputElement} */ (
       document.getElementById("rgb-gradient")
@@ -433,11 +271,6 @@ export const CarOptionsView = new (class CarOptionsView {
 
   // UI EVENT HANDLERS:
 
-  handleToggleSettingsPanel() {
-    this.isSettingsPanelOpen = !this.isSettingsPanelOpen;
-    this.render();
-  }
-
   handleToggleLightsOn() {
     CarConfiguratorActions.toggleLightsOn();
   }
@@ -454,64 +287,5 @@ export const CarOptionsView = new (class CarOptionsView {
   handleChangeUserCameraLuminosity(e) {
     const luminosity = Number(e.target.value);
     CarConfiguratorActions.changeUserCameraLuminosity(luminosity);
-  }
-})();
-
-/** @global */
-export const CarConfigStepperView = new (class CarConfigStepperView {
-  template = Handlebars.compile(
-    /** @type {HTMLElement} */ (
-      document.getElementById("config-stepper-template")
-    ).innerHTML,
-  );
-
-  constructor() {
-    this.render();
-    CarConfiguratorStore.subscribe(
-      ["currentStep", "selectedCarIndex"],
-      this.render,
-    );
-  }
-
-  /** @private */
-  render = () => {
-    const { currentStep, selectedCarIndex } = CarConfiguratorStore.state;
-    const selectedCar = AppConfig.cars[selectedCarIndex];
-
-    /** @type {typeof currentStep | null} */
-    const prevStep =
-      currentStep === "carSelection"
-        ? null
-        : currentStep === "customization"
-        ? "carSelection"
-        : "customization";
-    /** @type {typeof currentStep | null} */
-    const nextStep =
-      currentStep === "carSelection"
-        ? "customization"
-        : currentStep === "customization"
-        ? "review"
-        : null;
-    const nextStepName =
-      nextStep === "customization"
-        ? "Customize"
-        : nextStep === "review"
-        ? "Confirm & Review"
-        : null;
-    const carPrice = selectedCar.price;
-
-    /** @type {HTMLElement} */ (
-      document.getElementById("config-stepper")
-    ).innerHTML = this.template({
-      prevStep,
-      nextStep,
-      nextStepName,
-      carPrice,
-    });
-  };
-
-  /** @param {CarConfiguratorState['currentStep']} currentStep */
-  handleChangeCurrentStep(currentStep) {
-    CarConfiguratorActions.changeCurrentStep(currentStep);
   }
 })();

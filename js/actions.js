@@ -24,11 +24,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
    * @property {Entity} gradientPlatform
    * @property {Entity} isAnimationActiveToken
    * @property {Entity} body
-   * @property {{
-   *   frontBumpers: Entity;
-   *   rearBumpers: Entity;
-   *   spoilers: Entity;
-   * }} carParts
    */
   /** @private @type {EntityMap | null} */
   entities = null;
@@ -79,7 +74,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
      * @typedef {Pick<
      *   CarConfiguratorState,
      *   | 'selectedCarIndex'
-     *   | 'selectedParts'
      *   | 'selectedCubemap'
      *   | 'rgbGradientOn'
      *   | 'rotationOn'
@@ -99,13 +93,9 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         Object.keys(CarConfiguratorStore.state)
       );
     } else {
-      const carPartEntitiesList = Object.values(entities.carParts);
       for (const entity of updatedEntities) {
         if (entity === entities.body) {
           updatedKeys.push("selectedCarIndex");
-        }
-        if (carPartEntitiesList.includes(entity)) {
-          updatedKeys.push("selectedParts");
         }
         if (entity === entities.environment) {
           updatedKeys.push("selectedCubemap");
@@ -126,36 +116,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       newState.selectedCarIndex = AppConfig.cars.findIndex(({ sceneUUID }) => {
         return entities.body.getComponent("scene_ref").value === sceneUUID;
       });
-    }
-    if (updatedKeys.includes("selectedParts")) {
-      // if visibility on a car part is updated before its respective car body,
-      // we will go ahead and update the index respective to the correct car.
-      const selectedParts =
-        /** @type {CarConfiguratorState['selectedParts']} */ ({});
-      for (const [key, entity] of Object.entries(entities.carParts)) {
-        const partSceneUUID = entity.getComponent("scene_ref").value;
-        selectedParts[
-          /** @type {keyof CarConfiguratorState['selectedParts']} */ (key)
-        ] = Math.max(
-          ...AppConfig.cars.map(({ frontBumpers }) =>
-            frontBumpers.findIndex((id) => partSceneUUID === id),
-          ),
-          0,
-        );
-      }
-      // only update object in state if the values are different (to avoid
-      // triggering unnecessary re-render).
-      /** @type {CarConfiguratorState['selectedParts']} */
-      if (
-        Object.entries(CarConfiguratorStore.state.selectedParts).some(
-          ([key, index]) =>
-            selectedParts[
-              /** @type {keyof CarConfiguratorState['selectedParts']} */ (key)
-            ] !== index,
-        )
-      ) {
-        newState.selectedParts = selectedParts;
-      }
     }
     if (updatedKeys.includes("selectedCubemap")) {
       newState.selectedCubemap = AppConfig.cubemaps.find(({ skyboxUUID }) => {
@@ -221,7 +181,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         }) ||
         // we shouldn't need to fall back but in case we changed the color
         // in the scene to something we don't recognize, we want to store it
-        // so that this color is used when we switch cars or parts.
+        // so that this color is used when we switch cars.
         carPaintDataJson.albedo;
       newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
         const sourceMaterialDataJson =
@@ -253,14 +213,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     this.applySelectedMaterial();
     entities.body.setComponent("scene_ref", { value: selectedCar.sceneUUID });
-    for (const [key, entity] of Object.entries(entities.carParts)) {
-      entity.setComponent("scene_ref", {
-        value:
-          selectedCar[
-            /** @type {keyof (typeof entities.carParts)} */ (key)
-          ][0] || INVALID_UUID,
-      });
-    }
     SDK3DVerse.engineAPI.propagateChanges();
   }
 
@@ -276,21 +228,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     AppConfig.cars.forEach((_, i) => {
       paintAssetEditors[i].updateAsset(desc);
     });
-  }
-
-  /** @private */
-  applySelectedPart() {
-    const entities = this.safeGet("entities");
-    const { selectedPartCategory, selectedParts, selectedCarIndex } =
-      CarConfiguratorStore.state;
-    const selectedPartIndex = selectedParts[selectedPartCategory];
-    entities.carParts[selectedPartCategory].setComponent("scene_ref", {
-      value:
-        AppConfig.cars[selectedCarIndex][selectedPartCategory][
-          selectedPartIndex
-        ] || INVALID_UUID,
-    });
-    SDK3DVerse.engineAPI.propagateChanges();
   }
 
   /** @private */
@@ -341,11 +278,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       gradientPlatform: gradientPlatformEntity,
       isAnimationActiveToken: isAnimationActiveTokenEntity,
       body: bodyEntity,
-      carParts: {
-        frontBumpers: frontBumperEntity,
-        rearBumpers: rearBumperEntity,
-        spoilers: spoilerEntity,
-      },
     };
 
     this.updateStateFromEntities();
@@ -397,11 +329,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /** @param {number} selectedCarIndex */
   changeCar(selectedCarIndex) {
-    CarConfiguratorStore.setState({
-      selectedCarIndex,
-      selectedParts: { frontBumpers: 0, rearBumpers: 0, spoilers: 0 },
-      selectedPartCategory: "frontBumpers",
-    });
+    CarConfiguratorStore.setState({ selectedCarIndex });
     this.applySelectedCar();
   }
 
@@ -417,25 +345,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       selectedMaterial: AppConfig.materials[matIndex],
     });
     this.applySelectedMaterial();
-  }
-
-  /**
-   * @param {CarConfiguratorState['selectedPartCategory']} selectedPartCategory
-   */
-  changeSelectedPartCategory(selectedPartCategory) {
-    CarConfiguratorStore.setState({ selectedPartCategory });
-  }
-
-  /** @param {number} partIndex */
-  changeSelectedPart(partIndex) {
-    const { selectedParts, selectedPartCategory } = CarConfiguratorStore.state;
-    CarConfiguratorStore.setState({
-      selectedParts: {
-        ...selectedParts,
-        [selectedPartCategory]: partIndex,
-      },
-    });
-    this.applySelectedPart();
   }
 
   /** @param {number} cubemapIndex */
@@ -497,14 +406,6 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     CarConfiguratorStore.setState({ userCameraLuminosity });
     setCameraSettings({
       brightness: CarConfiguratorStore.state.userCameraLuminosity,
-    });
-  }
-
-  /** @param {CarConfiguratorState['currentStep']} currentStep */
-  changeCurrentStep(currentStep) {
-    CarConfiguratorStore.setState({ currentStep });
-    setCameraSettings({
-      displayBackground: CarConfiguratorStore.state.currentStep === "review",
     });
   }
 

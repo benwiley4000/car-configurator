@@ -30,313 +30,262 @@
         </div>
       </div>
 
-      <!-- CAR SELECTION CONTAINER -->
-      <div id="car-selection" class="car-selection"></div>
-      <!-- CAR SELECTION TEMPLATE -->
-      <script id="car-selection-template" type="text/x-handlebars">
-        {{#each arrows as | arrow |}}
-          <div
-            class="switch-car-button {{arrow.direction}}"
-            onclick="CarSelectionView.handlePreviousCar()"
-          >
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 27 47"
-              fill="none"
-            >
-              <path d="M2 2L23 23.5L2 45" />
-            </svg>
-          </div>
-        {{/each}}
-
-        <div class="car-heading">
-          <h2 class="car-name">
-            <span>
-              <span class="highlighted-word">{{firstWord}}</span>
-              {{afterFirstWord}}
-            </span>
-          </h2>
-          <p class="car-description">
-            <span>{{description}}</span>
-          </p>
-        </div>
-
-        <div class="car-infos">
-          {{#each stats as | stat |}}
-            <div class="info-item">
-              <h3 class="info-label">{{stat.label}}</h3>
-              <div class="number">
-                <p class="value">{{stat.value}}</p>
-                <p class="unit">{{stat.unit}}</p>
+      <div class="main-ui-layout">
+        <div class="top-row">
+          <!-- CAR HEADING CONTAINER -->
+          <div id="car-heading" class="car-heading"></div>
+          <!-- CAR HEADING TEMPLATE -->
+          <script id="car-heading-template" type="text/x-handlebars">
+            <h2 class="car-name">
+              <span>
+                <span class="highlighted-word">{{firstWord}}</span>
+                {{afterFirstWord}}
+              </span>
+              <div
+                class="switch-car-button"
+                onclick="CarSelectionView.handleNextCar()"
+              >
+                <svg
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 27 47"
+                  fill="none"
+                >
+                  <path d="M2 2L23 23.5L2 45" />
+                </svg>
               </div>
-            </div>
-          {{/each}}
-        </div>
-      </script>
+            </h2>
+            <p class="car-description">
+              <span>{{description}}</span>
+            </p>
+          </script>
 
-      <!-- CUSTOMIZATION -->
-
-      <!-- CAR PARTS CONTAINER -->
-      <div id="car-parts" class="car-parts"></div>
-      <!-- CAR PARTS TEMPLATE -->
-      <script id="car-parts-template" type="text/x-handlebars">
-        <!-- Switch between categories -->
-        <div class="categories">
-          {{#each availableCategories as | category |}}
-            <button
-              onclick="CarPartsView.handleChangeSelectedPartCategory(
-                '{{category.name}}'
-              )"
-              class="tab {{#if category.isSelected}} active-tab {{/if}}"
-            >
-              {{category.displayName}}
-            </button>
-          {{/each}}
-        </div>
-
-        <!-- Display the data for the selected category -->
-        <div class="parts-for-category">
-          {{#each selectedCategoryData as | part |}}
-            <div
-              class="{{#if part.isSelected}} active-part {{/if}} part-item"
-              onclick="CarPartsView.handleChangeSelectedPart({{@index}})"
-            >
-              <div>{{part.displayName}}</div>
-              <div class="check-circle">
-                <img src="./img/white-check.png" />
-              </div>
-            </div>
-          {{/each}}
-        </div>
-      </script>
-
-      <!-- COLORS SELECTION CONTAINER -->
-      <div id="colors-selection" class="colors-selection"></div>
-      <!-- COLOR SELECTION TEMPLATE -->
-      <script id="colors-selection-template" type="text/x-handlebars">
-        {{#each colors as | color |}}
-          <div
-            style="--color: {{color.cssColor}}"
-            onclick="CarColorsView.handleChangeSelectedColor(
-              '{{color.cssColor}}'
+          <div class="ui-right">
+            <!-- SETTINGS PANEL -->
+            <div id="settings-panel" class="settings-panel">
+              <label class="settings-line rgb-gradient-setting">
+                <h4>RGB Gradient</h4>
+                <div class="switch-container">
+                  <input
+                    id="rgb-gradient"
+                    type="checkbox"
+                    onclick="CarOptionsView.handleToggleRgbGradientOn()"
+                  />
+                  <div class="switch-display"></div>
+                </div>
+              </label>
+              <div class="luminosity-setting">
+                <label class="settings-line">
+                  <h4>Luminosity</h4>
+                  <h4 id="luminosity-value"></h4>
+                </label>
+                <input
+                  id="luminosity-slider"
+                  oninput="CarOptionsView.handleChangeUserCameraLuminosity(
+              { target: this }
             )"
-            class="color {{#if color.isActive}} active-color {{/if}}"
-          ></div>
-        {{/each}}
-      </script>
-
-      <!-- MATERIALS SELECTION -->
-      <div id="materials-selection" class="material-selection">
-        <div
-          class="material-icon"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
-        >
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
-            <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
-          </svg>
-        </div>
-        <div
-          class="material-icon"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
-        >
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
-            <circle cx="65" cy="65" r="57.5" class="stroke" stroke-width="15" />
-            <path
-              d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
-              class="fill"
-            />
-          </svg>
-        </div>
-        <div
-          class="material-icon"
-          onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
-        >
-          <svg width="50%" height="50%" viewBox="0 0 130 130" fill="none">
-            <circle cx="65" cy="65" r="61" class="stroke" stroke-width="8" />
-            <circle
-              cx="65"
-              cy="65"
-              r="65"
-              transform="rotate(90 65 65)"
-              class="fill"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <!-- CUBEMAP SELECTION CONTAINER -->
-      <div id="cubemap-selection" class="cubemap-selection"></div>
-      <!-- CUBEMAP SELECTION TEMPLATE -->
-      <script id="cubemap-selection-template" type="text/x-handlebars">
-        {{#each cubemaps as | cubemap |}}
-          <div
-            class="cubemap"
-            onclick="CarCubemapView.handleChangeCubemap({{@index}})"
-          >
-            <div
-              class="cubemap-check"
-            >
-              <img
-                src="./img/orange-check.png"
-                class="cubemap-check-icon"
-                alt=""
-              />
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                />
+                <small>Only your render is affected by this setting.</small>
+              </div>
             </div>
-            <img
-              src="{{cubemap.previewSrc}}"
-              alt="{{cubemap.displayName}}"
-              class="cubemap-bg"
-            />
-          </div>
-        {{/each}}
-      </script>
 
-      <!-- OPTIONS -->
-      <div class="options-container">
-        <div class="options">
-          <div
-            class="option-button"
-            onclick="CarOptionsView.handleToggleLightsOn()"
-          >
-            <svg
-              id="light-toggle"
-              height="60%"
-              width="60%"
-              viewBox="0 0 128 92"
-              fill="none"
-            >
-              <path
-                d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z"
-                class="toggle-button-fill"
-              />
-              <path
-                d="M91 21H123"
-                class="toggle-button-stroke"
-                stroke-width="10"
-                stroke-linecap="round"
-              />
-              <path
-                d="M91 46H123"
-                class="toggle-button-stroke"
-                stroke-width="10"
-                stroke-linecap="round"
-              />
-              <path
-                d="M91 72H123"
-                class="toggle-button-stroke"
-                stroke-width="10"
-                stroke-linecap="round"
-              />
-            </svg>
-          </div>
+            <div class="material-and-color">
+              <!-- COLORS SELECTION CONTAINER -->
+              <div id="colors-selection" class="colors-selection"></div>
+              <!-- COLOR SELECTION TEMPLATE -->
+              <script id="colors-selection-template" type="text/x-handlebars">
+                {{#each colors as | color |}}
+                  <div
+                    style="
+                      --color: {{color.cssColor}};
+                      {{#if color.useDarkAccent}}
+                        --border-color: var(--dark-gray);
+                        --check-brightness: 0;
+                      {{/if}}
+                    "
+                    onclick="CarColorsView.handleChangeSelectedColor(
+                      '{{color.cssColor}}'
+                    )"
+                    class="color {{#if color.isActive}} active-color {{/if}}"
+                  >
+                  <img
+                    src="./img/white-check.png"
+                    class="check-icon"
+                    alt=""
+                  />
+                </div>
+                {{/each}}
+              </script>
 
-          <div
-            class="option-button"
-            onclick="CarOptionsView.handleToggleRotationOn()"
-          >
-            <svg
-              id="rotate-toggle"
-              class="toggle-button-fill"
-              height="55%"
-              width="55%"
-              viewBox="0 0 214.367 214.367"
-            >
-              <path
-                d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
-              c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
-              c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
-              S202.403,42.716,202.403,95.22z"
-              />
-            </svg>
-          </div>
-          <div
-            class="option-button"
-            onclick="CarOptionsView.handleToggleSettingsPanel()"
-          >
-            <svg
-              id="settings-toggle"
-              class="toggle-button-fill"
-              viewBox="0 0 50 50"
-              height="55%"
-              width="55%"
-            >
-              <path
-                d="M47.16,21.221l-5.91-0.966c-0.346-1.186-0.819-2.326-1.411-3.405l3.45-4.917c0.279-0.397,0.231-0.938-0.112-1.282 l-3.889-3.887c-0.347-0.346-0.893-0.391-1.291-0.104l-4.843,3.481c-1.089-0.602-2.239-1.08-3.432-1.427l-1.031-5.886 C28.607,2.35,28.192,2,27.706,2h-5.5c-0.49,0-0.908,0.355-0.987,0.839l-0.956,5.854c-1.2,0.345-2.352,0.818-3.437,1.412l-4.83-3.45 c-0.399-0.285-0.942-0.239-1.289,0.106L6.82,10.648c-0.343,0.343-0.391,0.883-0.112,1.28l3.399,4.863 c-0.605,1.095-1.087,2.254-1.438,3.46l-5.831,0.971c-0.482,0.08-0.836,0.498-0.836,0.986v5.5c0,0.485,0.348,0.9,0.825,0.985 l5.831,1.034c0.349,1.203,0.831,2.362,1.438,3.46l-3.441,4.813c-0.284,0.397-0.239,0.942,0.106,1.289l3.888,3.891 c0.343,0.343,0.884,0.391,1.281,0.112l4.87-3.411c1.093,0.601,2.248,1.078,3.445,1.424l0.976,5.861C21.3,47.647,21.717,48,22.206,48 h5.5c0.485,0,0.9-0.348,0.984-0.825l1.045-5.89c1.199-0.353,2.348-0.833,3.43-1.435l4.905,3.441 c0.398,0.281,0.938,0.232,1.282-0.111l3.888-3.891c0.346-0.347,0.391-0.894,0.104-1.292l-3.498-4.857 c0.593-1.08,1.064-2.222,1.407-3.408l5.918-1.039c0.479-0.084,0.827-0.5,0.827-0.985v-5.5C47.999,21.718,47.644,21.3,47.16,21.221z M25,32c-3.866,0-7-3.134-7-7c0-3.866,3.134-7,7-7s7,3.134,7,7C32,28.866,28.866,32,25,32z"
-              />
-            </svg>
+              <!-- MATERIALS SELECTION -->
+              <div id="materials-selection" class="material-selection">
+                <div
+                  class="material-icon"
+                  onclick="CarMaterialsView.handleChangeSelectedMaterial(0)"
+                >
+                  <svg
+                    width="50%"
+                    height="50%"
+                    viewBox="0 0 130 130"
+                    fill="none"
+                  >
+                    <circle
+                      cx="65"
+                      cy="65"
+                      r="57.5"
+                      class="stroke"
+                      stroke-width="15"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="material-icon"
+                  onclick="CarMaterialsView.handleChangeSelectedMaterial(1)"
+                >
+                  <svg
+                    width="50%"
+                    height="50%"
+                    viewBox="0 0 130 130"
+                    fill="none"
+                  >
+                    <circle
+                      cx="65"
+                      cy="65"
+                      r="57.5"
+                      class="stroke"
+                      stroke-width="15"
+                    />
+                    <path
+                      d="M65 130C82.2391 130 98.7721 123.152 110.962 110.962C123.152 98.7721 130 82.2391 130 65C130 47.7609 123.152 31.2279 110.962 19.0381C98.7721 6.8482 82.2391 5.15332e-07 65 -2.84124e-06L65 65L65 130Z"
+                      class="fill"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="material-icon"
+                  onclick="CarMaterialsView.handleChangeSelectedMaterial(2)"
+                >
+                  <svg
+                    width="50%"
+                    height="50%"
+                    viewBox="0 0 130 130"
+                    fill="none"
+                  >
+                    <circle
+                      cx="65"
+                      cy="65"
+                      r="61"
+                      class="stroke"
+                      stroke-width="8"
+                    />
+                    <circle
+                      cx="65"
+                      cy="65"
+                      r="65"
+                      transform="rotate(90 65 65)"
+                      class="fill"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- SETTINGS PANEL -->
-        <div id="settings-panel" class="settings-panel">
-          <label class="settings-line rgb-gradient-setting">
-            <h4>RGB Gradient</h4>
-            <div class="switch-container">
-              <input
-                id="rgb-gradient"
-                type="checkbox"
-                onclick="CarOptionsView.handleToggleRgbGradientOn()"
-              />
-              <div class="switch-display"></div>
+        <div class="lower-content">
+          <div class="bottom-bar">
+            <!-- CUBEMAP SELECTION CONTAINER -->
+            <div id="cubemap-selection" class="cubemap-selection"></div>
+            <!-- CUBEMAP SELECTION TEMPLATE -->
+            <script id="cubemap-selection-template" type="text/x-handlebars">
+              {{#each cubemaps as | cubemap |}}
+                <div
+                  class="cubemap"
+                  onclick="CarCubemapView.handleChangeCubemap({{@index}})"
+                >
+                  <div
+                    class="cubemap-check"
+                  >
+                    <img
+                      src="./img/orange-check.png"
+                      class="cubemap-check-icon"
+                      alt=""
+                    />
+                  </div>
+                  <img
+                    src="{{cubemap.previewSrc}}"
+                    alt="{{cubemap.displayName}}"
+                    class="cubemap-bg"
+                  />
+                </div>
+              {{/each}}
+            </script>
+
+            <!-- OPTIONS -->
+            <div class="options">
+              <div
+                class="option-button"
+                onclick="CarOptionsView.handleToggleLightsOn()"
+              >
+                <svg
+                  id="light-toggle"
+                  height="60%"
+                  width="60%"
+                  viewBox="0 0 128 92"
+                  fill="none"
+                >
+                  <path
+                    d="M73 14.5C64.6728 -11.6705 29.4999 3.66658 13.4999 16.9999C-4.49999 31.9998 -3.99996 55.707 13.4999 71.9999C28 85.5 61 104.5 73 80.5C77.9498 70.6005 76.5002 25.5 73 14.5Z"
+                    class="toggle-button-fill"
+                  />
+                  <path
+                    d="M91 21H123"
+                    class="toggle-button-stroke"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M91 46H123"
+                    class="toggle-button-stroke"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M91 72H123"
+                    class="toggle-button-stroke"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+
+              <div
+                class="option-button"
+                onclick="CarOptionsView.handleToggleRotationOn()"
+              >
+                <svg
+                  id="rotate-toggle"
+                  class="toggle-button-fill"
+                  height="55%"
+                  width="55%"
+                  viewBox="0 0 214.367 214.367"
+                >
+                  <path
+                    d="M202.403,95.22c0,46.312-33.237,85.002-77.109,93.484v25.663l-69.76-40l69.76-40v23.494
+            c27.176-7.87,47.109-32.964,47.109-62.642c0-35.962-29.258-65.22-65.22-65.22s-65.22,29.258-65.22,65.22
+            c0,9.686,2.068,19.001,6.148,27.688l-27.154,12.754c-5.968-12.707-8.994-26.313-8.994-40.441C11.964,42.716,54.68,0,107.184,0
+            S202.403,42.716,202.403,95.22z"
+                  />
+                </svg>
+              </div>
             </div>
-          </label>
-          <div class="luminosity-setting">
-            <label class="settings-line">
-              <h4>Luminosity</h4>
-              <h4 id="luminosity-value"></h4>
-            </label>
-            <input
-              id="luminosity-slider"
-              oninput="CarOptionsView.handleChangeUserCameraLuminosity(
-                { target: this }
-              )"
-              type="range"
-              min="0"
-              max="5"
-              step="0.1"
-            />
-            <small>Only your render is affected by this setting.</small>
           </div>
         </div>
       </div>
-
-      <!-- STEPPER BUTTONS CONTAINER -->
-      <div id="config-stepper" class="config-stepper"></div>
-      <script id="config-stepper-template" type="text/x-handlebars">
-        <div
-          class="step-back-button-container
-        {{#unless prevStep}} no-step {{/unless}}"
-        >
-          <div
-            class="step-button"
-            onclick="CarConfigStepperView.handleChangeCurrentStep(
-              '{{prevStep}}'
-            )"
-          >
-            <svg viewBox="0 0 30 32" fill="none">
-              <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
-            </svg>
-          </div>
-        </div>
-        <div
-          class="step-forward-button-container
-        {{#unless nextStep}} no-step {{/unless}}"
-        >
-          <h3 class="price">{{carPrice}}</h3>
-          <div
-            class="step-button"
-            onclick="CarConfigStepperView.handleChangeCurrentStep(
-              '{{nextStep}}'
-            )"
-          >
-            <h3>{{nextStepName}}</h3>
-            <svg viewBox="0 0 30 32" fill="none">
-              <path d="M14.25 2L28 16M28 16L14.25 30M28 16H2" />
-            </svg>
-          </div>
-        </div>
-      </script>
     </div>
 
     <!-- SCRIPTS -->

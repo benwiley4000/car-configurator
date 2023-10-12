@@ -4,12 +4,10 @@ import {
   LoadingOverlayView,
   TimeoutOverlayView,
   CarSelectionView,
-  CarPartsView,
   CarColorsView,
   CarMaterialsView,
   CarCubemapView,
   CarOptionsView,
-  CarConfigStepperView,
 } from "./views.js";
 import {
   getUserToken,
@@ -154,12 +152,10 @@ Object.assign(window, {
   LoadingOverlayView,
   TimeoutOverlayView,
   CarSelectionView,
-  CarPartsView,
   CarColorsView,
   CarMaterialsView,
   CarCubemapView,
   CarOptionsView,
-  CarConfigStepperView,
 });
 
 SDK3DVerse.engineAPI.editorAPI.on(
