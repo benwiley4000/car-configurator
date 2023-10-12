@@ -50,33 +50,6 @@ export function setCameraSettings(settings) {
 }
 
 /**
- * This function sets the resolution with a max rendering resolution of
- * 1920px then adapts the scale appropriately for the canvas size.
- */
-export function reconfigureResolution() {
-  const { width, height } = /** @type {HTMLElement} */ (
-    document.getElementById("canvas-container")
-  ).getBoundingClientRect();
-
-  const largestDim = Math.max(width, height);
-  const MAX_DIM = 1920;
-  const scale = largestDim > MAX_DIM ? MAX_DIM / largestDim : 1;
-
-  let w = Math.floor(width);
-  let h = Math.floor(height);
-  const aspectRatio = w / h;
-
-  if (w > h) {
-    // landscape
-    w = Math.floor(aspectRatio * h);
-  } else {
-    // portrait
-    h = Math.floor(w / aspectRatio);
-  }
-  SDK3DVerse.setResolution(w, h, scale);
-}
-
-/**
  * @param {string} assetType
  * @param {string} assetUUID
  * @returns

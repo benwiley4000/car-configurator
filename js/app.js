@@ -14,7 +14,6 @@ import {
   getCameraSettings,
   setCameraSettings,
   changeCameraPosition,
-  reconfigureResolution,
   showClientAvatars,
 } from "./utils-3dverse.js";
 
@@ -40,72 +39,50 @@ async function initApp() {
     await import("./secrets.js");
   }
 
-  SDK3DVerse.setApiVersion("v1");
-  SDK3DVerse.webAPI.setUserToken(getUserToken());
+  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
 
-  const mediaQuery = window.matchMedia("(max-width: 768px)");
-  mediaQuery.addEventListener("change", onMediaQueryChange);
-
-  const viewports = [
-    {
-      id: 0,
-      left: 0,
-      top: 0,
-      width: 1,
-      height: 1,
-      defaultControllerType: 1,
-      onCameraCreation: () => {
-        onMediaQueryChange(mediaQuery);
-        // these are the right bloom settings to emphasize
-        // the emission of the car headlights
-        setCameraSettings({
-          bloom: true,
-          bloomStrength: 1,
-          bloomThreshold: 50,
-        });
-        CarConfiguratorActions.changeUserCameraLuminosity(
-          getCameraSettings().brightness,
-        );
-      },
-    },
-  ];
-
-  SDK3DVerse.setViewports(viewports);
-  reconfigureResolution();
-  /** @type {number | null} */
-  let debounceResizeTimeout = null;
-  window.addEventListener("resize", () => {
-    if (debounceResizeTimeout) {
-      clearTimeout(debounceResizeTimeout);
-    }
-    debounceResizeTimeout = setTimeout(() => {
-      reconfigureResolution();
-      debounceResizeTimeout = null;
-    }, 100);
+  const sessionConnectionInfo = await SDK3DVerse.getSessionConnectionInfo({
+    userToken: getUserToken(),
+    sceneUUID: AppConfig.sceneUUID,
+    joinExisting: true,
+    isTransient: true,
   });
 
-  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
-  const connectionInfo = await SDK3DVerse.webAPI.createOrJoinSession(
-    AppConfig.sceneUUID,
-  );
-
-  const displayCanvas = /** @type {HTMLElement} */ (
-    document.getElementById("display-canvas")
-  );
-  SDK3DVerse.setupDisplay(displayCanvas);
-  // right click is used to zoom in and out so prevent default action
-  displayCanvas.addEventListener("contextmenu", (e) => e.preventDefault());
-
   CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
-  await SDK3DVerse.startStreamer(connectionInfo);
 
-  CarConfiguratorActions.setSceneLoadingState("Connecting to editor API...");
-  await SDK3DVerse.connectToEditor();
+  await SDK3DVerse.start({
+    sessionConnectionInfo,
+    canvas: document.getElementById("display-canvas"),
+    connectToEditor: true,
+    viewportProperties: {
+      defaultControllerType: SDK3DVerse.controller_type.orbit,
+    },
+    maxDimension: 1920,
+    onConnectingToEditor() {
+      CarConfiguratorActions.setSceneLoadingState("Connecting to editor...");
+    },
+  });
+
+  const mediaQuery = window.matchMedia("(max-width: 768px)");
+  mediaQuery.addEventListener("change", repositionCameraOnResize);
+  repositionCameraOnResize(mediaQuery);
+  // these are the right bloom settings to emphasize
+  // the emission of the car headlights
+  setCameraSettings({
+    bloom: true,
+    bloomStrength: 1,
+    bloomThreshold: 50,
+  });
+  CarConfiguratorActions.changeUserCameraLuminosity(
+    getCameraSettings().brightness,
+  );
 
   CarConfiguratorActions.setSceneLoadingState("Analyzing scene objects...");
+
   await CarConfiguratorActions.fetchSceneEntities();
 
   CarConfiguratorActions.setSceneLoadingState("Caching materials...");
+
   await CarConfiguratorActions.cacheMaterials();
 
   CarConfiguratorActions.setSceneLoadingState("Loading complete.");
@@ -124,7 +101,7 @@ async function initApp() {
 }
 
 /** @param {MediaQueryList | MediaQueryListEvent} mediaQuery */
-function onMediaQueryChange(mediaQuery) {
+function repositionCameraOnResize(mediaQuery) {
   if (mediaQuery.matches) {
     changeCameraPosition(
       [-4.595289707183838, 1.6792974472045898, 8.23273754119873],

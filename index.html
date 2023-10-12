@@ -8,9 +8,13 @@
   </head>
 
   <body>
-    <div id="canvas-container" class="canvas-container">
+    <div class="canvas-container">
       <!-- CANVAS -->
-      <canvas id="display-canvas" class="display-canvas"></canvas>
+      <canvas
+        id="display-canvas"
+        class="display-canvas"
+        oncontextmenu="event.preventDefault()"
+      ></canvas>
 
       <!-- LOADING OVERLAY -->
       <div id="loading-overlay" class="loading-overlay">
