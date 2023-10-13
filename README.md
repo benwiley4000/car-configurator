@@ -10,18 +10,15 @@ Here is the basic flow of this app:
 (This chart was created with [flowchart.fun](https://flowchart.fun/))
 
 IMMEDIATE TODO
-5. fix bugs
-6. implement features list
-qr code
-7. 3dverse sdk changes
+1. Investigate requestRegisterViewports setCameraSettings cannot convert null or undefined to object - try to reproduce then try to reproduce without async/await compilation
+1.5. make sure client avatars still work after reconnect
+3. figure out what to do with asset editor api
+4. fix bugs if remaining
 
 ## Bugs
 4. The arrows switching between cars seem sometimes non-responsive (try doing it a bunch). this could be maybe solved by using isVisible instead of reparenting. there is also a bug where sometimes the car switch just doesnt happen. i should document this change and share a repro before i switch to is visible. NOTE: don't try to fix this until after we are using the transient scene. This will maybe resolve issues.
 
 ## app changes
-- Put in the button baptiste wanted
-- Randomize initial viewing angle to increase the chance that you can see others in the scene.
-- Add some UI to show others in the scene. Maybe we can publish the client list as an embeddable react component.
 - Find less shitty-looking skyboxes?
 
 ## 3dverse stuff
@@ -29,13 +26,10 @@ qr code
 2. I need to go and make sure we're taking advantage of best camera settings (talk to Rados)
 
 ## SDK TODO
-- Make it so we don't throw an error whenever the session is closed (but preserve behavior that relies on this in collaborate.. figure out how to handle this differently).
 - Replace undocumented asset api usage with something else
 - better api for starting a session
 - this needs to include setting up client avatars
-- Maybe repetitive routines?
-- Make sure clients show up with avatars and colors
-- Maybe make it possible to pass a set of scene changes along with createSession, or to precreate entities on the backend with preset entity visible states
+- transient sessions
 
 ## Other stuff
 - Maybe make react component for client list and embed it?
