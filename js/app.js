@@ -63,7 +63,7 @@ async function initApp() {
     },
   });
 
-  const mediaQuery = window.matchMedia("(max-width: 768px)");
+  const mediaQuery = window.matchMedia("(max-width: 890px)");
   mediaQuery.addEventListener("change", repositionCameraOnResize);
   repositionCameraOnResize(mediaQuery);
   // these are the right bloom settings to emphasize

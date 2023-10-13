@@ -289,3 +289,18 @@ export const CarOptionsView = new (class CarOptionsView {
     CarConfiguratorActions.changeUserCameraLuminosity(luminosity);
   }
 })();
+
+export const SharePromptView = new (class SharePromptView {
+  constructor() {
+    const template = Handlebars.compile(
+      /** @type {HTMLElement} */ (
+        document.getElementById("share-prompt-template")
+      ).innerHTML,
+    );
+    const url = window.location.href;
+    const urlEncoded = encodeURIComponent(url);
+    /** @type {HTMLElement} */ (
+      document.getElementById("share-prompt")
+    ).innerHTML = template({ url, urlEncoded });
+  }
+})();

@@ -43,7 +43,7 @@
             <h2 class="car-name">
               <span>
                 <span class="highlighted-word">{{firstWord}}</span>
-                {{afterFirstWord}}
+                <span>{{afterFirstWord}}</span>
               </span>
               <div
                 class="switch-car-button"
@@ -288,14 +288,66 @@
               </div>
             </div>
           </div>
+
+          <div class="info-3dverse">
+            <!-- SHARE PROMPT -->
+            <div id="share-prompt" class="share-prompt"></div>
+            <!-- SHARE PROMPT TEMPLATE -->
+            <script id="share-prompt-template" type="text/x-handlebars">
+              <h3 class="title">Share or join with your phone</h3>
+              <button
+                class="copy-link"
+                onclick="navigator.clipboard.writeText('{{url}}')"
+              ></button>
+              <img
+                class="qr-code"
+                alt="qr code"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data={{urlEncoded}}"
+              />
+              <a
+                href="https://3dverse.com"
+                target="_blank"
+                rel="noreferrer"
+                title="Built with 3dverse"
+                class="built-with-3dverse"
+              >
+                <svg class="logo-3dverse" fill="none" viewBox="0 0 40 40">
+                  <path
+                    fill="#523B04"
+                    d="m5.288 19.753 8.896 8.698v11.548l-8.901-8.705.005-11.541ZM33.995 19.753l-8.896 8.698v11.548L34 31.294l-.005-11.541Z"
+                  ></path>
+                  <path
+                    fill="url(#3dverse-rocket_svg__logo-rocket-gradient)"
+                    fill-rule="evenodd"
+                    d="m29.33 13.272 4.875 6.475v11.547L24.99 19.747v5.101H14.496v-5.101L5.283 31.294V19.753l4.875-6.473V9.174C10.159 3.058 14.951 0 19.745 0c2.362 0 4.724.743 6.512 2.228 1.84 1.529 3.073 3.844 3.073 6.946v4.098Zm-9.586-7.517c1.51 0 3.02 1.08 3.02 3.24v4.28l-6.04.002V8.995c0-1.592.82-2.597 1.856-3.015.37-.15.767-.225 1.164-.225Zm-3.02 7.522v.003h6.04-6.04v-.003Zm3.02 16.702-5.247-5.13H24.99l-5.247 5.13Z"
+                    clip-rule="evenodd"
+                  ></path>
+                  <defs>
+                    <linearGradient
+                      id="3dverse-rocket_svg__logo-rocket-gradient"
+                      x1="12.075"
+                      x2="31.321"
+                      y1="1.887"
+                      y2="32.453"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#f0c732"></stop>
+                      <stop offset="1" stop-color="var(--color-accent)"></stop>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <span>Built with <span class="threedee">3d</span>verse</span>
+              </div>
+            </script>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- SCRIPTS -->
     <!-- SDK 3dverse -->
-    <script src="https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse.js"></script>
-    <script src="https://cdn.3dverse.com/legacy/sdk/latest/SDK3DVerse_ClientDisplay_Ext.js"></script>
+    <script src="http://localhost:9000/SDK3DVerse.js"></script>
+    <script src="http://localhost:9000/SDK3DVerse_ClientDisplay_Ext.js"></script>
 
     <!-- HANDLERBARS (templating) -->
     <script src="./js/vendor/handlebars.js"></script>
