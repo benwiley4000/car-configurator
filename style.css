@@ -272,7 +272,7 @@ img {
   display: flex;
   flex-direction: column;
   background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
   padding: var(--spacing-sm);
   border-radius: 1rem;
   max-width: 650px;
