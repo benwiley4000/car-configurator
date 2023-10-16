@@ -363,6 +363,24 @@ img {
   stroke: var(--more-off-white);
 }
 
+.car-heading .models-by-augmented-one {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  pointer-events: all;
+  gap: 0.5rem;
+  color: var(--off-white);
+  text-decoration: none;
+}
+
+.car-heading .models-by-augmented-one span {
+  font-size: 12px;
+}
+
+.car-heading .models-by-augmented-one .ao-logo {
+  width: 2rem;
+}
+
 /* SETTINGS PANEL */
 
 .settings-panel {
