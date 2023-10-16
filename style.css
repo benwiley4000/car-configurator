@@ -364,8 +364,8 @@ img {
 }
 
 .car-heading .models-by-augmented-one {
+  align-self: flex-end;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   pointer-events: all;
   gap: 0.5rem;
