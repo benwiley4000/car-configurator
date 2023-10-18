@@ -1,4 +1,5 @@
 export default {
+  publicToken: "",
   assets: {
     SceneCarConfigurator: {
       asset_id: "da5e1a59-4213-4015-b6c6-faa838c7367a",

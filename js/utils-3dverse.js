@@ -1,4 +1,5 @@
 import AssetEditorAPI from "./AssetEditorAPI.js";
+import { AppConfig } from "./config.js";
 
 // TODO: get rid of this and use real types
 const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
@@ -7,10 +8,6 @@ const SDK3DVerse_ClientDisplay_Ext =
   /** @type {typeof window & { SDK3DVerse_ClientDisplay_Ext: unknown }} */ (
     window
   ).SDK3DVerse_ClientDisplay_Ext;
-
-export function getUserToken() {
-  return localStorage.getItem("3dverse-api-token");
-}
 
 /**
  * @param {[number, number, number]} destinationPosition
@@ -64,7 +61,7 @@ export async function getAssetDescription(assetType, assetUUID) {
     `${apiUrl}/assets/${assetType}/${assetUUID}/description`,
     {
       headers: {
-        User_token: getUserToken() || "",
+        User_token: AppConfig.publicUserToken || "",
       },
     },
   );
@@ -92,7 +89,7 @@ export async function getAssetDescription(assetType, assetUUID) {
  * @returns
  */
 export function getAssetEditorAPIForMaterial(materialUUID, callback) {
-  const api = new AssetEditorAPI(getUserToken(), callback);
+  const api = new AssetEditorAPI(AppConfig.publicUserToken, callback);
   api
     .connect("material", materialUUID)
     .then(({ description }) => callback("assetUpdated", description));

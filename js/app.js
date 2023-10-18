@@ -10,7 +10,6 @@ import {
   CarOptionsView,
 } from "./views.js";
 import {
-  getUserToken,
   getCameraSettings,
   setCameraSettings,
   changeCameraPosition,
@@ -34,15 +33,10 @@ const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
  * it's finished.
  */
 async function initApp() {
-  if (window.location.hostname.includes("localhost")) {
-    // set 3dverse-api-token in local storage
-    await import("./secrets.js");
-  }
-
   CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
 
   const sessionConnectionInfo = await SDK3DVerse.getSessionConnectionInfo({
-    userToken: getUserToken(),
+    userToken: AppConfig.publicUserToken,
     sceneUUID: AppConfig.sceneUUID,
     joinExisting: true,
     isTransient: true,

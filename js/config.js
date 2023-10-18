@@ -11,6 +11,12 @@ const assetIds = Object.entries(templateJson.assets).reduce(
 );
 
 export const AppConfig = {
+  // This public user token gives any app user read-only access to the scene.
+  // Read-only access still permits temporary changes to the scene graph,
+  // within the context of a session, and these changes will be synced with
+  // other users connected to the same session. However the changes will not
+  // be persisted.
+  publicUserToken: templateJson.publicToken,
   sceneUUID: assetIds.SceneCarConfigurator,
   environmentEntityName: "Env",
   platformEntityName: "Platform",
