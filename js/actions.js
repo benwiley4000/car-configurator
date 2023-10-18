@@ -214,7 +214,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
     this.applySelectedMaterial();
     entities.body.setComponent("scene_ref", { value: selectedCar.sceneUUID });
-    SDK3DVerse.engineAPI.propagateChanges();
+    SDK3DVerse.engineAPI.commitChanges();
   }
 
   /** @private */
@@ -355,7 +355,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       radianceUUID,
       irradianceUUID,
     });
-    SDK3DVerse.engineAPI.propagateChanges();
+    SDK3DVerse.engineAPI.commitChanges();
   }
 
   toggleLightsOn() {
@@ -380,7 +380,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     entities.isAnimationActiveToken.setComponent("tags", {
       value: CarConfiguratorStore.state.rotationOn ? ["animationIsActive"] : [],
     });
-    SDK3DVerse.engineAPI.propagateChanges();
+    SDK3DVerse.engineAPI.commitChanges();
   }
 
   toggleRgbGradientOn() {
@@ -393,7 +393,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         ? entities.platform.getComponent("mesh_ref").value
         : INVALID_UUID,
     });
-    SDK3DVerse.engineAPI.propagateChanges();
+    SDK3DVerse.engineAPI.commitChanges();
   }
 
   /**  @param {number} userCameraLuminosity */
