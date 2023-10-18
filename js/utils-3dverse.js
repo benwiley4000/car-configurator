@@ -3,6 +3,10 @@ import AssetEditorAPI from "./AssetEditorAPI.js";
 // TODO: get rid of this and use real types
 const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
   .SDK3DVerse;
+const SDK3DVerse_ClientDisplay_Ext =
+  /** @type {typeof window & { SDK3DVerse_ClientDisplay_Ext: unknown }} */ (
+    window
+  ).SDK3DVerse_ClientDisplay_Ext;
 
 export function getUserToken() {
   return localStorage.getItem("3dverse-api-token");
@@ -105,6 +109,7 @@ export async function showClientAvatars() {
   clientDisplayEX.showClientAvatars({
     // depending on the size of your scene you might want to adjust the radius
     radius: 80,
+    /** @param {{ color: string }} params */
     getClientAvatarSrc({ color }) {
       const svgContent = clientAvatarContent
         .replace(/FG_COLOR/g, color)
@@ -112,6 +117,7 @@ export async function showClientAvatars() {
       const url = `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
       return url;
     },
+    /** @param {{ clientUUID: string }} params */
     getClientDisplayName({ clientUUID }) {
       // Convert the UUID to something that looks sort of like a word
       const name = [...clientUUID]
