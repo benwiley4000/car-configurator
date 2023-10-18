@@ -66,9 +66,10 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
   /**
    * @private
-   * @param  {...Entity} updatedEntities
+   * @param  {Entity[]} [updatedEntities]
    */
-  updateStateFromEntities = (...updatedEntities) => {
+  updateStateFromEntities = (updatedEntities = []) => {
+    console.log(updatedEntities)
     const entities = this.safeGet("entities");
     /**
      * @typedef {Pick<
