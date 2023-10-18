@@ -139,7 +139,7 @@ SDK3DVerse.engineAPI.editorAPI.on(
   "editor-error",
   (/** @type {{ httpCode?: number; message?: string }} */ error) => {
     if (error.httpCode === 429) {
-      // Tell user to stop spamming
+      // This can happen if too many actions are submitted in a short period
       alert(
         `3dverse says: ${error.message}\n${JSON.stringify(error, null, 2)}`,
       );
