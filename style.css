@@ -40,7 +40,7 @@ html {
 
 body {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   background-color: black;
   margin: auto;
   display: flex;
@@ -82,7 +82,7 @@ img {
 
 .canvas-container {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   align-items: center;
   display: flex;
   justify-content: center;
