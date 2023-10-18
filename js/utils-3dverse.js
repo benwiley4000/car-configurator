@@ -45,8 +45,8 @@ export function setCameraSettings(settings) {
   const camera = getCamera();
   const cameraComponent = camera.getComponent("camera");
   Object.assign(cameraComponent.dataJSON, settings);
-  camera.setComponent("camera", cameraComponent);
-  SDK3DVerse.engineAPI.propagateChanges();
+  camera.setComponent("camera", settings);
+  SDK3DVerse.engineAPI.commitChanges();
 }
 
 /**
