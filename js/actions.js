@@ -259,18 +259,12 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       gradientPlatformEntity,
       isAnimationActiveTokenEntity,
       bodyEntity,
-      frontBumperEntity,
-      rearBumperEntity,
-      spoilerEntity,
     ] = await SDK3DVerse.engineAPI.findEntitiesByNames(
       AppConfig.environmentEntityName,
       AppConfig.platformEntityName,
       AppConfig.gradientPlatformEntityName,
       AppConfig.isAnimationActiveTokenEntityName,
       AppConfig.sceneRefEntityNames.body,
-      AppConfig.sceneRefEntityNames.frontBumpers,
-      AppConfig.sceneRefEntityNames.rearBumpers,
-      AppConfig.sceneRefEntityNames.spoilers,
     );
     this.entities = {
       environment: environmentEntity,

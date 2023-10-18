@@ -48,41 +48,5 @@ export default {
       asset_id: "ef8b7508-7ef3-47a9-9e5a-6ed6f039b62a",
       asset_type: "material",
     },
-    CubemapPureSkySkybox: {
-      asset_id: "eb6b6cfc-a25f-4f9b-9cbf-287488a5f902",
-      asset_type: "cubemap",
-    },
-    CubemapPureSkyRadiance: {
-      asset_id: "2abf3b02-7ce9-437c-a85f-5f2f54ecc67b",
-      asset_type: "cubemap",
-    },
-    CubemapPureSkyIrradiance: {
-      asset_id: "ff345697-eca6-4970-bec7-7e6b1d52c715",
-      asset_type: "cubemap",
-    },
-    CubemapZwingerNightSkybox: {
-      asset_id: "3d87dcf8-7e9e-40b2-9187-521d6a2f0d7a",
-      asset_type: "cubemap",
-    },
-    CubemapZwingerNightRadiance: {
-      asset_id: "2312C1F1-3277-4DDE-8D74-6F42B413F447",
-      asset_type: "cubemap",
-    },
-    CubemapZwingerNightIrradiance: {
-      asset_id: "e8308b91-206b-4314-b1de-5d9831534fc8",
-      asset_type: "cubemap",
-    },
-    CubemapBloubergSunriseSkybox: {
-      asset_id: "3d73a47a-ade0-43a8-bfe3-ac9488d79d59",
-      asset_type: "cubemap",
-    },
-    CubemapBloubergSunriseRadiance: {
-      asset_id: "5cb7653e-fbf1-497a-bd64-26ad617ee6aa",
-      asset_type: "cubemap",
-    },
-    CubemapBloubergSunriseIrradiance: {
-      asset_id: "2f957174-2439-444f-95ed-5409a2c7a7b5",
-      asset_type: "cubemap",
-    },
   },
 };
