@@ -755,16 +755,21 @@ img {
   content: "🔗 Copy link";
 }
 
-.share-prompt .copy-link:hover {
+.share-prompt .copy-link:hover,
+.share-prompt .copy-link:active:not(:hover) {
   filter: brightness(0.9);
 }
 
-.share-prompt .copy-link:active {
+.share-prompt .copy-link:active:hover {
   filter: brightness(1.1);
 }
 
-.share-prompt .copy-link:active::before {
+.share-prompt .copy-link:active:hover::before {
   content: "✅ Copied!";
+}
+
+.share-prompt .copy-link:active:not(:hover)::before {
+  content: "🤥 Or not...";
 }
 
 .share-prompt .qr-code {
