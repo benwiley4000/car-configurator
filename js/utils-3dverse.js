@@ -56,9 +56,8 @@ export function setCameraSettings(settings) {
  * @returns
  */
 export async function getAssetDescription(assetType, assetUUID) {
-  const apiUrl = "https://api.3dverse.com/app/v1";
   const res = await fetch(
-    `${apiUrl}/assets/${assetType}/${assetUUID}/description`,
+    `${SDK3DVerse.webAPI.apiURL}/assets/${assetType}/${assetUUID}/description`,
     {
       headers: {
         User_token: AppConfig.publicUserToken || "",

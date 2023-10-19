@@ -1,7 +1,7 @@
 // @ts-nocheck
 // (we will externalize this so no use spending time typing it right now)
 
-const baseUrl = `wss://api.3dverse.com/legacy`;
+const baseUrl = `wss://${new URL(SDK3DVerse.webAPI.apiURL).host}/legacy`;
 
 export default class AssetEditorAPI {
   constructor(userToken, callback) {
