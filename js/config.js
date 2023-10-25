@@ -30,7 +30,7 @@ export const AppConfig = {
   cubemaps: [
     {
       name: "Pure Sky",
-      skyboxUUID:  "eb6b6cfc-a25f-4f9b-9cbf-287488a5f902",
+      skyboxUUID: "eb6b6cfc-a25f-4f9b-9cbf-287488a5f902",
       radianceUUID: "2abf3b02-7ce9-437c-a85f-5f2f54ecc67b",
       irradianceUUID: "ff345697-eca6-4970-bec7-7e6b1d52c715",
       previewSrc: "./img/cubemap1.png",
@@ -94,6 +94,24 @@ export const AppConfig = {
       paintMaterialUUID: assetIds.MaterialUrusPaint,
       headLightsMatUUID: assetIds.MaterialUrusHeadlights,
       rearLightsMatUUID: assetIds.MaterialUrusRearlights,
+    },
+    {
+      name: "Audi TT RS",
+      sceneUUID: assetIds.SceneAudi,
+      description:
+        "The Audio TT RS delivers sports car handling, muscle-car performance, and a high-end look and feel.",
+      paintMaterialUUID: assetIds.MaterialAudiPaint,
+      headLightsMatUUID: assetIds.MaterialAudiHeadlights,
+      rearLightsMatUUID: assetIds.MaterialAudiRearlights,
+    },
+    {
+      name: "Mercedes G-Class",
+      sceneUUID: assetIds.SceneMercedes,
+      description:
+        "The Mercedes G-Class has stood the test of time for more than 40 years. There's good reason why many of the original cross-country vehicles are still on the road to this day.",
+      paintMaterialUUID: assetIds.MaterialMercedesPaint,
+      headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
+      rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
     },
   ],
 };
