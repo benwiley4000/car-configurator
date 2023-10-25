@@ -92,6 +92,13 @@ async function initApp() {
   SDK3DVerse.notifier.on("onConnectionClosed", () => {
     CarConfiguratorActions.signalDisconnected();
   });
+
+  // hide scene ref cache container (suspended 1000 meters in the air to avoid
+  // being seen during page loading)
+  const [sceneRefCache] = await SDK3DVerse.engineAPI.findEntitiesByNames(
+    "SCENE_REF_CACHE",
+  );
+  SDK3DVerse.engineAPI.setEntityVisibility(sceneRefCache, false);
 }
 
 /** @param {MediaQueryList | MediaQueryListEvent} mediaQuery */
