@@ -95,23 +95,5 @@ export const AppConfig = {
       headLightsMatUUID: assetIds.MaterialUrusHeadlights,
       rearLightsMatUUID: assetIds.MaterialUrusRearlights,
     },
-    {
-      name: "Audi TT RS",
-      sceneUUID: assetIds.SceneAudi,
-      description:
-        "The Audio TT RS delivers sports car handling, muscle-car performance, and a high-end look and feel.",
-      paintMaterialUUID: assetIds.MaterialAudiPaint,
-      headLightsMatUUID: assetIds.MaterialAudiHeadlights,
-      rearLightsMatUUID: assetIds.MaterialAudiRearlights,
-    },
-    {
-      name: "Mercedes G-Class",
-      sceneUUID: assetIds.SceneMercedes,
-      description:
-        "The Mercedes G-Class has stood the test of time for more than 40 years. There's good reason why many of the original cross-country vehicles are still on the road to this day.",
-      paintMaterialUUID: assetIds.MaterialMercedesPaint,
-      headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
-      rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
-    },
   ],
 };
