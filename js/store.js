@@ -18,10 +18,8 @@ function deepFreezeObject(obj) {
 /**
  * @typedef {{
  *   selectedCarIndex: number;
- *   selectedPartCategory: keyof (typeof AppConfig.partCategoryNames);
- *   selectedParts: Record<keyof (typeof AppConfig.partCategoryNames), number>;
  *   selectedColor: [Number, Number, number];
- *   selectedMaterial: (typeof AppConfig)['materials'][number];
+ *   selectedMaterial: (typeof AppConfig)['materials'][number] | null;
  *   selectedCubemap: (typeof AppConfig)['cubemaps'][number];
  *   lightsOn: boolean;
  *   rotationOn: boolean;
@@ -38,15 +36,6 @@ export const CarConfiguratorStore = new (class CarConfiguratorStore {
   /** @private @type {CarConfiguratorState} */
   internalState = deepFreezeObject({
     selectedCarIndex: 0,
-    selectedPartCategory:
-      /** @type {CarConfiguratorState['selectedPartCategory']} */ (
-        Object.keys(AppConfig.partCategoryNames)[0]
-      ),
-    selectedParts: {
-      frontBumpers: 0,
-      rearBumpers: 0,
-      spoilers: 0,
-    },
     selectedColor: AppConfig.colorChoices[0],
     selectedMaterial: AppConfig.materials[0],
     selectedCubemap: AppConfig.cubemaps[0],

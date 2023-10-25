@@ -175,7 +175,10 @@ export const CarMaterialsView = new (class CarMaterialsView {
       .forEach((icon, i) => {
         icon.classList.toggle(
           "active-material",
-          AppConfig.materials.indexOf(selectedMaterial) === i,
+          Boolean(
+            selectedMaterial &&
+              AppConfig.materials.indexOf(selectedMaterial) === i,
+          ),
         );
       });
   };

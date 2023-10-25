@@ -185,15 +185,16 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
         // in the scene to something we don't recognize, we want to store it
         // so that this color is used when we switch cars.
         carPaintDataJson.albedo;
-      newState.selectedMaterial = AppConfig.materials.find(({ matUUID }) => {
-        const sourceMaterialDataJson =
-          cachedMaterialAssetDescriptions[matUUID].dataJson;
-        const { clearCoatRoughness, clearCoatStrength } = carPaintDataJson;
-        return (
-          sourceMaterialDataJson.clearCoatRoughness === clearCoatRoughness &&
-          sourceMaterialDataJson.clearCoatStrength === clearCoatStrength
-        );
-      });
+      newState.selectedMaterial =
+        AppConfig.materials.find(({ matUUID }) => {
+          const sourceMaterialDataJson =
+            cachedMaterialAssetDescriptions[matUUID].dataJson;
+          const { clearCoatRoughness, clearCoatStrength } = carPaintDataJson;
+          return (
+            sourceMaterialDataJson.clearCoatRoughness === clearCoatRoughness &&
+            sourceMaterialDataJson.clearCoatStrength === clearCoatStrength
+          );
+        }) || null;
     }
 
     if (
@@ -224,8 +225,19 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       "cachedMaterialAssetDescriptions",
     );
     const paintAssetEditors = this.safeGet("paintAssetEditors");
-    const { selectedMaterial, selectedColor } = CarConfiguratorStore.state;
-    const desc = cachedMaterialAssetDescriptions[selectedMaterial.matUUID];
+    const { selectedMaterial, selectedColor, selectedCarIndex } =
+      CarConfiguratorStore.state;
+    const desc =
+      cachedMaterialAssetDescriptions[
+        selectedMaterial
+          ? selectedMaterial.matUUID
+          : // If we can't identify which of the model materials was used to
+            // create the current paint material, just copy the description from
+            // the car paint. This allows users to modify materials in the
+            // scene editor without breaking the app. This will also deselect
+            // all material options in the UI, until a new option is clicked.
+            AppConfig.cars[selectedCarIndex].paintMaterialUUID
+      ];
     desc.dataJson.albedo = selectedColor;
     AppConfig.cars.forEach((_, i) => {
       paintAssetEditors[i].updateAsset(desc);
