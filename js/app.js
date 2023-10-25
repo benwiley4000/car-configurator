@@ -35,6 +35,13 @@ const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
 async function initApp() {
   CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
 
+  // HACK: remove this when we're ready to go live
+  SDK3DVerse.setApiVersion("v1");
+  SDK3DVerse.setApiVersion = () => {};
+  SDK3DVerse.webAPI.setURL("https://api.3dverse.dev/app/v1");
+  SDK3DVerse.defaultEditorURL = "wss://editor-backend.3dverse.dev";
+  // END HACK
+
   const sessionConnectionInfo = await SDK3DVerse.getSessionConnectionInfo({
     userToken: AppConfig.publicUserToken,
     sceneUUID: AppConfig.sceneUUID,
