@@ -33,36 +33,56 @@ const SDK3DVerse = /** @type {typeof window & { SDK3DVerse: any }} */ (window)
  * it's finished.
  */
 async function initApp() {
-  CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
+  /**
+   * A 3dverse session can sometimes be closed after a page refresh, if you were
+   * the only client connected to that session. We will retry joining a session
+   * one more time if this happens to us.
+   */
+  let retriesLeft = 1;
+  let startFailed = false;
+  do {
+    try {
+      CarConfiguratorActions.setSceneLoadingState("Connecting to 3dverse...");
 
-  // HACK: remove this when we're ready to go live
-  SDK3DVerse.setApiVersion("v1");
-  SDK3DVerse.setApiVersion = () => {};
-  SDK3DVerse.webAPI.setURL("https://api.3dverse.dev/app/v1");
-  SDK3DVerse.defaultEditorURL = "wss://editor-backend.3dverse.dev";
-  // END HACK
+      // HACK: remove this when we're ready to go live
+      SDK3DVerse.setApiVersion("v1");
+      SDK3DVerse.setApiVersion = () => {};
+      SDK3DVerse.webAPI.setURL("https://api.3dverse.dev/app/v1");
+      SDK3DVerse.defaultEditorURL = "wss://editor-backend.3dverse.dev";
+      // END HACK
 
-  const sessionConnectionInfo = await SDK3DVerse.getSessionConnectionInfo({
-    userToken: AppConfig.publicUserToken,
-    sceneUUID: AppConfig.sceneUUID,
-    joinExisting: true,
-    isTransient: true,
-  });
+      const sessionConnectionInfo = await SDK3DVerse.getSessionConnectionInfo({
+        userToken: AppConfig.publicUserToken,
+        sceneUUID: AppConfig.sceneUUID,
+        joinExisting: true,
+        isTransient: true,
+      });
 
-  CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
+      CarConfiguratorActions.setSceneLoadingState("Starting streamer...");
 
-  await SDK3DVerse.start({
-    sessionConnectionInfo,
-    canvas: document.getElementById("display-canvas"),
-    connectToEditor: true,
-    viewportProperties: {
-      defaultControllerType: SDK3DVerse.controller_type.orbit,
-    },
-    maxDimension: 1920,
-    onConnectingToEditor() {
-      CarConfiguratorActions.setSceneLoadingState("Connecting to editor...");
-    },
-  });
+      await SDK3DVerse.start({
+        sessionConnectionInfo,
+        canvas: document.getElementById("display-canvas"),
+        connectToEditor: true,
+        viewportProperties: {
+          defaultControllerType: SDK3DVerse.controller_type.orbit,
+        },
+        maxDimension: 1920,
+        onConnectingToEditor() {
+          CarConfiguratorActions.setSceneLoadingState(
+            "Connecting to editor...",
+          );
+        },
+      });
+    } catch (err) {
+      if (retriesLeft) {
+        startFailed = true;
+        console.warn(err);
+      } else {
+        throw err;
+      }
+    }
+  } while (startFailed && retriesLeft--);
 
   const mediaQuery = window.matchMedia("(max-width: 890px)");
   mediaQuery.addEventListener("change", repositionCameraOnResize);
