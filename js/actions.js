@@ -23,7 +23,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
    * @property {Entity} platform
    * @property {Entity} gradientPlatform
    * @property {Entity} isAnimationActiveToken
-   * @property {Entity} body
+   * @property {Entity} car
    */
   /** @private @type {EntityMap | null} */
   entities = null;
@@ -96,7 +96,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       );
     } else {
       for (const entity of updatedEntities) {
-        if (entity === entities.body) {
+        if (entity === entities.car) {
           updatedKeys.push("selectedCarIndex");
         }
         if (entity === entities.environment) {
@@ -116,7 +116,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
 
     if (updatedKeys.includes("selectedCarIndex")) {
       newState.selectedCarIndex = AppConfig.cars.findIndex(({ sceneUUID }) => {
-        return entities.body.getComponent("scene_ref").value === sceneUUID;
+        return entities.car.getComponent("scene_ref").value === sceneUUID;
       });
     }
     if (updatedKeys.includes("selectedCubemap")) {
@@ -214,8 +214,7 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     const entities = this.safeGet("entities");
     const selectedCar =
       AppConfig.cars[CarConfiguratorStore.state.selectedCarIndex];
-    this.applySelectedMaterial();
-    entities.body.setComponent("scene_ref", { value: selectedCar.sceneUUID });
+    entities.car.setComponent("scene_ref", { value: selectedCar.sceneUUID });
     SDK3DVerse.engineAPI.commitChanges();
   }
 
@@ -272,20 +271,20 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
       platformEntity,
       gradientPlatformEntity,
       isAnimationActiveTokenEntity,
-      bodyEntity,
+      carEntity,
     ] = await SDK3DVerse.engineAPI.findEntitiesByNames(
       AppConfig.environmentEntityName,
       AppConfig.platformEntityName,
       AppConfig.gradientPlatformEntityName,
       AppConfig.isAnimationActiveTokenEntityName,
-      AppConfig.sceneRefEntityNames.body,
+      AppConfig.carSceneRefName,
     );
     this.entities = {
       environment: environmentEntity,
       platform: platformEntity,
       gradientPlatform: gradientPlatformEntity,
       isAnimationActiveToken: isAnimationActiveTokenEntity,
-      body: bodyEntity,
+      car: carEntity,
     };
 
     this.updateStateFromEntities();
@@ -312,9 +311,17 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     );
     this.cachedMaterialAssetDescriptions = cachedMaterialAssetDescriptions;
 
+    let onMaterialsReady = () => {};
+    const materialsReadyPromise = /** @type {Promise<void>} */ (
+      new Promise((resolve) => {
+        onMaterialsReady = resolve;
+      })
+    );
+
     /** @param {string} materialUUID */
     const hookUpAssetEditor = (materialUUID) => {
       return getAssetEditorAPIForMaterial(materialUUID, (event, desc) => {
+        onMaterialsReady();
         if (event !== "assetUpdated") return;
         this.cachedMaterialAssetDescriptions = {
           ...this.cachedMaterialAssetDescriptions,
@@ -333,6 +340,8 @@ export const CarConfiguratorActions = new (class CarConfiguratorActions {
     this.paintAssetEditors = AppConfig.cars.map(({ paintMaterialUUID }) => {
       return hookUpAssetEditor(paintMaterialUUID);
     });
+
+    await materialsReadyPromise;
   }
 
   /** @param {number} selectedCarIndex */

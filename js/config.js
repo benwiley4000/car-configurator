@@ -22,9 +22,7 @@ export const AppConfig = {
   platformEntityName: "Platform",
   gradientPlatformEntityName: "RGB Platform",
   isAnimationActiveTokenEntityName: "isAnimationActiveToken",
-  sceneRefEntityNames: {
-    body: "Car",
-  },
+  carSceneRefName: "Car",
   // the cubemaps are from an external project that won't be copied so
   // we don't include their UUIDS in the template config
   cubemaps: [
@@ -57,11 +55,6 @@ export const AppConfig = {
     [0.58, 0.141, 0.506],
     [0.251, 0, 0],
   ]),
-  partCategoryNames: {
-    frontBumpers: "Front Bumper",
-    rearBumpers: "Rear Bumper",
-    spoilers: "Spoiler",
-  },
   materials: [
     {
       name: "Metallic",
@@ -87,13 +80,22 @@ export const AppConfig = {
       rearLightsMatUUID: assetIds.MaterialViperRearlights,
     },
     {
-      name: "Lamborghini Urus",
-      sceneUUID: assetIds.SceneUrus,
+      name: "Audi TT RS",
+      sceneUUID: assetIds.SceneAudi,
       description:
-        "Lamborghini Urus is the first Super Sport Utility Vehicle in the world, merging the soul of a super sports car with the practical functionality of an SUV.",
-      paintMaterialUUID: assetIds.MaterialUrusPaint,
-      headLightsMatUUID: assetIds.MaterialUrusHeadlights,
-      rearLightsMatUUID: assetIds.MaterialUrusRearlights,
+        "The Audio TT RS delivers sports car handling, muscle-car performance, and a high-end look and feel.",
+      paintMaterialUUID: assetIds.MaterialAudiPaint,
+      headLightsMatUUID: assetIds.MaterialAudiHeadlights,
+      rearLightsMatUUID: assetIds.MaterialAudiRearlights,
+    },
+    {
+      name: "Mercedes AMG GT",
+      sceneUUID: assetIds.SceneMercedes2,
+      description:
+        "The Mercedes-AMG GT Coupé breathes high performance, technical leadership, supreme appeal and absolute luxury.",
+      paintMaterialUUID: assetIds.MaterialMercedes2Paint,
+      headLightsMatUUID: assetIds.MaterialMercedes2Headlights,
+      rearLightsMatUUID: assetIds.MaterialMercedes2Rearlights,
     },
   ],
 };
