@@ -9,8 +9,12 @@ export default {
       asset_id: "6d4481b2-69fb-4521-ac39-47f3a9ad7c7e",
       asset_type: "scene",
     },
-    SceneUrus: {
-      asset_id: "0c6a9f74-feb4-4aed-8f59-463c24da1b2f",
+    SceneAudi: {
+      asset_id: "930a64e7-a364-4bc8-b6d5-5eb6f0ae00d6",
+      asset_type: "scene",
+    },
+    SceneMercedes: {
+      asset_id: "73a30be6-3734-414e-8f29-900527caf6c8",
       asset_type: "scene",
     },
     MaterialMetallic: {
@@ -37,17 +41,29 @@ export default {
       asset_id: "ca52ec66-ec04-43ca-bb39-0f2e6055e7bb",
       asset_type: "material",
     },
-    MaterialUrusPaint: {
-      asset_id: "20f3387f-b549-49ce-bf21-1fec67abef63",
+    MaterialAudiPaint: {
+      asset_id: "ecafe512-651e-42e7-adbf-b1139f8f042d",
       asset_type: "material",
     },
-    MaterialUrusHeadlights: {
-      asset_id: "d2de613c-9d0e-4612-b253-e8ea0740c960",
+    MaterialAudiHeadlights: {
+      asset_id: "71e4f8bd-06a8-4a2c-afe3-0bc03df494da",
       asset_type: "material",
     },
-    MaterialUrusRearlights: {
-      asset_id: "ef8b7508-7ef3-47a9-9e5a-6ed6f039b62a",
+    MaterialAudiRearlights: {
+      asset_id: "bce3ea1a-3aea-4b9b-ab95-91fa7fddfec3",
       asset_type: "material",
+    },
+    MaterialMercedesPaint: {
+      asset_id: "093d11f5-02d7-46e3-ab9d-3a6fe75e354b",
+      asset_type: "material"
+    },
+    MaterialMercedesHeadlights: {
+      asset_id: "6cd356b7-4505-46b1-a6ea-c04d1967e49d",
+      asset_type: "material"
+    },
+    MaterialMercedesRearlights: {
+      asset_id: "1fe26ce1-5736-45d6-a76a-d3a0a6f1aa03",
+      asset_type: "material"
     },
   },
 };

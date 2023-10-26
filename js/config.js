@@ -90,12 +90,12 @@ export const AppConfig = {
     },
     {
       name: "Mercedes AMG GT",
-      sceneUUID: assetIds.SceneMercedes2,
+      sceneUUID: assetIds.SceneMercedes,
       description:
         "The Mercedes-AMG GT Coupé breathes high performance, technical leadership, supreme appeal and absolute luxury.",
-      paintMaterialUUID: assetIds.MaterialMercedes2Paint,
-      headLightsMatUUID: assetIds.MaterialMercedes2Headlights,
-      rearLightsMatUUID: assetIds.MaterialMercedes2Rearlights,
+      paintMaterialUUID: assetIds.MaterialMercedesPaint,
+      headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
+      rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
     },
   ],
 };
