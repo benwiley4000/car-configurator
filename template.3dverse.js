@@ -17,6 +17,10 @@ export default {
       asset_id: "73a30be6-3734-414e-8f29-900527caf6c8",
       asset_type: "scene",
     },
+    SceneFiat: {
+      asset_id: "b4950566-d2a8-488a-8700-03b8326a09ba",
+      asset_type: "scene",
+    },
     MaterialMetallic: {
       asset_id: "e1357fe8-7a6f-4af5-83e0-b16643b98372",
       asset_type: "material",
@@ -64,6 +68,18 @@ export default {
     MaterialMercedesRearlights: {
       asset_id: "1fe26ce1-5736-45d6-a76a-d3a0a6f1aa03",
       asset_type: "material"
+    },
+    MaterialFiatPaint: {
+      asset_id: "141b477c-131a-4b4c-a8a9-f14568ceed19",
+      asset_type: "material",
+    },
+    MaterialFiatHeadlights: {
+      asset_id: "ff2c1daf-f8fd-46de-b0f2-1ee356dfe536",
+      asset_type: "material",
+    },
+    MaterialFiatRearlights: {
+      asset_id: "73684d4a-d70e-4a79-a73a-b630deda1ae6",
+      asset_type: "material",
     },
   },
 };

@@ -97,5 +97,14 @@ export const AppConfig = {
       headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
       rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
     },
+    {
+      name: "Fiat 850 Spider",
+      sceneUUID: assetIds.SceneFiat,
+      description:
+        "The budget Fiat 850 Spider was designed by Giorgetto Giugiaro, designer of the DeLorean DMC-12 and Maserati Ghibli.",
+      paintMaterialUUID: assetIds.MaterialFiatPaint,
+      headLightsMatUUID: assetIds.MaterialFiatHeadlights,
+      rearLightsMatUUID: assetIds.MaterialFiatRearlights,
+    },
   ],
 };
