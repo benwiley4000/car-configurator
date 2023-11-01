@@ -76,6 +76,11 @@ export const AppConfig = {
       paintMaterialUUID: assetIds.MaterialViperPaint,
       headLightsMatUUID: assetIds.MaterialViperHeadlights,
       rearLightsMatUUID: assetIds.MaterialViperRearlights,
+      credits: {
+        author: "Augmented One",
+        image: "AO_White.png",
+        url: "https://www.instagram.com/augmented_one",
+      },
     },
     {
       name: "Audi TT RS",
@@ -83,6 +88,11 @@ export const AppConfig = {
       paintMaterialUUID: assetIds.MaterialAudiPaint,
       headLightsMatUUID: assetIds.MaterialAudiHeadlights,
       rearLightsMatUUID: assetIds.MaterialAudiRearlights,
+      credits: {
+        author: "SINNIK, licensed under Creative Commons Attribution",
+        image: "cc-icon.svg#cc-logo",
+        url: "https://sketchfab.com/3d-models/2018-audi-tt-rs-d00ae4bc719249bb9bd1e2fc06853bec",
+      },
     },
     {
       name: "Mercedes AMG GT",
@@ -90,6 +100,11 @@ export const AppConfig = {
       paintMaterialUUID: assetIds.MaterialMercedesPaint,
       headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
       rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
+      credits: {
+        author: "Yan Carvalho, licensed under Creative Commons Attribution",
+        image: "cc-icon.svg#cc-logo",
+        url: "https://sketchfab.com/3d-models/mercedes-benz-amg-gt-661dcab94455463784651a3ebc63cfb9",
+      },
     },
     {
       name: "Fiat 850 Spider",
@@ -97,6 +112,11 @@ export const AppConfig = {
       paintMaterialUUID: assetIds.MaterialFiatPaint,
       headLightsMatUUID: assetIds.MaterialFiatHeadlights,
       rearLightsMatUUID: assetIds.MaterialFiatRearlights,
+      credits: {
+        author: "Lucas Soler, licensed under Creative Commons Attribution",
+        image: "cc-icon.svg#cc-logo",
+        url: "https://sketchfab.com/3d-models/fiat-850-spider-8ea03b3cbb9f439ea82a68ddbeb5f6ae",
+      },
     },
   ],
 };

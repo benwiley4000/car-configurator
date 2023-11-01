@@ -88,6 +88,7 @@ export const CarSelectionView = new (class CarSelectionView {
     ).innerHTML = this.template({
       firstWord,
       afterFirstWord: otherWords.join(" "),
+      credits: selectedCar.credits,
     });
   };
 

@@ -345,8 +345,7 @@ img {
   stroke: var(--more-off-white);
 }
 
-.car-heading .models-by-augmented-one {
-  align-self: flex-end;
+.car-heading .credit {
   display: flex;
   align-items: center;
   pointer-events: all;
@@ -355,11 +354,11 @@ img {
   text-decoration: none;
 }
 
-.car-heading .models-by-augmented-one span {
-  font-size: 12px;
+.car-heading .credit span {
+  font-size: 14px;
 }
 
-.car-heading .models-by-augmented-one .ao-logo {
+.car-heading .credit .credit-logo {
   width: 2rem;
 }
 
