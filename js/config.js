@@ -73,8 +73,6 @@ export const AppConfig = {
     {
       name: "Dodge Viper SRT",
       sceneUUID: assetIds.SceneViper,
-      description:
-        "The legend became infamous after ex-Top Gear presenter Richard Hammond crashed one of only eight cars built.",
       paintMaterialUUID: assetIds.MaterialViperPaint,
       headLightsMatUUID: assetIds.MaterialViperHeadlights,
       rearLightsMatUUID: assetIds.MaterialViperRearlights,
@@ -82,8 +80,6 @@ export const AppConfig = {
     {
       name: "Audi TT RS",
       sceneUUID: assetIds.SceneAudi,
-      description:
-        "The Audio TT RS delivers sports car handling, muscle-car performance, and a high-end look and feel.",
       paintMaterialUUID: assetIds.MaterialAudiPaint,
       headLightsMatUUID: assetIds.MaterialAudiHeadlights,
       rearLightsMatUUID: assetIds.MaterialAudiRearlights,
@@ -91,8 +87,6 @@ export const AppConfig = {
     {
       name: "Mercedes AMG GT",
       sceneUUID: assetIds.SceneMercedes,
-      description:
-        "The Mercedes-AMG GT Coupé breathes high performance, technical leadership, supreme appeal and absolute luxury.",
       paintMaterialUUID: assetIds.MaterialMercedesPaint,
       headLightsMatUUID: assetIds.MaterialMercedesHeadlights,
       rearLightsMatUUID: assetIds.MaterialMercedesRearlights,
@@ -100,8 +94,6 @@ export const AppConfig = {
     {
       name: "Fiat 850 Spider",
       sceneUUID: assetIds.SceneFiat,
-      description:
-        "The budget Fiat 850 Spider was designed by Giorgetto Giugiaro, designer of the DeLorean DMC-12 and Maserati Ghibli.",
       paintMaterialUUID: assetIds.MaterialFiatPaint,
       headLightsMatUUID: assetIds.MaterialFiatHeadlights,
       rearLightsMatUUID: assetIds.MaterialFiatRearlights,

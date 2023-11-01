@@ -275,7 +275,7 @@ img {
   backdrop-filter: blur(2px);
   padding: var(--spacing-sm);
   border-radius: 1rem;
-  max-width: 650px;
+  width: 600px;
   gap: 1rem;
 }
 
@@ -300,7 +300,6 @@ img {
   justify-content: space-between;
   align-items: center;
   gap: var(--spacing);
-  white-space: nowrap;
 }
 
 @media (max-width: 1024px) {
@@ -326,23 +325,6 @@ img {
   padding-bottom: 0;
   background-color: var(--color-primary);
   border-radius: calc(var(--car-name-size) / 4);
-}
-
-.car-heading .car-description {
-  color: var(--off-white);
-  line-height: 1.75rem;
-}
-
-@media (max-width: 1024px) {
-  .car-heading .car-description {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 560px) {
-  .car-heading .car-description {
-    display: none;
-  }
 }
 
 .car-heading .car-name .switch-car-button {
