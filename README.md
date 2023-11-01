@@ -10,10 +10,10 @@ Here is the basic flow of this app:
 (This chart was created with [flowchart.fun](https://flowchart.fun/))
 
 TODO
-1. figure out what to do with asset editor api
-2. Fix client avatars
-3. Fix list of cars
-4. Fix issues with view on mobile
+## 1. figure out what to do with asset editor api
+## 2. Fix client avatars
+## 3. Fix list of cars
+4. use different version of dodge from houssem
 5. Implement transient session
 6. Make sure to consolidate git repo / single commit before release
 7. Fix scene state before switching to all transient changes
