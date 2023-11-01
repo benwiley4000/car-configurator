@@ -10,12 +10,8 @@ Here is the basic flow of this app:
 (This chart was created with [flowchart.fun](https://flowchart.fun/))
 
 TODO
-## 1. figure out what to do with asset editor api
-## 2. Fix client avatars
-## 3. Fix list of cars
-4. use different version of dodge from houssem
-5. Implement transient session
-6. Make sure to consolidate git repo / single commit before release
-7. Fix scene state before switching to all transient changes
-8. Document app design principles for 3dverse app
-9. Come up with short challenges we can give new users to modify the behavior of the app (ideally done in a way that users don't need to access the editor right away)
+- figure out what to do with asset editor api
+- get houssem to update assets with new scene
+- transient session check
+- Fix scene state before switching to all transient changes
+- Show how to add your own car
